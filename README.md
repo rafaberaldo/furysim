@@ -1,4 +1,4 @@
-# furysim
+# FurySim
 
 ## Project setup
 ```
