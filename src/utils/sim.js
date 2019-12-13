@@ -28,7 +28,10 @@ export default {
   handleTick(player, tick) {
     const exists = (e) => !!e
     const eventOrder = [
+      player.bloodFury,
+      player.deathWish,
       player.bloodthirst,
+      player.whirlwind,
       player.mainhand,
       player.offhand,
       player.angerManagement
@@ -41,9 +44,11 @@ export default {
     })
 
     // Tick cooldowns
+    player.gcd.tick()
+    player.flurry.tick(tick)
     eventOrder.forEach((e) => {
-      if (e.cooldown) e.cooldown.tick()
-      if (e.tick) e.tick()
+      if (e.cooldown) e.cooldown.tick(tick)
+      if (e.tick) e.tick(tick)
     })
   }
 }

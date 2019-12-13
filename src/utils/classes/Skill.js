@@ -1,9 +1,9 @@
-import Cooldown from './Cooldown'
+import { Cooldown, CooldownGCD } from './Cooldown'
 
 import { clamp } from '../helpers'
 
 export default class Skill {
-  constructor(name, cost, cooldown, player) {
+  constructor(name, cost, cooldown, triggerGcd, player) {
     this.consts = {
       SKILL_RESULT_TYPE_MISS: 'SKILL_MISS',
       SKILL_RESULT_TYPE_DODGE: 'SKILL_DODGE',
@@ -13,7 +13,9 @@ export default class Skill {
     this.consts = Object.freeze(this.consts)
 
     this.cost = cost
-    this.cooldown = new Cooldown(name, cooldown)
+    this.cooldown = triggerGcd
+      ? new CooldownGCD(name, cooldown, 0, player)
+      : new Cooldown(name, cooldown)
 
     // TODO confirm miss refund is 80%
     this.missRefundMul = 0.2
@@ -35,6 +37,10 @@ export default class Skill {
     throw new Error('Base class, not implemented.')
   }
 
+  get canUse() {
+    return this.player.rage.has(this.cost) && this.cooldown.canUse
+  }
+
   // Methods
 
   use(tick) {
@@ -42,12 +48,12 @@ export default class Skill {
     let dmg = 0
     let type = null
 
-    if (roll < this.attackTable.miss) {
+    if (roll <= this.attackTable.miss) {
       type = this.consts.SKILL_RESULT_TYPE_MISS
       this.player.log.skillMiss++
       this.player.rage.use(this.cost * this.missRefundMul)
 
-    } else if (roll < this.attackTable.dodge) {
+    } else if (roll <= this.attackTable.dodge) {
       type = this.consts.SKILL_RESULT_TYPE_DODGE
       this.player.log.skillDodge++
       this.player.rage.use(this.cost * this.missRefundMul)
@@ -56,7 +62,7 @@ export default class Skill {
       const roll2 = Math.random() * 100
       this.player.rage.use(this.cost)
 
-      if (roll2 < this.player.mainhand.critChance) {
+      if (roll2 <= this.player.mainhand.critChance) {
         dmg = Math.floor(this.dmg * this.player.skillCritMul * this.player.target.armorMitigationMul)
         type = this.consts.SKILL_RESULT_TYPE_CRIT
         this.player.log.skillCrit++

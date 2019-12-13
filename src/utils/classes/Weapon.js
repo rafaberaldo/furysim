@@ -1,4 +1,4 @@
-import Cooldown from './Cooldown'
+import { Cooldown } from './Cooldown'
 
 import { getRandom, clamp } from '../helpers'
 
@@ -23,6 +23,7 @@ export default class Weapon {
     this.dmgMin = weapon.dmgMin
     this.dmgMax = weapon.dmgMax
     this.speed = weapon.speed
+    this.enchant = weapon.enchant
 
     this.player = player
     this.target = player.target
@@ -63,7 +64,7 @@ export default class Weapon {
   get dmg() {
     const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
     let dmg = weaponDmg + (this.speed * this.player.ap / 14)
-    // TODO - Add dmg multiplier (Death Wish)
+    dmg *= this.player.dmgMul
     if (this.isOffhand) dmg *= this.player.offhandDmgMul
     return dmg
   }
@@ -71,8 +72,9 @@ export default class Weapon {
   // https://vanilla-wow.fandom.com/wiki/Normalization
   get normalizedDmg() {
     const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
-    // TODO - Add dmg multiplier (Death Wish)
-    return weaponDmg + (this.normalizedSpeed(this.wpnType) * this.player.ap / 14)
+    let dmg = weaponDmg + (this.normalizedSpeed * this.player.ap / 14)
+    dmg *= this.player.dmgMul
+    return dmg
   }
 
   get dodgeChance() {
@@ -126,21 +128,25 @@ export default class Weapon {
     let dmg = 0
     let type = null
 
-    if (roll < this.attackTable.miss) {
+    // TODO confirm flurry use charge on miss
+    if (this.player.flurry.isActive) this.player.flurry.useCharge(tick)
+
+    if (roll <= this.attackTable.miss) {
       type = this.consts.SWING_RESULT_TYPE_MISS
       this.player.log.miss++
 
-    } else if (roll < this.attackTable.dodge) {
+    } else if (roll <= this.attackTable.dodge) {
       this.player.rage.gainFromDodge(this.dmg * this.target.armorMitigationMul)
       type = this.consts.SWING_RESULT_TYPE_DODGE
       this.player.log.dodge++
 
-    } else if (roll < this.attackTable.glance) {
+    } else if (roll <= this.attackTable.glance) {
       dmg = Math.floor(this.dmg * this.glancePenaltyMul * this.target.armorMitigationMul)
       type = this.consts.SWING_RESULT_TYPE_GLANCE
       this.player.log.glance++
 
-    } else if (roll < this.attackTable.crit) {
+    } else if (roll <= this.attackTable.crit) {
+      this.player.flurry.gain(tick)
       dmg = Math.floor(this.dmg * 2 * this.target.armorMitigationMul)
       type = this.consts.SWING_RESULT_TYPE_CRIT
       this.player.log.crit++
