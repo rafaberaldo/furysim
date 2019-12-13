@@ -61,22 +61,6 @@ export default class Weapon {
     }
   }
 
-  get dmg() {
-    const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
-    let dmg = weaponDmg + (this.speed * this.player.ap / 14)
-    dmg *= this.player.dmgMul
-    if (this.isOffhand) dmg *= this.player.offhandDmgMul
-    return dmg
-  }
-
-  // https://vanilla-wow.fandom.com/wiki/Normalization
-  get normalizedDmg() {
-    const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
-    let dmg = weaponDmg + (this.normalizedSpeed * this.player.ap / 14)
-    dmg *= this.player.dmgMul
-    return dmg
-  }
-
   get dodgeChance() {
     return clamp(5 + this.skillDiff * 0.1)
   }
@@ -133,43 +117,77 @@ export default class Weapon {
     return clamp(actualMiss - gearHit)
   }
 
+  getDmg(plus = 0) {
+    const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
+    let dmg = weaponDmg + (this.speed * this.player.ap / 14)
+    dmg += plus
+    if (this.isOffhand) dmg *= this.player.offhandDmgMul
+    return dmg
+  }
+
+  // https://vanilla-wow.fandom.com/wiki/Normalization
+  getNormalizedDmg(plus = 0) {
+    const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
+    let dmg = weaponDmg + (this.normalizedSpeed * this.player.ap / 14)
+    return dmg + plus
+  }
+
   swing(tick) {
+    if (this.player.heroicStrike.isQueued && !this.isOffhand) {
+      if (!this.player.heroicStrike.canUse) {
+        this.player.heroicStrike.isQueued = false
+        this.player.addTimeline(tick, this.player.heroicStrike.cooldown.name, 'SKILL_UNQUEUED_RESOURCE')
+      } else {
+        this.player.heroicStrike.isQueued = false
+        this.player.heroicStrike.use(tick)
+
+        // Heroic strike now consumes Flurry charges after 1.13.3
+        if (this.player.flurry.isActive) this.player.flurry.useCharge(tick)
+
+        // Heroic strike replaces swing
+        this.cooldown.reset()
+        return
+      }
+    }
+
     const roll = Math.random() * 100
-    let dmg = null
+    let dmg = this.getDmg() * this.player.dmgMul * this.target.armorMitigationMul
     let type = null
 
     // Flurry consume charges even on misses
     if (this.player.flurry.isActive) this.player.flurry.useCharge(tick)
 
     if (roll <= this.attackTable.miss) {
+      dmg = null
       type = this.consts.SWING_RESULT_TYPE_MISS
       this.player.log.miss++
 
     } else if (roll <= this.attackTable.dodge) {
-      this.player.rage.gainFromDodge(this.dmg * this.target.armorMitigationMul)
       type = this.consts.SWING_RESULT_TYPE_DODGE
+      this.player.rage.gainFromDodge(dmg)
+      dmg = 0
       this.player.log.dodge++
 
     } else if (roll <= this.attackTable.glance) {
-      dmg = Math.floor(this.dmg * this.glancePenaltyMul * this.target.armorMitigationMul)
+      dmg *= this.glancePenaltyMul
       type = this.consts.SWING_RESULT_TYPE_GLANCE
       this.player.log.glance++
 
     } else if (roll <= this.attackTable.crit) {
-      this.player.flurry.gain(tick)
-      dmg = Math.floor(this.dmg * 2 * this.target.armorMitigationMul)
+      dmg *= 2
       type = this.consts.SWING_RESULT_TYPE_CRIT
+      this.player.flurry.gain(tick)
       this.player.log.crit++
 
     } else {
-      dmg = Math.floor(this.dmg * this.target.armorMitigationMul)
       type = this.consts.SWING_RESULT_TYPE_HIT
       this.player.log.hit++
     }
 
-    this.player.rage.gainFromSwing(dmg)
     this.cooldown.use()
+    this.player.rage.gainFromSwing(dmg)
 
+    dmg = dmg && Math.floor(dmg)
     this.player.log.totalDmg += dmg
     this.player.addTimeline(tick, this.cooldown.name, type, dmg)
   }

@@ -18,14 +18,14 @@
     },
     mounted() {
       const cfg = {
-          duration: 45,
+          duration: 30,
           player: {
             lvl: 60,
             str: 270,
             ap: 1500,
-            hit: 6,
+            hit: 8,
             haste: 0,
-            crit: 25
+            crit: 45
           },
           target: {
             lvl: 63,

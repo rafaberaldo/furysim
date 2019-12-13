@@ -6,6 +6,6 @@ export default class Whirlwind extends Skill {
   }
 
   get dmg() {
-    return this.player.mainhand.normalizedDmg
+    return this.player.mainhand.getNormalizedDmg()
   }
 }

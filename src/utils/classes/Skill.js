@@ -23,6 +23,7 @@ export default class Skill {
     this.missRefundMul = (name === 'Whirlwind' || name === 'Cleave') ? 1 : 0.2
 
     this.player = player
+    this.target = player.target
   }
 
   // Getters
@@ -46,13 +47,13 @@ export default class Skill {
 
   use(tick) {
     const roll = Math.random() * 100
-    let dmg = 0
+    let dmg = null
     let type = null
 
     if (roll <= this.attackTable.miss) {
       type = this.consts.SKILL_RESULT_TYPE_MISS
-      this.player.log.skillMiss++
       this.player.rage.use(this.cost * this.missRefundMul)
+      this.player.log.skillMiss++
 
     } else if (roll <= this.attackTable.dodge) {
       type = this.consts.SKILL_RESULT_TYPE_DODGE
@@ -60,16 +61,16 @@ export default class Skill {
       this.player.rage.use(this.cost * this.missRefundMul)
 
     } else {
+      dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
       const roll2 = Math.random() * 100
       this.player.rage.use(this.cost)
 
       if (roll2 <= this.player.mainhand.critChance) {
-        dmg = Math.floor(this.dmg * this.player.skillCritMul * this.player.target.armorMitigationMul)
+        dmg *= this.player.skillCritMul
         type = this.consts.SKILL_RESULT_TYPE_CRIT
         this.player.log.skillCrit++
 
       } else {
-        dmg = Math.floor(this.dmg * this.player.target.armorMitigationMul)
         type = this.consts.SKILL_RESULT_TYPE_HIT
         this.player.log.skillHit++
       }
@@ -77,6 +78,7 @@ export default class Skill {
 
     this.cooldown.use()
 
+    dmg = dmg && Math.floor(dmg)
     this.player.log.totalDmg += dmg
     this.player.addTimeline(tick, this.cooldown.name, type, dmg)
   }

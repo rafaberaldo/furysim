@@ -43,6 +43,9 @@ export default {
       if (e.use) e.use(tick)
     })
 
+    // Queue mechanic skills
+    if (player.heroicStrike.canQueue) player.heroicStrike.queue(tick)
+
     // Tick cooldowns
     player.gcd.tick()
     eventOrder.forEach((e) => {

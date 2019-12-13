@@ -8,6 +8,7 @@ import BloodFury from './Cooldowns/BloodFury'
 import Flurry from './Flurry'
 import Bloodthirst from './Skills/Bloodthirst'
 import Whirlwind from './Skills/Whirlwind'
+import HeroicStrike from './Skills/HeroicStrike'
 
 import { parseTalents } from '../helpers'
 
@@ -44,6 +45,7 @@ export default class Player {
     this.flurry = new Flurry(this)
     this.bloodthirst = new Bloodthirst(this)
     this.whirlwind = new Whirlwind(this)
+    this.heroicStrike = new HeroicStrike(this)
 
     this.log = {
       timeline: [],

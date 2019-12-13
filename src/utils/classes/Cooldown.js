@@ -42,6 +42,10 @@ export class Cooldown {
 
     this.timeLeft = this.duration
   }
+
+  reset() {
+    this.timeLeft = this.duration
+  }
 }
 
 export class CooldownGCD extends Cooldown {

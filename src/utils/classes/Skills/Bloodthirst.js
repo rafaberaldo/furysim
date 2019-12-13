@@ -6,6 +6,6 @@ export default class Bloodthirst extends Skill {
   }
 
   get dmg() {
-    return this.player.ap * 0.45 * this.player.dmgMul
+    return this.player.ap * 0.45
   }
 }

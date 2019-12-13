@@ -14,9 +14,9 @@ export default class Aura {
   // Methods
 
   tick(tick) {
-    if (this.timeLeft === 1) {
-      this.player.addTimeline(tick+1, this.name, 'BUFF_FADED')
-    }
+    if (!this.timeLeft) return
+
+    this.player.addTimeline(tick+1, this.name, 'BUFF_FADED')
     this.timeLeft = Math.max(0, --this.timeLeft)
   }
 
