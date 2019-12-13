@@ -45,7 +45,6 @@ export default {
 
     // Tick cooldowns
     player.gcd.tick()
-    player.flurry.tick(tick)
     eventOrder.forEach((e) => {
       if (e.cooldown) e.cooldown.tick(tick)
       if (e.tick) e.tick(tick)

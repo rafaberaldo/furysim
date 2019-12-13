@@ -30,10 +30,10 @@ export default class Weapon {
 
     // Initial offhand swing delay is 200-300 according to Magey
     // https://discordapp.com/channels/383596811517952002/582317222547030021/602887155840450560
-    this.offhandSwingOffset = getRandom(200, 300)
+    this.offhandSwingOffset = getRandom(0.2, 0.3)
     this.cooldown = new Cooldown(
       this.isOffhand ? 'Offhand' : 'Mainhand',
-      this.speed,
+      this.speed / this.player.haste,
       this.isOffhand ? this.offhandSwingOffset : 0
     )
   }
@@ -115,6 +115,16 @@ export default class Weapon {
 
   // Methods
 
+  addFlurry() {
+    this.cooldown.duration /= this.player.flurryHaste
+    this.cooldown.timeLeft /= this.player.flurryHaste
+  }
+
+  removeFlurry() {
+    this.cooldown.duration *= this.player.flurryHaste
+    this.cooldown.timeLeft *= this.player.flurryHaste
+  }
+
   getMissChance(isAuto = true) {
     // https://www.wowhead.com/news=292085/hit-cap-in-classic-wow-clarifications
     const gearHit = clamp(this.player.hit - (this.skillDiff > 10 ? 1 : 0))
@@ -125,10 +135,10 @@ export default class Weapon {
 
   swing(tick) {
     const roll = Math.random() * 100
-    let dmg = 0
+    let dmg = null
     let type = null
 
-    // TODO confirm flurry use charge on miss
+    // Flurry consume charges even on misses
     if (this.player.flurry.isActive) this.player.flurry.useCharge(tick)
 
     if (roll <= this.attackTable.miss) {

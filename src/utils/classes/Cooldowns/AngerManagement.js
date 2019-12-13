@@ -2,7 +2,7 @@ import { Cooldown } from '../Cooldown'
 
 export default class AngerManagement extends Cooldown {
   constructor(player) {
-    super('Anger Management', 3, 3000)
+    super('Anger Management', 3, 3)
 
     this.player = player
   }

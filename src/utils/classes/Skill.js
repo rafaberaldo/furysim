@@ -17,8 +17,10 @@ export default class Skill {
       ? new CooldownGCD(name, cooldown, 0, player)
       : new Cooldown(name, cooldown)
 
+    // WW and Cleve do not refund
+    // https://github.com/magey/classic-warrior/issues/27
     // TODO confirm miss refund is 80%
-    this.missRefundMul = 0.2
+    this.missRefundMul = (name === 'Whirlwind' || name === 'Cleave') ? 1 : 0.2
 
     this.player = player
   }
@@ -26,7 +28,6 @@ export default class Skill {
   // Getters
 
   // Skills are two-rolls system
-  // https://vanilla-wow.fandom.com/wiki/Attack_table
   get attackTable() {
     const miss = clamp(this.player.mainhand.getMissChance(false))
     const dodge = clamp(miss + this.player.mainhand.dodgeChance)

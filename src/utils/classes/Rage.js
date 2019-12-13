@@ -10,11 +10,17 @@ export default class Rage {
 
   // Methods
 
+  unbridledWrath() {
+    return (Math.random() <= this.player.extraRageChance) ? 1 : 0
+  }
+
   // https://vanilla-wow.fandom.com/wiki/Rage
   // https://web.archive.org/web/20071012151506/http://forums.wow-europe.com/thread.html?topicId=83678537&pageNo=1&sid=1
   gainFromSwing(dmg) {
+    if (dmg === null) return
+
     let gain = dmg / this.conversionValue * 7.5
-    if (Math.random() <= this.player.extraRageChance && gain > 0) gain++
+    gain += this.unbridledWrath(gain)
     this.current = clamp(Math.floor(this.current + gain))
   }
 

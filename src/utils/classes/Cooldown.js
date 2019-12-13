@@ -1,8 +1,8 @@
 export class Cooldown {
   constructor(name, duration, timeLeft = 0) {
     this.name = name
-    this._duration = duration * 1000
-    this._timeLeft = timeLeft
+    this._duration = Math.round(duration * 1000)
+    this._timeLeft = Math.round(timeLeft * 1000)
   }
 
   // Setters

@@ -5,7 +5,7 @@ import { Cooldown } from './Cooldown'
 import AngerManagement from './Cooldowns/AngerManagement'
 import DeathWish from './Cooldowns/DeathWish'
 import BloodFury from './Cooldowns/BloodFury'
-import Flurry from './Auras/Flurry'
+import Flurry from './Flurry'
 import Bloodthirst from './Skills/Bloodthirst'
 import Whirlwind from './Skills/Whirlwind'
 
@@ -17,7 +17,7 @@ export default class Player {
     this.str = cfg.player.str
     this._ap = cfg.player.ap
     this.hit = cfg.player.hit
-    this.haste = cfg.player.haste
+    this.haste = 1 + cfg.player.haste / 100
     this.crit = cfg.player.crit
 
     this.target = new Target(cfg.target, cfg.player)

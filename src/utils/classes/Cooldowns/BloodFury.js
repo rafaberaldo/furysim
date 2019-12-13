@@ -4,7 +4,7 @@ export default class BloodFury extends CooldownGCD {
   constructor(player) {
     super('Blood Fury', 60, 0, player)
 
-    this.buffDuration = 15000
+    this.buffDuration = 15 * 1000
     this.buffDurationLeft = 0
   }
 

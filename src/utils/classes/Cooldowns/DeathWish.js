@@ -4,7 +4,7 @@ export default class DeathWish extends CooldownGCD {
   constructor(player) {
     super('Death Wish', 180, 0, player)
 
-    this.buffDuration = 30000
+    this.buffDuration = 30 * 1000
     this.buffDurationLeft = 0
     this.cost = 10
   }
