@@ -1,8 +1,4 @@
-import { Cooldown } from './Cooldown'
-
-import { getRandom, clamp } from '../helpers'
-
-export default class Weapon {
+class Weapon {
   constructor(weapon, player, isOffhand = false) {
     this.consts = {
       NORM_DAGGER_SPEED: 1.7,
@@ -97,7 +93,15 @@ export default class Weapon {
     return this.cooldown.canUse
   }
 
+  get timeLeft() {
+    return this.cooldown.timeLeft
+  }
+
   // Methods
+
+  tick(time, secs) {
+    this.cooldown.tick(time, secs)
+  }
 
   addFlurry() {
     this.cooldown.duration /= this.player.flurryHaste
@@ -132,20 +136,14 @@ export default class Weapon {
     return dmg + plus
   }
 
-  swing(tick) {
+  swing(time) {
     if (this.player.heroicStrike.isQueued && !this.isOffhand) {
-      if (!this.player.heroicStrike.canUse) {
-        this.player.heroicStrike.isQueued = false
-        this.player.addTimeline(tick, this.player.heroicStrike.cooldown.name, 'SKILL_UNQUEUED_RESOURCE')
-      } else {
-        this.player.heroicStrike.isQueued = false
-        this.player.heroicStrike.use(tick)
-
-        // Heroic strike now consumes Flurry charges after 1.13.3
-        if (this.player.flurry.isActive) this.player.flurry.useCharge(tick)
-
-        // Heroic strike replaces swing
+      this.player.heroicStrike.isQueued = false
+      if (this.player.heroicStrike.canUse) {
+        this.player.heroicStrike.use(time)
         this.cooldown.reset()
+        // Heroic strike consumes Flurry charges after patch 1.13.3
+        if (this.player.flurry.isActive) this.player.flurry.useCharge(time)
         return
       }
     }
@@ -155,9 +153,13 @@ export default class Weapon {
     let type = null
 
     // Flurry consume charges even on misses
-    if (this.player.flurry.isActive) this.player.flurry.useCharge(tick)
+    if (this.player.flurry.isActive) this.player.flurry.useCharge(time)
 
-    if (roll <= this.attackTable.miss) {
+    // Heroic strike "bug"
+    // https://us.forums.blizzard.com/en/wow/t/off-hand-swings-with-hs-cleave-queued-dont-suffer-dw-miss-penalty/309417/7
+    const canMiss = !(this.player.heroicStrike.isQueued && this.isOffhand)
+
+    if (roll <= this.attackTable.miss && canMiss) {
       dmg = null
       type = this.consts.SWING_RESULT_TYPE_MISS
       this.player.log.miss++
@@ -176,7 +178,7 @@ export default class Weapon {
     } else if (roll <= this.attackTable.crit) {
       dmg *= 2
       type = this.consts.SWING_RESULT_TYPE_CRIT
-      this.player.flurry.gain(tick)
+      this.player.flurry.apply(time)
       this.player.log.crit++
 
     } else {
@@ -189,6 +191,6 @@ export default class Weapon {
 
     dmg = dmg && Math.floor(dmg)
     this.player.log.totalDmg += dmg
-    this.player.addTimeline(tick, this.cooldown.name, type, dmg)
+    this.player.addTimeline(time, this.cooldown.name, type, dmg)
   }
 }

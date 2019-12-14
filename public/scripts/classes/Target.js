@@ -1,4 +1,4 @@
-export default class Target {
+class Target {
   constructor(target, player) {
     this.lvl = target.lvl
     this.armor = target.armor

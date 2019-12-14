@@ -1,18 +1,4 @@
-import Target from './Target'
-import Weapon from './Weapon'
-import Rage from './Rage'
-import { Cooldown } from './Cooldown'
-import AngerManagement from './Cooldowns/AngerManagement'
-import DeathWish from './Cooldowns/DeathWish'
-import BloodFury from './Cooldowns/BloodFury'
-import Flurry from './Flurry'
-import Bloodthirst from './Skills/Bloodthirst'
-import Whirlwind from './Skills/Whirlwind'
-import HeroicStrike from './Skills/HeroicStrike'
-
-import { parseTalents } from '../helpers'
-
-export default class Player {
+class Player {
   constructor(cfg) {
     this.lvl = cfg.player.lvl
     this.str = cfg.player.str
@@ -20,6 +6,8 @@ export default class Player {
     this.hit = cfg.player.hit
     this.haste = 1 + cfg.player.haste / 100
     this.crit = cfg.player.crit
+
+    this.debug = cfg.debug || false
 
     this.target = new Target(cfg.target, cfg.player)
     this.mainhand = new Weapon(cfg.mainhand, this)
@@ -81,18 +69,18 @@ export default class Player {
 
   getDps(duration) {
     if (duration <= 0) return
-    return Number((this.log.totalDmg / duration).toFixed(1))
+    return this.log.totalDmg / duration
   }
 
-  addTimeline(tick, name, type, value = null) {
-    const time = (tick / 1000).toFixed(3).padStart(6, '0')
+  addTimeline(time, name, type, value = null) {
+    time = Number(time.toFixed(3))
     this.log.timeline.push(
       `${time}: ${name} ${type} for ${value} (${this.rage.current} rage)`
     )
+    if (!this.debug) return
+    
     value === null
-      // eslint-disable-next-line no-console
-      ? console.log(tick / 1000, ':', name, type)
-      // eslint-disable-next-line no-console
-      : console.log(tick / 1000, ':', name, type, 'for', value, '(', this.rage.current, 'rage )')
+      ? console.log(time, ':', name, type)
+      : console.log(time, ':', name, type, 'for', value, '(', this.rage.current, 'rage )')
   }
 }

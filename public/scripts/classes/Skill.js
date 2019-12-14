@@ -1,8 +1,4 @@
-import { Cooldown, CooldownGCD } from './Cooldown'
-
-import { clamp } from '../helpers'
-
-export default class Skill {
+class Skill {
   constructor(name, cost, cooldown, triggerGcd, player) {
     this.consts = {
       SKILL_RESULT_TYPE_MISS: 'SKILL_MISS',
@@ -40,12 +36,20 @@ export default class Skill {
   }
 
   get canUse() {
-    return this.player.rage.has(this.cost) && this.cooldown.canUse
+    return this.player.rage.has(this.cost)
+  }
+
+  get timeLeft() {
+    return this.cooldown.timeLeft
   }
 
   // Methods
 
-  use(tick) {
+  tick(time, secs) {
+    this.cooldown.tick(time, secs)
+  }
+
+  use(time) {
     const roll = Math.random() * 100
     let dmg = null
     let type = null
@@ -80,6 +84,6 @@ export default class Skill {
 
     dmg = dmg && Math.floor(dmg)
     this.player.log.totalDmg += dmg
-    this.player.addTimeline(tick, this.cooldown.name, type, dmg)
+    this.player.addTimeline(time, this.cooldown.name, type, dmg)
   }
 }

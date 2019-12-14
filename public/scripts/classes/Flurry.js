@@ -1,4 +1,4 @@
-export default class Flurry {
+class Flurry {
   constructor(player) {
     this.name = 'Flurry'
     this.charges = 3
@@ -15,18 +15,18 @@ export default class Flurry {
 
   // Methods
 
-  gain(tick) {
+  apply(time) {
     if (!this.isActive) {
       // if not already applied
       this.player.mainhand.addFlurry()
       this.player.isDw && this.player.offhand.addFlurry()
     }
 
-    this.player.addTimeline(tick, this.name, 'BUFF_APPLIED')
+    this.player.addTimeline(time, this.name, 'BUFF_APPLIED')
     this.chargesLeft = this.charges
   }
 
-  useCharge(tick) {
+  useCharge(time) {
     if (!this.isActive) {
       throw new Error(`Trying to use ${this.name} charges when there is none.`)
     }
@@ -37,6 +37,6 @@ export default class Flurry {
 
     this.player.mainhand.removeFlurry()
     this.player.isDw && this.player.offhand.removeFlurry()
-    this.player.addTimeline(tick+1, this.name, 'BUFF_FADED')
+    this.player.addTimeline(time, this.name, 'BUFF_FADED')
   }
 }

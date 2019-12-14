@@ -1,8 +1,8 @@
-export function getRandom(min, max) {
+function getRandom(min, max) {
   return Math.random() * (max - min) + min
 }
 
-export function clamp(value, min = 0, max = 100) {
+function clamp(value, min = 0, max = 100) {
   return value < min
     ? min
     : value > max
@@ -11,7 +11,7 @@ export function clamp(value, min = 0, max = 100) {
 }
 
 const defaultTalentUrl = 'https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051'
-export function parseTalents(url = defaultTalentUrl) {
+function parseTalents(url = defaultTalentUrl) {
   const numbers = url.split('/').pop()
   let [arms, fury] = numbers.split('-')
 

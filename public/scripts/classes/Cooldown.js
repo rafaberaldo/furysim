@@ -1,18 +1,18 @@
-export class Cooldown {
+class Cooldown {
   constructor(name, duration, timeLeft = 0) {
     this.name = name
-    this._duration = Math.round(duration * 1000)
-    this._timeLeft = Math.round(timeLeft * 1000)
+    this._duration = Number(duration.toFixed(3))
+    this._timeLeft = Number(timeLeft.toFixed(3))
   }
 
   // Setters
 
   set duration(value) {
-    this._duration = Math.round(value)
+    this._duration = Number(value.toFixed(3))
   }
 
   set timeLeft(value) {
-    this._timeLeft = Math.round(value)
+    this._timeLeft = Number(value.toFixed(3))
   }
 
   // Getters
@@ -26,13 +26,13 @@ export class Cooldown {
   }
 
   get canUse() {
-    return this.timeLeft === 0
+    return true
   }
 
   // Methods
 
-  tick() {
-    this.timeLeft = Math.max(0, --this.timeLeft)
+  tick(time, secs) {
+    this._timeLeft = Math.max(0, this.timeLeft - secs)
   }
 
   use() {
@@ -40,15 +40,15 @@ export class Cooldown {
       throw new Error (`Trying use ${this.name} before it is ready`)
     }
 
-    this.timeLeft = this.duration
+    this._timeLeft = this.duration
   }
 
   reset() {
-    this.timeLeft = this.duration
+    this._timeLeft = this.duration
   }
 }
 
-export class CooldownGCD extends Cooldown {
+class CooldownGCD extends Cooldown {
   constructor(name, duration, timeLeft, player) {
     super(name, duration, timeLeft)
 
@@ -57,8 +57,8 @@ export class CooldownGCD extends Cooldown {
 
   // Getters
 
-  get canUse() {
-    return super.canUse && this.player.gcd.canUse
+  get timeLeft() {
+    return Math.max(this.player.gcd.timeLeft, this._timeLeft)
   }
 
   // Methods

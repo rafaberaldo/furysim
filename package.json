@@ -34,6 +34,7 @@
       "parser": "babel-eslint"
     }
   },
+  "eslintIgnore": ["public/"],
   "browserslist": [
     "> 1%",
     "last 2 versions"

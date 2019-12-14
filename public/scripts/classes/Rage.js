@@ -1,6 +1,4 @@
-import { clamp } from '../helpers'
-
-export default class Rage {
+class Rage {
   constructor(player) {
     this.current = 0
     this.conversionValue = 0.0091107836 * player.lvl**2 + 3.225598133 * player.lvl + 4.2652911

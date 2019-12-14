@@ -1,6 +1,4 @@
-import Skill from '../Skill'
-
-export default class HeroicStrike extends Skill {
+class HeroicStrike extends Skill {
   constructor(player) {
     super('Heroic Strike', 15, 0, false, player)
 
@@ -14,16 +12,16 @@ export default class HeroicStrike extends Skill {
   }
 
   get canQueue() {
-    return super.canUse && this.player.rage.has(70)
+    return super.canUse && this.player.rage.has(50)
   }
 
   // Methods
 
-  // TODO make it remove offhand penalty when queued
-  queue(tick) {
+  queue(time) {
     if (this.isQueued) return
+    if (!this.canQueue) return
 
     this.isQueued = true
-    this.player.addTimeline(tick, this.cooldown.name, 'SKILL_QUEUED')
+    this.player.addTimeline(time, this.cooldown.name, 'SKILL_QUEUED')
   }
 }

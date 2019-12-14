@@ -1,6 +1,4 @@
-import Skill from '../Skill'
-
-export default class Bloodthirst extends Skill {
+class Bloodthirst extends Skill {
   constructor(player) {
     super('Bloodthirst', 30, 6, true, player)
   }
