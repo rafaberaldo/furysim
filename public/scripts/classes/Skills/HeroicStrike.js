@@ -1,6 +1,6 @@
 class HeroicStrike extends Skill {
-  constructor(player) {
-    super('Heroic Strike', 15, 0, false, player)
+  constructor(player, useWhen) {
+    super('Heroic Strike', player.heroicCost, 0, false, useWhen, player)
 
     this.isQueued = false
   }
@@ -8,20 +8,22 @@ class HeroicStrike extends Skill {
   // Getters
 
   get dmg() {
-    return this.player.mainhand.getDmg(138)
+    return this.player.mainhand.dmg + 138
   }
 
   get canQueue() {
-    return super.canUse && this.player.rage.has(50)
+    if (!super.canUse) return
+
+    return this.player.rage.has(this.useWhen.rage || this.cost)
   }
 
   // Methods
 
-  queue(time) {
+  queue() {
     if (this.isQueued) return
     if (!this.canQueue) return
 
     this.isQueued = true
-    this.player.addTimeline(time, this.cooldown.name, 'SKILL_QUEUED')
+    this.player.addTimeline(this.cooldown.name, 'SKILL_QUEUED')
   }
 }

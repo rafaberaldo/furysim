@@ -1,14 +1,16 @@
 class Skill {
-  constructor(name, cost, cooldown, triggerGcd, player) {
+  constructor(name, cost, cooldown, triggerGcd, useWhen, player) {
     this.consts = {
-      SKILL_RESULT_TYPE_MISS: 'SKILL_MISS',
-      SKILL_RESULT_TYPE_DODGE: 'SKILL_DODGE',
-      SKILL_RESULT_TYPE_CRIT: 'SKILL_CRIT',
-      SKILL_RESULT_TYPE_HIT: 'SKILL_HIT'
+      SKILL_RESULT_MISS: 'SKILL_MISS',
+      SKILL_RESULT_DODGE: 'SKILL_DODGE',
+      SKILL_RESULT_CRIT: 'SKILL_CRIT',
+      SKILL_RESULT_HIT: 'SKILL_HIT'
     }
     this.consts = Object.freeze(this.consts)
 
+    this.name = name
     this.cost = cost
+    this.useWhen = useWhen
     this.cooldown = triggerGcd
       ? new CooldownGCD(name, cooldown, 0, player)
       : new Cooldown(name, cooldown)
@@ -26,7 +28,7 @@ class Skill {
 
   // Skills are two-rolls system
   get attackTable() {
-    const miss = clamp(this.player.mainhand.getMissChance(false))
+    const miss = clamp(this.player.mainhand.skillMissChance)
     const dodge = clamp(miss + this.player.mainhand.dodgeChance)
     return { miss, dodge }
   }
@@ -39,51 +41,67 @@ class Skill {
     return this.player.rage.has(this.cost)
   }
 
-  get timeLeft() {
-    return this.cooldown.timeLeft
+  get normTimeLeft() {
+    return this.cooldown.normTimeLeft
   }
 
   // Methods
 
-  tick(time, secs) {
-    this.cooldown.tick(time, secs)
+  tick(secs) {
+    this.cooldown.tick(secs)
   }
 
-  use(time) {
+  getSkillResult() {
     const roll = Math.random() * 100
-    let dmg = null
-    let type = null
+    if (roll <= this.attackTable.miss) return this.consts.SKILL_RESULT_MISS
+    if (roll <= this.attackTable.dodge) return this.consts.SKILL_RESULT_DODGE
 
-    if (roll <= this.attackTable.miss) {
-      type = this.consts.SKILL_RESULT_TYPE_MISS
-      this.player.rage.use(this.cost * this.missRefundMul)
-      this.player.log.skillMiss++
+    const roll2 = Math.random() * 100
+    if (roll2 <= this.player.mainhand.critChance) return this.consts.SKILL_RESULT_CRIT
+    return this.consts.SKILL_RESULT_HIT
+  }
 
-    } else if (roll <= this.attackTable.dodge) {
-      type = this.consts.SKILL_RESULT_TYPE_DODGE
-      this.player.log.skillDodge++
-      this.player.rage.use(this.cost * this.missRefundMul)
-
-    } else {
-      dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
-      const roll2 = Math.random() * 100
-      this.player.rage.use(this.cost)
-
-      if (roll2 <= this.player.mainhand.critChance) {
-        dmg *= this.player.skillCritMul
-        type = this.consts.SKILL_RESULT_TYPE_CRIT
-        this.player.log.skillCrit++
-
-      } else {
-        type = this.consts.SKILL_RESULT_TYPE_HIT
-        this.player.log.skillHit++
-      }
+  use() {
+    if (!this.canUse) {
+      throw new Error(`Trying to use ${this.name} when can't use.`)
     }
 
     this.cooldown.use()
 
-    dmg = dmg && Math.floor(dmg)
+    const result = this.getSkillResult()
+
+    if (result === this.consts.SKILL_RESULT_MISS) {
+      this.player.rage.use(m.round(this.cost * this.missRefundMul))
+      this.player.log.skillMiss++
+      this.player.addTimeline(this.name, result)
+      return
+    }
+
+    if (result === this.consts.SKILL_RESULT_DODGE) {
+      this.player.rage.use(m.round(this.cost * this.missRefundMul))
+      this.player.log.skillDodge++
+      this.player.addTimeline(this.name, result)
+      return
+    }
+
+    let dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
+
+    if (result === this.consts.SKILL_RESULT_CRIT) {
+      dmg *= this.player.skillCritMul
+      this.player.flurry.apply()
+      this.player.log.skillCrit++
+    }
+
+    if (result === this.consts.SKILL_RESULT_HIT) {
+      this.player.log.skillHit++
+    }
+
+    dmg = m.round(dmg)
+    this.player.rage.use(this.cost)
     this.player.log.totalDmg += dmg
-    this.player.addTimeline(time, this.cooldown.name, type, dmg)
+
+    this.player.addTimeline(this.name, result, dmg)
+
+    this.player.mainhand.testProcs()
   }
 }

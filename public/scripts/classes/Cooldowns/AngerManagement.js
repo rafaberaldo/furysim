@@ -7,9 +7,9 @@ class AngerManagement extends Cooldown {
 
   // Methods
 
-  use(time) {
+  use() {
     super.use()
     this.player.rage.gain(1)
-    // this.player.addTimeline(time, this.name, 'RAGE_GAIN', 1)
+    // this.player.addTimeline(this.name, 'RAGE_GAIN')
   }
 }

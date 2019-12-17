@@ -1,3 +1,5 @@
+const m = Math
+
 function getRandom(min, max) {
   return Math.random() * (max - min) + min
 }
@@ -10,27 +12,38 @@ function clamp(value, min = 0, max = 100) {
       : value
 }
 
+function ppmToChance(ppm, speed) {
+  return (ppm / 60) * speed
+}
+
 const defaultTalentUrl = 'https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051'
 function parseTalents(url = defaultTalentUrl) {
   const numbers = url.split('/').pop()
-  let [arms, fury] = numbers.split('-')
+  let [arms, fury, prot] = numbers.split('-')
 
-  const getValue = (str, i, def) => {
-    return (str && str.length > i) ? (parseInt(str[i]) || def) : def
+  const getValue = (str, i) => {
+    return (str && str.length > i)
+      ? parseInt(str[i]) || 0
+      : 0
   }
 
   return {
-    improvedHS: getValue(arms, 0, 0),
-    angerMgmt: getValue(arms, 7, 0),
-    deepWounds: getValue(arms, 8, 0),
-    twoHandSpec: getValue(arms, 9, 0),
-    impale: getValue(arms, 10, 0),
-    boomingVoice: getValue(fury, 0, 0),
-    unbridledWrath: getValue(fury, 3, 0),
-    dualWieldSpec: getValue(fury, 8, 0),
-    impExecute: getValue(fury, 9, 0),
-    improvedSlam: getValue(fury, 11, 0),
-    deathWish: getValue(fury, 12, 0),
-    flurry: getValue(fury, 15, 0)
+    improvedHS: getValue(arms, 0),
+    tacticalMastery: getValue(arms, 4),
+    angerManagement: getValue(arms, 7),
+    deepWounds: getValue(arms, 8),
+    twoHandSpec: getValue(arms, 9),
+    impale: getValue(arms, 10),
+
+    boomingVoice: getValue(fury, 0),
+    cruelty: getValue(fury, 1),
+    unbridledWrath: getValue(fury, 3),
+    improvedBS: getValue(fury, 7),
+    dualWieldSpec: getValue(fury, 8),
+    impExecute: getValue(fury, 9),
+    improvedSlam: getValue(fury, 11),
+    deathWish: getValue(fury, 12),
+    flurry: getValue(fury, 15),
+    bloodthirst: getValue(fury, 16)
   }
 }

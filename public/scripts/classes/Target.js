@@ -1,15 +1,29 @@
 class Target {
   constructor(target, player) {
+    this._armor = target.armor
     this.lvl = target.lvl
-    this.armor = target.armor
+    this.sunderArmor = target.sunderArmor
+    this.faerieFire = target.faerieFire
+    this.cor = target.cor
+    this.annihilator = target.annihilator
 
     this.player = player
   }
 
   // Getters
 
+  get armor() {
+    let armor = this._armor
+    if (this.sunderArmor) armor -= 2250
+    if (this.faerieFire) armor -= 505
+    if (this.cor) armor -= 640
+    if (this.annihilator) armor -= 600
+
+    return armor
+  }
+
   get defenseSkill() {
-      return this.lvl * 5
+    return this.lvl * 5
   }
 
   get armorMitigationMul() {

@@ -5,6 +5,7 @@ class Flurry {
     this.chargesLeft = 0
 
     this.player = player
+    this.haste = player.flurryHaste
   }
 
   // Getters
@@ -15,28 +16,20 @@ class Flurry {
 
   // Methods
 
-  apply(time) {
-    if (!this.isActive) {
-      // if not already applied
-      this.player.mainhand.addFlurry()
-      this.player.isDw && this.player.offhand.addFlurry()
-    }
+  apply() {
+    if (!this.isActive) this.player.increaseAtkSpeed(this.haste)
 
-    this.player.addTimeline(time, this.name, 'BUFF_APPLIED')
     this.chargesLeft = this.charges
+    this.player.addTimeline(this.name, 'BUFF_APPLIED')
   }
 
-  useCharge(time) {
-    if (!this.isActive) {
-      throw new Error(`Trying to use ${this.name} charges when there is none.`)
-    }
+  useCharge() {
+    if (!this.isActive) return
 
-    this.chargesLeft = Math.max(0, --this.chargesLeft)
+    this.chargesLeft = m.max(0, --this.chargesLeft)
 
     if (this.isActive) return
-
-    this.player.mainhand.removeFlurry()
-    this.player.isDw && this.player.offhand.removeFlurry()
-    this.player.addTimeline(time, this.name, 'BUFF_FADED')
+    this.player.decreaseAtkSpeed(this.haste)
+    this.player.addTimeline(this.name, 'BUFF_FADED')
   }
 }

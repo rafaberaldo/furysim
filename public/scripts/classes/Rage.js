@@ -12,25 +12,15 @@ class Rage {
     return (Math.random() <= this.player.extraRageChance) ? 1 : 0
   }
 
-  // TODO should damage be integer before calculating rage gain?
-  // https://vanilla-wow.fandom.com/wiki/Rage
-  // https://web.archive.org/web/20071012151506/http://forums.wow-europe.com/thread.html?topicId=83678537&pageNo=1&sid=1
+  // https://blue.mmo-champion.com/topic/18325-the-new-rage-formula-by-kalgan/
   gainFromSwing(dmg) {
-    if (!dmg) return
-
     let gain = dmg / this.conversionValue * 7.5
     gain += this.unbridledWrath(gain)
-    this.current = clamp(Math.floor(this.current + gain))
-  }
-
-  gainFromDodge(dmg) {
-    // TODO confirm rage gain from dodge is 75%
-    const gain = dmg / this.conversionValue * 7.5 * 0.75
-    this.current = clamp(Math.floor(this.current + gain))
+    this.current = clamp(m.round(this.current + gain))
   }
 
   gain(value) {
-    this.current = clamp(Math.floor(this.current + value))
+    this.current = clamp(m.round(this.current + value))
   }
 
   use(value) {
@@ -38,10 +28,14 @@ class Rage {
       throw new Error(`Trying use ${value} rage while only has ${this.current}`)
     }
 
-    this.current = clamp(Math.floor(this.current - value))
+    this.current = clamp(m.round(this.current - value))
   }
 
   has(value) {
     return this.current >= value
+  }
+
+  lessThan(value) {
+    return this.current <= value
   }
 }
