@@ -1,5 +1,9 @@
 class Player {
-  constructor(cfg) {
+  constructor(cfg, log) {
+    this.isDebug = cfg.debug || false
+    this.debug = { timeline: [] }
+    this.log = log
+
     this._str = cfg.player.str
     this.lvl = cfg.player.lvl
     this.gearAp = cfg.player.gearAp
@@ -7,18 +11,19 @@ class Player {
     this.hit = cfg.player.hit
     this.haste = 1 + cfg.player.haste / 100
     this.crit = cfg.player.crit
-
-    this.debug = cfg.debug || false
-    this.latency = cfg.latency
-
+    this.gcd = new Cooldown('GCD', 1.5)
     this.target = new Target(cfg.target, cfg.player)
-    this.mainhand = new Weapon(cfg.mainhand, this)
-    this.offhand = cfg.offhand ? new Weapon(cfg.offhand, this, true) : null
+    this.windfury = cfg.player.buffs.wf && new Windfury(this)
+    this.windfuryApMul = cfg.player.buffs.improvedWf ? 1.3 : 1
+    this.mainhand = new Weapon('Mainhand', cfg.mainhand, this)
+    this.offhand = cfg.offhand && new Weapon('Offhand', cfg.offhand, this)
     this.isDw = !!this.offhand
     this.rage = new Rage(this)
-    this.windfury = cfg.player.wf && new Windfury(this)
-    this.windfuryApMul = cfg.player.improvedWf ? 1.3 : 1
     this.hoj = cfg.player.hoj && new HandOfJustice(this)
+    this.mrp = new MightyRagePotion(this, cfg.mrp)
+    this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.bloodFury)
+    this.whirlwind = new Whirlwind(this, cfg.whirlwind)
+    this.bloodrage = new Bloodrage(this, cfg.bloodrage)
 
     // Talents
     const talents = parseTalents()
@@ -34,31 +39,13 @@ class Player {
     this.battleShoutDuration = 120 * (1 + talents.boomingVoice * 0.1)
     this.battleShoutApMul = 1 + talents.improvedBS * 0.05
 
-    this.gcd = new Cooldown('GCD', 1.5)
-    this.bloodrage = new Bloodrage(this, cfg.bloodrage)
+    this.execute = new Execute(this, cfg.execute)
     this.heroicStrike = new HeroicStrike(this, cfg.heroicStrike)
-    this.whirlwind = new Whirlwind(this, cfg.whirlwind)
     this.battleShout = new Buff('Battle Shout', 10, this.battleShoutDuration, 0, true, this)
-    this.bloodFury = cfg.player.bloodFury && new BloodFury(this, cfg.bloodFury)
     this.flurry = talents.flurry && new Flurry(this)
     this.bloodthirst = talents.bloodthirst && new Bloodthirst(this)
     this.deathWish = talents.deathWish &&
       new Buff('Death Wish', 10, 30, 180, true, this, cfg.deathWish.timeLeft)
-    this.mrp = new MightyRagePotion(this, cfg.mrp)
-
-    this.log = {
-      timeline: [],
-      totalDmg: 0,
-      miss: 0,
-      dodge: 0,
-      glance: 0,
-      crit: 0,
-      hit: 0,
-      skillMiss: 0,
-      skillDodge: 0,
-      skillCrit: 0,
-      skillHit: 0
-    }
   }
 
   // Setters
@@ -85,7 +72,9 @@ class Player {
     // Crusader / Holy Strength
     if (this.mainhand.enchant && this.mainhand.enchant.isActive) str += 100
     if (this.offhand.enchant && this.offhand.enchant.isActive) str += 100
+
     if (this.mrp && this.mrp.isActive) str += 60
+    if (this.bok) str *= 1.1
 
     return str
   }
@@ -128,16 +117,11 @@ class Player {
       : true
   }
 
-  getDps(duration) {
-    if (duration <= 0) return
-    return this.log.totalDmg / duration
-  }
-
   addTimeline(name, type, value = null) {
-    this.log.timeline.push(
+    this.debug.timeline.push(
       `${this.time}: ${name} ${type} for ${value} (${this.rage.current} rage)`
     )
-    if (!this.debug) return
+    if (!this.isDebug) return
 
     !value
       ? console.log(

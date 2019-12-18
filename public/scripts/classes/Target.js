@@ -26,6 +26,7 @@ class Target {
     return this.lvl * 5
   }
 
+  // https://vanilla-wow.fandom.com/wiki/Armor
   get armorMitigationMul() {
     return 1 - (this.armor / (this.armor + 400 + 85 * this.player.lvl))
   }

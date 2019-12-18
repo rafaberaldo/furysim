@@ -3,6 +3,7 @@ importScripts('./classes/Player.js')
 importScripts('./classes/Rage.js')
 importScripts('./classes/Target.js')
 importScripts('./classes/Weapon.js')
+importScripts('./classes/Log.js')
 
 importScripts('./classes/Aura.js')
 importScripts('./classes/Auras/Windfury.js')
@@ -20,6 +21,7 @@ importScripts('./classes/Cooldowns/HandOfJustice.js')
 
 importScripts('./classes/Skill.js')
 importScripts('./classes/Skills/Bloodthirst.js')
+importScripts('./classes/Skills/Execute.js')
 importScripts('./classes/Skills/HeroicStrike.js')
 importScripts('./classes/Skills/Whirlwind.js')
 
@@ -27,23 +29,26 @@ importScripts('./helpers.js')
 
 function run(cfg) {
   const startTime = new Date().getTime()
-  let dmg = 0
-  let maxIterations = cfg.debug ? 1 : cfg.iterations
+  const maxIterations = cfg.debug ? 1 : cfg.iterations
+  const log = new Log(cfg.duration, maxIterations)
   const exists = (e) => !!e
 
   for (let i = 0; i < maxIterations; ++i) {
-    const player = new Player(cfg)
-    if (i === 0 && cfg.debug) console.log(player, player.offhand.attackTable)
+    const player = new Player(cfg, log)
+    if (i === 0 && cfg.debug) console.log(player)
 
     const events = [
       player.mainhand,
       player.offhand,
 
-      player.battleShout,
       player.deathWish,
       player.bloodrage,
-      player.bloodFury,
       player.mrp,
+
+      player.execute,
+
+      player.battleShout,
+      player.bloodFury,
 
       player.bloodthirst,
       player.whirlwind,
@@ -54,6 +59,7 @@ function run(cfg) {
 
     const otherCooldowns = [
       player.gcd,
+      player.flurry,
       player.windfury,
       player.hoj
     ].filter(exists)
@@ -68,9 +74,9 @@ function run(cfg) {
         return next
       })
 
-      // if (nextEvent === player.bloodrage.periodic) debugger;
-
-      const secs = nextEvent.normTimeLeft
+      const latency = nextEvent.isPlayerInput
+        ? m.max(0, getRandom(cfg.latency.min, cfg.latency.max) / 1000) : 0
+      const secs = nextEvent.normTimeLeft + latency
       time += secs
       player.time = time
 
@@ -88,10 +94,9 @@ function run(cfg) {
       if (nextEvent.use) nextEvent.use()
 
       // Try to queue HS
-      player.heroicStrike.queue()
+      player.heroicStrike.tryToQueue()
     }
 
-    dmg += player.getDps(cfg.duration)
     const progress = m.round(i / maxIterations * 100) + '%'
     postMessage({ progress })
   }
@@ -99,14 +104,9 @@ function run(cfg) {
   const endTime = new Date().getTime()
   const finishedIn = ((endTime - startTime) / 1000)
 
-  console.log('Finished in', finishedIn, 'secs')
-  console.log('DPS:', (dmg / maxIterations).toFixed(1))
-  // console.log('DPS:', player.getDps(cfg.duration))
+  console.log(log)
 
-  const summary = { dps: (dmg / maxIterations).toFixed(1), finishedIn }
-  Object.assign(summary)
-  postMessage({ summary })
-
+  postMessage({ finishedIn, dps: log.dps, report: log.report })
 }
 
 onmessage = function (e) {

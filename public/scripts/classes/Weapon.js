@@ -1,5 +1,5 @@
 class Weapon {
-  constructor(weapon, player, isOffhand = false) {
+  constructor(name, weapon, player) {
     this.consts = {
       NORM_DAGGER_SPEED: 1.7,
       NORM_ONE_HAND_SPEED: 2.4,
@@ -13,8 +13,9 @@ class Weapon {
     }
     this.consts = Object.freeze(this.consts)
 
-    this.name = isOffhand ? 'Offhand' : 'Mainhand'
-    this.isOffhand = isOffhand
+    this.log = player.log.set(name)
+    this.name = name
+    this.isOffhand = name === 'Offhand'
     this.type = weapon.type
     this.skill = weapon.skill
     this.dmgMin = weapon.dmgMin
@@ -23,14 +24,15 @@ class Weapon {
 
     this.player = player
     this.target = player.target
+    this.windfury = !this.isOffhand && player.windfury
 
-    // Initial offhand swing delay is 200-300 according to Magey
+    // NC: Initial offhand swing delay is 200-300
     // https://discordapp.com/channels/383596811517952002/582317222547030021/602887155840450560
-    this.offhandSwingOffset = getRandom(0.2, 0.3)
+    this.offhandSwingOffset = this.isOffhand ? getRandom(0.2, 0.3) : 0
     this.swingTimer = new AttackSpeed(
       this.name,
       this.speed / this.player.haste,
-      this.isOffhand ? this.offhandSwingOffset : 0
+      this.offhandSwingOffset
     )
     this.enchant = weapon.enchant && new Aura(
       `Crusader ${this.name}`, 15, 1, this.speed, this.player
@@ -40,7 +42,7 @@ class Weapon {
   // Getters
 
   get dmg() {
-    const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
+    const weaponDmg = getRandomInt(this.dmgMin, this.dmgMax)
     let dmg = weaponDmg + (this.speed * this.player.ap / 14)
     if (this.isOffhand) dmg *= this.player.offhandDmgMul
     return dmg
@@ -55,7 +57,7 @@ class Weapon {
 
   // https://vanilla-wow.fandom.com/wiki/Normalization
   get normalizedDmg() {
-    const weaponDmg = getRandom(this.dmgMin, this.dmgMax)
+    const weaponDmg = getRandomInt(this.dmgMin, this.dmgMax)
     let dmg = weaponDmg + (this.normalizedSpeed * this.player.ap / 14)
     return dmg
   }
@@ -78,7 +80,7 @@ class Weapon {
   }
 
   // Offhand attacks that occur while on-next-hit abilities such as
-  // Heroic Strike are queued do not suffer the dual wield to-hit penalty.
+  // Heroic Strike are queued do not suffer the dual wield to-hit penalty
   // https://us.forums.blizzard.com/en/wow/t/wow-classic-not-a-bug-list-updated-12-13-2019/175887
   get missChance() {
     if (this.player.heroicStrike.isQueued && this.isOffhand) return 0
@@ -111,7 +113,6 @@ class Weapon {
     return clamp(this.player.crit + this.critSupp)
   }
 
-  // https://github.com/magey/classic-warrior/wiki/Attack-table
   get attackTable() {
     const miss = clamp(this.missChance)
     const dodge = clamp(miss + this.dodgeChance)
@@ -134,7 +135,24 @@ class Weapon {
     return this.swingTimer.normTimeLeft
   }
 
-  get isHeroicStrikeReplacing() {
+  // Methods
+
+  tick(secs) {
+    this.swingTimer.tick(secs)
+    this.enchant && this.enchant.tick(secs)
+  }
+
+  getMissChance(isSwing = true) {
+    // 1% hit from gear lost if delta > 10
+    // https://www.wowhead.com/news=292085/hit-cap-in-classic-wow-clarifications
+    const gearHit = clamp(this.player.hit - (this.skillDiff > 10 ? 1 : 0))
+    const baseMiss = 5 + this.skillDiff * (this.skillDiff > 10 ? 0.2 : 0.1)
+    // NC: DW miss chance is 80% * baseMiss + 20
+    const actualMiss = this.player.isDw && isSwing ? (baseMiss * 0.8 + 20) : baseMiss
+    return clamp(actualMiss - gearHit)
+  }
+
+  isHeroicStrikeReplacing() {
     if (this.isOffhand) return
     if (!this.player.heroicStrike.isQueued) return
 
@@ -145,23 +163,9 @@ class Weapon {
     return true
   }
 
-  // Methods
-
-  tick(secs) {
-    this.swingTimer.tick(secs)
-    this.enchant && this.enchant.tick(secs)
-  }
-
-  getMissChance(isSwing = true) {
-    // https://www.wowhead.com/news=292085/hit-cap-in-classic-wow-clarifications
-    const gearHit = clamp(this.player.hit - (this.skillDiff > 10 ? 1 : 0))
-    const baseMiss = 5 + this.skillDiff * (this.skillDiff > 10 ? 0.2 : 0.1)
-    const actualMiss = this.player.isDw && isSwing ? (baseMiss * 0.8 + 20) : baseMiss
-    return clamp(actualMiss - gearHit)
-  }
-
+  // https://github.com/magey/classic-warrior/wiki/Attack-table
   getSwingResult() {
-    const roll = Math.random() * 100
+    const roll = m.random() * 100
     if (roll <= this.attackTable.miss) return this.consts.SWING_RESULT_MISS
     if (roll <= this.attackTable.dodge) return this.consts.SWING_RESULT_DODGE
     if (roll <= this.attackTable.glance) return this.consts.SWING_RESULT_GLANCE
@@ -169,33 +173,38 @@ class Weapon {
     return this.consts.SWING_RESULT_HIT
   }
 
-  testProcs() {
+  // NC: A single hit can proc both weapon enchant and extra-attack
+  // NC: A single hit can't proc multiple extra-attacks
+  // NC: Priority is WF > MH > OH > Trinket
+  tryProcs() {
     this.enchant && this.enchant.tryToProc()
-    this.player.hoj && this.player.hoj.tryToProc()
 
-    if (this.isOffhand) return
-    this.player.windfury && this.player.windfury.tryToProc()
+    if (this.windfury && this.windfury.tryToProc()) return true
+    if (this.player.hoj && this.player.hoj.tryToProc()) return true
+
+    return
   }
 
-  swing() {
+  swing(isExtra = false) {
     this.swingTimer.restart()
 
     this.player.flurry && this.player.flurry.useCharge()
 
-    if (this.isHeroicStrikeReplacing) return
+    if (this.isHeroicStrikeReplacing()) return
 
+    this.log.count++
     const result = this.getSwingResult()
 
     if (result === this.consts.SWING_RESULT_MISS) {
-      this.player.log.miss++
+      this.log.miss++
       this.player.addTimeline(this.name, result)
       return
     }
 
     if (result === this.consts.SWING_RESULT_DODGE) {
-      // TODO confirm rage gain from dodge
-      this.player.rage.gainFromSwing(this.avgDmg)
-      this.player.log.dodge++
+      // NC: Rage from dodge is 75% of average damage
+      this.log.dodge++
+      this.player.rage.gainFromSwing(this.avgDmg * 0.75)
       this.player.addTimeline(this.name, result)
       return
     }
@@ -203,30 +212,29 @@ class Weapon {
     let dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
 
     if (result === this.consts.SWING_RESULT_GLANCE) {
+      // NC: Rage gain from glance is based on damage
       dmg *= this.glancePenaltyMul
-      this.player.log.glance++
+      this.log.glance++
     }
 
     if (result === this.consts.SWING_RESULT_CRIT) {
       dmg *= 2
+      this.log.crit++
       this.player.flurry.apply()
-      this.player.log.crit++
     }
 
-    if (result === this.consts.SWING_RESULT_HIT) {
-      this.player.log.hit++
-    }
+    if (result === this.consts.SWING_RESULT_HIT) this.log.hit++
 
     dmg = m.round(dmg)
+    this.log.dmg += dmg
     this.player.rage.gainFromSwing(dmg)
-    this.player.log.totalDmg += dmg
     this.player.addTimeline(this.name, result, dmg)
 
-    // Test procs before consuming a WF charge.
-    // If it procs a charge is consumed instantly.
-    this.testProcs(result)
+    // Test procs before consuming a WF charge,
+    // if it procs a charge is consumed instantly
+    if (this.tryProcs() && isExtra) this.log.chain++
 
-    // TODO WF consume charge on misses?
-    this.player.windfury && this.player.windfury.useCharge()
+    // NC: WF don't consume charge on misses
+    this.windfury && this.windfury.useCharge()
   }
 }

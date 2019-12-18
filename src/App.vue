@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  const duration = 100
+  const duration = 75
   const worldBuffsAp = 200 + 140 + 30
   const consumablesAp = 60 + 50 + 35 + 20
 
@@ -17,11 +17,11 @@
         result: 'Aguardando',
         cfg: {
           debug: true,
-          iterations: 50000,
+          iterations: 1000,
           duration,
           latency: {
             min: 0,
-            max: 0
+            max: 250
           },
           player: {
             lvl: 60,
@@ -31,10 +31,13 @@
             hit: 6,
             haste: 0,
             crit: 40,
-            bloodFury: true,
-            wf: true,
-            improvedWf: false,
-            hoj: true
+            hoj: true,
+            buffs: {
+              wf: true,
+              improvedWf: false,
+              bloodFury: true,
+              bok: false
+            }
           },
           target: {
             lvl: 63,
@@ -88,6 +91,13 @@
           whirlwind: {
             rage: 25,
             btCooldown: 1
+          },
+          execute: {
+            start: duration * 0.84, // last 16%
+            bloodthirst: {
+              priority: true,
+              ap: 2000
+            }
           },
           bloodrage: {
             rage: 50

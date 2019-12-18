@@ -10,14 +10,6 @@ class BloodragePeriodic extends Buff {
     return this.isActive
   }
 
-  get normTimeLeft() {
-    return this.cooldown.normTimeLeft
-  }
-
-  get isActive() {
-    return this.buffDurationLeft > 0
-  }
-
   // Methods
 
   start() {

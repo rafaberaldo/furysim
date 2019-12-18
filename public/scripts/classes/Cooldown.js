@@ -7,12 +7,12 @@ class Cooldown {
 
   // Getters
 
-  get onCooldown() {
-    return !!this.timeLeft
-  }
-
   get normTimeLeft() {
     return this.timeLeft
+  }
+
+  get onCooldown() {
+    return !!this.normTimeLeft
   }
 
   get canUse() {
@@ -41,6 +41,7 @@ class Cooldown {
 class CooldownGCD extends Cooldown {
   constructor(name, duration, timeLeft, player) {
     super(name, duration, timeLeft)
+    this.isPlayerInput = true
 
     this.player = player
   }
@@ -48,8 +49,7 @@ class CooldownGCD extends Cooldown {
   // Getters
 
   get normTimeLeft() {
-    const latency = getRandom(this.player.latency.min, this.player.latency.max) / 1000
-    return m.max(this.player.gcd.timeLeft, this.timeLeft) + latency
+    return m.max(this.player.gcd.timeLeft, this.timeLeft)
   }
 
   // Methods

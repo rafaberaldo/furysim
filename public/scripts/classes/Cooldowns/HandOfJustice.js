@@ -1,7 +1,8 @@
 class HandOfJustice extends Cooldown {
   constructor(player) {
     super('Hand of Justice', 0.01, 0)
-    this.chance = 0.2
+    this.chance = 0.02
+    this.log = player.log.set(this.name, true)
 
     this.player = player
   }
@@ -18,14 +19,17 @@ class HandOfJustice extends Cooldown {
 
   use() {
     super.use()
+    this.log.count++
     this.player.addTimeline(this.name, 'PROC')
     this.player.mainhand.swingTimer.reset()
-    this.player.mainhand.swing()
+    this.player.mainhand.swing(true)
   }
 
   tryToProc() {
     if (!this.canUse) return
+    if (m.random() > this.chance) return
 
-    if (Math.random() <= this.chance) this.use()
+    this.use()
+    return true
   }
 }

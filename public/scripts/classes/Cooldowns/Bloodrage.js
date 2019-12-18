@@ -3,17 +3,13 @@ class Bloodrage extends Cooldown {
     super('Bloodrage', 60, 0)
 
     this.useWhen = useWhen
+    this.isPlayerInput = true
     this.periodic = new BloodragePeriodic(player)
 
     this.player = player
   }
 
   // Getters
-
-  get normTimeLeft() {
-    const latency = getRandom(this.player.latency.min, this.player.latency.max) / 1000
-    return this.timeLeft + latency
-  }
 
   get canUse() {
     if (!super.canUse) return

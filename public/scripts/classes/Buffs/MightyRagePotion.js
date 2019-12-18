@@ -20,7 +20,7 @@ class MightyRagePotion extends Buff {
 
   use() {
     super.use()
-    this.player.rage.gain(getRandom(45, 75))
+    this.player.rage.gain(getRandomInt(45, 75))
     this.player.addTimeline(this.name, 'RAGE_GAIN')
   }
 }

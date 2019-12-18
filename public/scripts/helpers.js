@@ -1,7 +1,11 @@
 const m = Math
 
 function getRandom(min, max) {
-  return Math.random() * (max - min) + min
+  return m.random() * (max - min) + min
+}
+
+function getRandomInt(min, max) {
+  return m.round(m.random() * (max - min) + min)
 }
 
 function clamp(value, min = 0, max = 100) {

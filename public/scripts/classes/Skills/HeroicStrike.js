@@ -19,7 +19,7 @@ class HeroicStrike extends Skill {
 
   // Methods
 
-  queue() {
+  tryToQueue() {
     if (this.isQueued) return
     if (!this.canQueue) return
 

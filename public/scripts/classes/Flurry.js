@@ -3,6 +3,7 @@ class Flurry {
     this.name = 'Flurry'
     this.charges = 3
     this.chargesLeft = 0
+    this.log = player.log.set(this.name, true)
 
     this.player = player
     this.haste = player.flurryHaste
@@ -16,10 +17,15 @@ class Flurry {
 
   // Methods
 
+  tick(secs) {
+    if (this.isActive) this.log.uptime += secs
+  }
+
   apply() {
     if (!this.isActive) this.player.increaseAtkSpeed(this.haste)
 
     this.chargesLeft = this.charges
+    this.log.count++
     this.player.addTimeline(this.name, 'BUFF_APPLIED')
   }
 

@@ -29,7 +29,7 @@ class Windfury extends Aura {
     super.apply()
     this.cooldown.use()
     this.player.mainhand.swingTimer.reset()
-    this.player.mainhand.swing()
+    this.player.mainhand.swing(true)
   }
 
   useCharge() {
@@ -44,6 +44,6 @@ class Windfury extends Aura {
 
   tryToProc() {
     if (this.isActive || this.cooldown.onCooldown) return
-    super.tryToProc()
+    return super.tryToProc()
   }
 }
