@@ -1,8 +1,8 @@
 class Aura {
   constructor(name, duration, ppm, speed, player) {
+    this._buffDurationLeft = 0
+    this._buffDuration = duration
     this.name = name
-    this.duration = duration
-    this.timeLeft = 0
     this.chance = ppmToChance(ppm, speed)
     this.log = player.log.set(name, true)
 
@@ -12,25 +12,25 @@ class Aura {
   // Getters
 
   get isActive() {
-    return !!this.timeLeft
+    return !!this._buffDurationLeft
   }
 
   // Methods
 
   tick(secs) {
-    if (!this.timeLeft) return
+    if (!this._buffDurationLeft) return
 
-    this.timeLeft = m.max(0, this.timeLeft - secs)
-    this.log.uptime += m.min(secs, this.timeLeft)
+    this._buffDurationLeft = m.max(0, this._buffDurationLeft - secs)
+    this.log.uptime += m.min(secs, this._buffDurationLeft)
 
     if (this.isActive) return
     this.player.addTimeline(this.name, 'BUFF_FADED')
   }
 
   apply() {
-    this.timeLeft = this.duration
+    this._buffDurationLeft = this._buffDuration
     this.log.count++
-    this.player.addTimeline(this.name, 'BUFF_APPLIED', this.duration)
+    this.player.addTimeline(this.name, 'BUFF_APPLIED', this._buffDuration)
   }
 
   tryToProc() {

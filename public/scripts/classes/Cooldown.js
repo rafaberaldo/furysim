@@ -1,18 +1,18 @@
 class Cooldown {
   constructor(name, duration, timeLeft = 0) {
+    this._timeLeft = timeLeft
+    this._duration = duration
     this.name = name
-    this.duration = duration
-    this.timeLeft = timeLeft
   }
 
   // Getters
 
-  get normTimeLeft() {
-    return this.timeLeft
+  get timeLeft() {
+    return this._timeLeft
   }
 
   get onCooldown() {
-    return !!this.normTimeLeft
+    return !!this.timeLeft
   }
 
   get canUse() {
@@ -22,7 +22,7 @@ class Cooldown {
   // Methods
 
   tick(secs) {
-    this.timeLeft = m.max(0, this.timeLeft - secs)
+    this._timeLeft = m.max(0, this._timeLeft - secs)
   }
 
   use() {
@@ -30,11 +30,11 @@ class Cooldown {
       throw new Error (`Trying use ${this.name} before it is ready`)
     }
 
-    this.timeLeft = this.duration
+    this._timeLeft = this._duration
   }
 
   reset() {
-    this.timeLeft = 0
+    this._timeLeft = 0
   }
 }
 
@@ -48,8 +48,8 @@ class CooldownGCD extends Cooldown {
 
   // Getters
 
-  get normTimeLeft() {
-    return m.max(this.player.gcd.timeLeft, this.timeLeft)
+  get timeLeft() {
+    return m.max(this.player.gcd._timeLeft, this._timeLeft)
   }
 
   // Methods

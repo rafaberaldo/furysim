@@ -19,11 +19,12 @@ class Player {
     this.offhand = cfg.offhand && new Weapon('Offhand', cfg.offhand, this)
     this.isDw = !!this.offhand
     this.rage = new Rage(this)
-    this.hoj = cfg.player.hoj && new HandOfJustice(this)
+    this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, true, this)
     this.mrp = new MightyRagePotion(this, cfg.mrp)
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.bloodFury)
-    this.whirlwind = new Whirlwind(this, cfg.whirlwind)
     this.bloodrage = new Bloodrage(this, cfg.bloodrage)
+    this.whirlwind = new Whirlwind(this, cfg.whirlwind)
+    this.hamstring = new Hamstring(this, cfg.hamstring)
 
     // Talents
     const talents = parseTalents()
@@ -71,7 +72,7 @@ class Player {
 
     // Crusader / Holy Strength
     if (this.mainhand.enchant && this.mainhand.enchant.isActive) str += 100
-    if (this.offhand.enchant && this.offhand.enchant.isActive) str += 100
+    if (this.offhand && this.offhand.enchant && this.offhand.enchant.isActive) str += 100
 
     if (this.mrp && this.mrp.isActive) str += 60
     if (this.bok) str *= 1.1
@@ -92,7 +93,7 @@ class Player {
 
   get hasCrusaderProc() {
     return this.mainhand.enchant && this.mainhand.enchant.isActive ||
-      this.offhand.enchant && this.offhand.enchant.isActive
+      this.offhand && this.offhand.enchant && this.offhand.enchant.isActive
   }
 
   get isDeathWishActive() {
@@ -113,7 +114,13 @@ class Player {
 
   checkBtCd(min) {
     return this.bloodthirst
-      ? this.bloodthirst.cooldown.normTimeLeft >= min
+      ? this.bloodthirst.cooldown.timeLeft >= min
+      : true
+  }
+
+  checkWwCd(min) {
+    return this.whirlwind
+      ? this.whirlwind.cooldown.timeLeft >= min
       : true
   }
 

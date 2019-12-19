@@ -38,7 +38,7 @@ class Windfury extends Aura {
     this.chargesLeft = m.max(0, --this.chargesLeft)
 
     if (this.chargesLeft > 0) return
-    this.timeLeft = 0
+    this._buffDurationLeft = 0
     this.player.addTimeline(this.name, 'BUFF_FADED')
   }
 

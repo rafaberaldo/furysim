@@ -22,7 +22,7 @@ are assumptions due to lack of data.
 * Deep Wounds is not implemented.
 * Battle Shout triggers a GCD at the start of fight.
 * Execute phase is the last 14% of fight duration.
-* Windfury and items with extra-attack mechanic have a 10ms internal cooldown.
+* Windfury and items with extra-attack mechanic have a 100ms internal cooldown.
   * This prevents procs off itself, and proccing twice in the same swing.
 * Timeline for ``debug: true``:
   * Events at same time does not always shows in correct order.
@@ -47,6 +47,8 @@ are assumptions due to lack of data.
 * Whirlwind and Cleave do not refund rage.
 * Execute damage calculation is instantly but rage removal happens on next batch.
   * *To roughly simulate batching, rage is removed after any extra-attacks occur.*
+* A single attack can proc both weapon enchant and an extra-attack.
+* A single attack can't proc multiple extra-attacks (if procced by swing).
 
 ## Non confirmed
 
@@ -56,9 +58,7 @@ are assumptions due to lack of data.
 * Dodged swing rage gain is 75% of average damage.
 * Glanced swing rage gain is based on the damage.
 * Winfury don't consume charges on misses.
-* A single attack can proc both weapon enchant and an extra-attack.
-* A single attack can't proc multiple extra-attacks (not the same as chain proc).
-* Priority for extra-attacks is WF > MH > OH > Trinket.
+* Priority for extra-attacks is WF > MH / OH > Trinket.
 
 ## Sources
 

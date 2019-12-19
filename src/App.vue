@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  const duration = 75
+  const duration = 80
   const worldBuffsAp = 200 + 140 + 30
   const consumablesAp = 60 + 50 + 35 + 20
 
@@ -16,12 +16,12 @@
         worker: new Worker('./scripts/sim.js'),
         result: 'Aguardando',
         cfg: {
-          debug: true,
-          iterations: 1000,
+          debug: false,
+          iterations: 5000,
           duration,
           latency: {
             min: 0,
-            max: 250
+            max: 0
           },
           player: {
             lvl: 60,
@@ -47,21 +47,22 @@
             cor: true,
             annihilator: false
           },
-          // mainhand: {
-          //   type: 'TWO_HANDED', // Spinal Reaper
-          //   skill: 305,
-          //   dmgMin: 203,
-          //   dmgMax: 305,
-          //   speed: 3.4
-          // },
           mainhand: {
-            type: 'ONE_HANDED', // DB
+            type: 'TWO_HANDED', // Spinal Reaper
             skill: 305,
-            dmgMin: 114,
-            dmgMax: 213,
-            speed: 2.9,
+            dmgMin: 203,
+            dmgMax: 305,
+            speed: 3.4,
             enchant: true
           },
+          // mainhand: {
+          //   type: 'ONE_HANDED', // DB
+          //   skill: 305,
+          //   dmgMin: 114,
+          //   dmgMax: 213,
+          //   speed: 2.9,
+          //   enchant: true
+          // },
           // offhand: {
           //   type: 'ONE_HANDED', // BSH
           //   skill: 305,
@@ -70,14 +71,23 @@
           //   speed: 1.7,
           //   enchant: true
           // },
-          offhand: {
-            type: 'ONE_HANDED', // Frostbite
-            skill: 305,
-            dmgMin: 80,
-            dmgMax: 150,
-            speed: 2.7,
-            enchant: true
-          },
+          // offhand: {
+          //   type: 'ONE_HANDED', // Frostbite
+          //   skill: 305,
+          //   dmgMin: 80,
+          //   dmgMax: 150,
+          //   speed: 2.7,
+          //   enchant: true
+          // },
+          // offhand: {
+          //   type: 'ONE_HANDED', // Flurry Axe
+          //   skill: 305,
+          //   dmgMin: 37,
+          //   dmgMax: 69,
+          //   speed: 1.5,
+          //   enchant: true,
+          //   extraAttack: 0.0466
+          // },
           bloodFury: {
             waitCrusader: true,
             waitDeathWish: true
@@ -91,6 +101,11 @@
           whirlwind: {
             rage: 25,
             btCooldown: 1
+          },
+          hamstring: {
+            rage: 70,
+            btCooldown: 2,
+            wwCooldown: 2
           },
           execute: {
             start: duration * 0.84, // last 16%

@@ -37,7 +37,7 @@ class Log {
           uptime: toPercent(obj.uptime, this.totalDuration),
           ppm: (obj.count / (this.totalDuration / 60)).toFixed(1)
         }
-      if (key === 'Mainhand') report[key].chainedPerFight = (obj.chain / this.iterations).toFixed(1)
+      if (key === 'Mainhand') report[key].chainedPerFight = (obj.chain / this.iterations).toFixed(2)
     })
     return report
   }

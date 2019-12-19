@@ -1,8 +1,8 @@
 class Buff {
   constructor(name, cost, buffDuration, cooldown, triggerGcd, player, timeLeft = 0) {
+    this._buffDuration = buffDuration
+    this._buffDurationLeft = 0
     this.name = name
-    this.buffDuration = buffDuration
-    this.buffDurationLeft = 0
     this.cost = cost
 
     this.cooldown = triggerGcd
@@ -15,7 +15,7 @@ class Buff {
   // Getters
 
   get isActive() {
-    return this.buffDurationLeft > 0
+    return this._buffDurationLeft > 0
   }
 
   get canUse() {
@@ -25,17 +25,17 @@ class Buff {
     return true
   }
 
-  get normTimeLeft() {
-    return this.cooldown.normTimeLeft
+  get timeLeft() {
+    return this.cooldown.timeLeft
   }
 
   // Methods
 
   tick(secs) {
     this.cooldown.tick(secs)
-    if (!this.buffDurationLeft) return
+    if (!this._buffDurationLeft) return
 
-    this.buffDurationLeft = m.max(0, this.buffDurationLeft - secs)
+    this._buffDurationLeft = m.max(0, this._buffDurationLeft - secs)
 
     if (this.isActive) return
     this.player.addTimeline(this.name, 'BUFF_FADED')
@@ -43,8 +43,8 @@ class Buff {
 
   use() {
     this.cooldown.use()
-    this.buffDurationLeft = this.buffDuration
+    this._buffDurationLeft = this._buffDuration
     this.player.rage.use(this.cost)
-    this.player.addTimeline(this.name, 'BUFF_APPLIED', this.buffDuration)
+    this.player.addTimeline(this.name, 'BUFF_APPLIED', this._buffDuration)
   }
 }

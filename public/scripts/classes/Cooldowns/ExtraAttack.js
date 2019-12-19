@@ -1,7 +1,7 @@
-class HandOfJustice extends Cooldown {
-  constructor(player) {
-    super('Hand of Justice', 0.01, 0)
-    this.chance = 0.02
+class ExtraAttack extends Cooldown {
+  constructor(name, chance, procMultiple, player) {
+    super(name, procMultiple ? 0 : 0.1, 0)
+    this.chance = chance
     this.log = player.log.set(this.name, true)
 
     this.player = player
@@ -10,9 +10,9 @@ class HandOfJustice extends Cooldown {
   // Getters
 
   get canUse() {
-    if (!super.canUse) return
+    if (this.onCooldown) return
 
-    return !this.timeLeft
+    return true
   }
 
   // Methods

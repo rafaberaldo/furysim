@@ -18,8 +18,8 @@ class Execute extends Skill {
     if (this.player.time < this.useWhen.start) return
     if (
       this.useWhen.bloodthirst.priority &&
-      this.player.bloodthirst.canUse &&
       !this.player.bloodthirst.onCooldown &&
+      this.player.bloodthirst.canUse &&
       this.player.ap >= this.useWhen.bloodthirst.ap
     ) return
 
@@ -35,7 +35,7 @@ class Execute extends Skill {
        this.consts.SKILL_RESULT_DODGE].indexOf(result) > -1
 
     resultMiss
-      ? this.player.rage.use(this.current * this.extraMissRefundMul)
+      ? this.player.rage.use(m.round(this.player.rage.current * this.extraMissRefundMul))
       : this.player.rage.current = 0
 
     this.player.addTimeline(this.name, 'RAGE_REMOVAL')

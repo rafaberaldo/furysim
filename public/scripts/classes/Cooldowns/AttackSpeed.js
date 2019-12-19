@@ -6,13 +6,13 @@ class AttackSpeed extends Cooldown {
   // Methods
 
   increaseAtkSpeed(percent) {
-    this.duration /= percent
-    this.timeLeft /= percent
+    this._duration /= percent
+    this._timeLeft /= percent
   }
 
   decreaseAtkSpeed(percent) {
-    this.duration *= percent
-    this.timeLeft *= percent
+    this._duration *= percent
+    this._timeLeft *= percent
   }
 
   restart() {

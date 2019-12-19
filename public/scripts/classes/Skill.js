@@ -40,8 +40,12 @@ class Skill {
     return this.player.rage.has(this.cost)
   }
 
-  get normTimeLeft() {
-    return this.cooldown.normTimeLeft
+  get timeLeft() {
+    return this.cooldown.timeLeft
+  }
+
+  get onCooldown() {
+    return this.cooldown.onCooldown
   }
 
   // Methods
@@ -61,7 +65,7 @@ class Skill {
     return this.consts.SKILL_RESULT_HIT
   }
 
-  use() {
+  use(isExtra = false) {
     if (!this.canUse) {
       throw new Error(`Trying to use ${this.name} when can't use.`)
     }
@@ -75,14 +79,14 @@ class Skill {
       this.log.miss++
       this.player.rage.use(m.round(this.cost * this.missRefundMul))
       this.player.addTimeline(this.name, result)
-      return
+      return result
     }
 
     if (result === this.consts.SKILL_RESULT_DODGE) {
       this.log.dodge++
       this.player.rage.use(m.round(this.cost * this.missRefundMul))
       this.player.addTimeline(this.name, result)
-      return
+      return result
     }
 
     let dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
@@ -101,7 +105,7 @@ class Skill {
 
     this.player.addTimeline(this.name, result, dmg)
 
-    this.player.mainhand.tryProcs()
+    if (this.player.mainhand.tryProcs() && isExtra) this.player.mainhand.log.chain++
 
     return result
   }

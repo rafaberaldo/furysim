@@ -16,23 +16,23 @@ class Weapon {
     this.log = player.log.set(name)
     this.name = name
     this.isOffhand = name === 'Offhand'
+    this.isMainhand = name === 'Mainhand'
     this.type = weapon.type
     this.skill = weapon.skill
     this.dmgMin = weapon.dmgMin
     this.dmgMax = weapon.dmgMax
     this.speed = weapon.speed
+    this.extraAttack = weapon.extraAttack &&
+      new ExtraAttack(`${name} Proc`, weapon.extraAttack, true, player)
 
     this.player = player
     this.target = player.target
-    this.windfury = !this.isOffhand && player.windfury
+    this.windfury = player.windfury
 
-    // NC: Initial offhand swing delay is 200-300
-    // https://discordapp.com/channels/383596811517952002/582317222547030021/602887155840450560
-    this.offhandSwingOffset = this.isOffhand ? getRandom(0.2, 0.3) : 0
+    // NC: Initial offhand swing delay is 200-300 ms
+    this.swingOffset = this.isOffhand ? getRandom(0.2, 0.3) : 0
     this.swingTimer = new AttackSpeed(
-      this.name,
-      this.speed / this.player.haste,
-      this.offhandSwingOffset
+      this.name, this.speed / this.player.haste, this.swingOffset
     )
     this.enchant = weapon.enchant && new Aura(
       `Crusader ${this.name}`, 15, 1, this.speed, this.player
@@ -131,8 +131,8 @@ class Weapon {
     return this.swingTimer.canUse
   }
 
-  get normTimeLeft() {
-    return this.swingTimer.normTimeLeft
+  get timeLeft() {
+    return this.swingTimer.timeLeft
   }
 
   // Methods
@@ -152,14 +152,14 @@ class Weapon {
     return clamp(actualMiss - gearHit)
   }
 
-  isHeroicStrikeReplacing() {
+  isHeroicStrikeReplacing(isExtra) {
     if (this.isOffhand) return
     if (!this.player.heroicStrike.isQueued) return
 
     this.player.heroicStrike.isQueued = false
     if (!this.player.heroicStrike.canUse) return
 
-    this.player.heroicStrike.use()
+    this.player.heroicStrike.use(isExtra)
     return true
   }
 
@@ -173,13 +173,15 @@ class Weapon {
     return this.consts.SWING_RESULT_HIT
   }
 
-  // NC: A single hit can proc both weapon enchant and extra-attack
-  // NC: A single hit can't proc multiple extra-attacks
-  // NC: Priority is WF > MH > OH > Trinket
+  // A single hit can proc both weapon enchant and extra-attack
+  // A single hit can't proc multiple extra-attacks
+  // TODO: Proc multiple if source is an instant attack
+  // NC: Priority is WF > MH / OH > Trinket
   tryProcs() {
     this.enchant && this.enchant.tryToProc()
 
-    if (this.windfury && this.windfury.tryToProc()) return true
+    if (this.isMainhand && this.windfury && this.windfury.tryToProc()) return true
+    if (this.extraAttack && this.extraAttack.tryToProc()) return true
     if (this.player.hoj && this.player.hoj.tryToProc()) return true
 
     return
@@ -190,7 +192,7 @@ class Weapon {
 
     this.player.flurry && this.player.flurry.useCharge()
 
-    if (this.isHeroicStrikeReplacing()) return
+    if (this.isHeroicStrikeReplacing(isExtra)) return
 
     this.log.count++
     const result = this.getSwingResult()

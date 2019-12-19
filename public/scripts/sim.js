@@ -17,11 +17,12 @@ importScripts('./classes/Cooldown.js')
 importScripts('./classes/Cooldowns/AngerManagement.js')
 importScripts('./classes/Cooldowns/AttackSpeed.js')
 importScripts('./classes/Cooldowns/Bloodrage.js')
-importScripts('./classes/Cooldowns/HandOfJustice.js')
+importScripts('./classes/Cooldowns/ExtraAttack.js')
 
 importScripts('./classes/Skill.js')
 importScripts('./classes/Skills/Bloodthirst.js')
 importScripts('./classes/Skills/Execute.js')
+importScripts('./classes/Skills/Hamstring.js')
 importScripts('./classes/Skills/HeroicStrike.js')
 importScripts('./classes/Skills/Whirlwind.js')
 
@@ -52,6 +53,7 @@ function run(cfg) {
 
       player.bloodthirst,
       player.whirlwind,
+      player.hamstring,
 
       player.bloodrage.periodic,
       player.angerManagement
@@ -70,13 +72,13 @@ function run(cfg) {
       // respecting priority order
       const nextEvent = events.reduce((prio, next) => {
         if (!next.canUse) return prio
-        if (prio.normTimeLeft <= next.normTimeLeft && prio.canUse) return prio
+        if (prio.timeLeft <= next.timeLeft && prio.canUse) return prio
         return next
       })
 
       const latency = nextEvent.isPlayerInput
         ? m.max(0, getRandom(cfg.latency.min, cfg.latency.max) / 1000) : 0
-      const secs = nextEvent.normTimeLeft + latency
+      const secs = nextEvent.timeLeft + latency
       time += secs
       player.time = time
 
@@ -106,7 +108,7 @@ function run(cfg) {
 
   console.log(log)
 
-  postMessage({ finishedIn, dps: log.dps, report: log.report })
+  postMessage({ finishedIn, iterations: maxIterations, dps: log.dps, report: log.report })
 }
 
 onmessage = function (e) {
