@@ -13,8 +13,10 @@ class Bloodrage extends Cooldown {
 
   get canUse() {
     if (!super.canUse) return
+    if (!this.player.rage.lessThan(this.useWhen.rage || 100)) return
+    if (this.player.slam && this.player.slam.isCasting) return
 
-    return this.player.rage.lessThan(this.useWhen.rage || 100)
+    return true
   }
 
   // Methods

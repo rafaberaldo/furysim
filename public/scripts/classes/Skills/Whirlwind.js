@@ -14,8 +14,10 @@ class Whirlwind extends Skill {
   }
 
   get canUse() {
+    if (!this.useWhen.canUse) return
     if (!super.canUse) return
     if (!this.player.checkBtCd(this.useWhen.btCooldown || 0)) return
+    if (!this.player.checkSlamCd(this.useWhen.slamCooldown || 0)) return
     if (!this.player.rage.has(this.useWhen.rage || this.cost)) return
 
     return true

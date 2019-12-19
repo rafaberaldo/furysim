@@ -12,9 +12,11 @@ class HeroicStrike extends Skill {
   }
 
   get canQueue() {
+    if (!this.useWhen.canUse) return
     if (!super.canUse) return
+    if (!this.player.rage.has(this.useWhen.rage || this.cost)) return
 
-    return this.player.rage.has(this.useWhen.rage || this.cost)
+    return true
   }
 
   // Methods

@@ -11,6 +11,7 @@ class BloodFury extends Buff {
     if (!super.canUse) return
     if (this.useWhen.waitCrusader && !this.player.hasCrusaderProc) return
     if (this.useWhen.waitDeathWish && !this.player.isDeathWishActive) return
+    if (this.player.slam && this.player.slam.isCasting) return
 
     return true
   }

@@ -12,6 +12,7 @@ class MightyRagePotion extends Buff {
     if (this.useWhen.waitCrusader && !this.player.hasCrusaderProc) return
     if (this.useWhen.waitDeathWish && !this.player.isDeathWishActive) return
     if (!this.player.rage.lessThan(this.useWhen.rage || 100)) return
+    if (this.player.slam && this.player.slam.isCasting) return
 
     return true
   }

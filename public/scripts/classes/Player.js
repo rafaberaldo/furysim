@@ -18,13 +18,13 @@ class Player {
     this.mainhand = new Weapon('Mainhand', cfg.mainhand, this)
     this.offhand = cfg.offhand && new Weapon('Offhand', cfg.offhand, this)
     this.isDw = !!this.offhand
-    this.rage = new Rage(this)
+    this.rage = new Rage(this, cfg.player.startRage)
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, true, this)
     this.mrp = new MightyRagePotion(this, cfg.mrp)
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.bloodFury)
     this.bloodrage = new Bloodrage(this, cfg.bloodrage)
-    this.whirlwind = new Whirlwind(this, cfg.whirlwind)
-    this.hamstring = new Hamstring(this, cfg.hamstring)
+    this.whirlwind = cfg.whirlwind.canUse && new Whirlwind(this, cfg.whirlwind)
+    this.hamstring = cfg.hamstring.canUse && new Hamstring(this, cfg.hamstring)
 
     // Talents
     const talents = parseTalents()
@@ -41,10 +41,11 @@ class Player {
     this.battleShoutApMul = 1 + talents.improvedBS * 0.05
 
     this.execute = new Execute(this, cfg.execute)
-    this.heroicStrike = new HeroicStrike(this, cfg.heroicStrike)
+    this.heroicStrike = cfg.heroicStrike.canUse && new HeroicStrike(this, cfg.heroicStrike)
     this.battleShout = new Buff('Battle Shout', 10, this.battleShoutDuration, 0, true, this)
     this.flurry = talents.flurry && new Flurry(this)
     this.bloodthirst = talents.bloodthirst && new Bloodthirst(this)
+    this.slam = new Slam(this, cfg.slam)
     this.deathWish = talents.deathWish &&
       new Buff('Death Wish', 10, 30, 180, true, this, cfg.deathWish.timeLeft)
   }
@@ -121,6 +122,12 @@ class Player {
   checkWwCd(min) {
     return this.whirlwind
       ? this.whirlwind.cooldown.timeLeft >= min
+      : true
+  }
+
+  checkSlamCd(min) {
+    return this.slam
+      ? this.slam.cast.timeLeft >= min
       : true
   }
 

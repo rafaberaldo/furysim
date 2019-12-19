@@ -18,12 +18,14 @@ importScripts('./classes/Cooldowns/AngerManagement.js')
 importScripts('./classes/Cooldowns/AttackSpeed.js')
 importScripts('./classes/Cooldowns/Bloodrage.js')
 importScripts('./classes/Cooldowns/ExtraAttack.js')
+importScripts('./classes/Cooldowns/SlamCast.js')
 
 importScripts('./classes/Skill.js')
 importScripts('./classes/Skills/Bloodthirst.js')
 importScripts('./classes/Skills/Execute.js')
 importScripts('./classes/Skills/Hamstring.js')
 importScripts('./classes/Skills/HeroicStrike.js')
+importScripts('./classes/Skills/Slam.js')
 importScripts('./classes/Skills/Whirlwind.js')
 
 importScripts('./helpers.js')
@@ -39,19 +41,19 @@ function run(cfg) {
     if (i === 0 && cfg.debug) console.log(player)
 
     const events = [
+      player.slam,
       player.mainhand,
       player.offhand,
 
       player.deathWish,
       player.bloodrage,
       player.mrp,
-
-      player.execute,
-
       player.battleShout,
       player.bloodFury,
 
+      player.execute,
       player.bloodthirst,
+      player.slam.cast,
       player.whirlwind,
       player.hamstring,
 
@@ -71,12 +73,15 @@ function run(cfg) {
       // Get the next event with lower cooldown that can be usable,
       // respecting priority order
       const nextEvent = events.reduce((prio, next) => {
+        // if (next === player.slam.cast) debugger;
         if (!next.canUse) return prio
         if (prio.timeLeft <= next.timeLeft && prio.canUse) return prio
         return next
       })
 
-      const latency = nextEvent.isPlayerInput
+      if (nextEvent.timeLeft < 0) throw new Error('No time machines yet.')
+
+      const latency = nextEvent.isPlayerInput && cfg.latency.active
         ? m.max(0, getRandom(cfg.latency.min, cfg.latency.max) / 1000) : 0
       const secs = nextEvent.timeLeft + latency
       time += secs
@@ -95,7 +100,7 @@ function run(cfg) {
       if (nextEvent.swing) nextEvent.swing()
       if (nextEvent.use) nextEvent.use()
 
-      // Try to queue HS
+      // TODO: Put HS in event queue as well
       player.heroicStrike.tryToQueue()
     }
 

@@ -20,8 +20,9 @@
           iterations: 5000,
           duration,
           latency: {
-            min: 0,
-            max: 0
+            active: true,
+            min: 60,
+            max: 200
           },
           player: {
             lvl: 60,
@@ -32,6 +33,7 @@
             haste: 0,
             crit: 40,
             hoj: true,
+            startRage: 0,
             buffs: {
               wf: true,
               improvedWf: false,
@@ -96,16 +98,27 @@
             timeLeft: Math.max(0, duration - 30)
           },
           heroicStrike: {
-            rage: 50
+            canUse: true,
+            rage: 70
           },
           whirlwind: {
-            rage: 25,
-            btCooldown: 1
+            canUse: true,
+            rage: 45,
+            btCooldown: 1,
+            slamCooldown: 1
           },
           hamstring: {
-            rage: 70,
-            btCooldown: 2,
-            wwCooldown: 2
+            canUse: true,
+            rage: 80,
+            btCooldown: 1,
+            wwCooldown: 1,
+            slamCooldown: 1
+          },
+          slam: {
+            canUse: true,
+            spamRage: 80,
+            btCooldown: 1,
+            swing: 1.1
           },
           execute: {
             start: duration * 0.84, // last 16%

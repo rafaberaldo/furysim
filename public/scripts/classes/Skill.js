@@ -37,7 +37,10 @@ class Skill {
   }
 
   get canUse() {
-    return this.player.rage.has(this.cost)
+    if (!this.player.rage.has(this.cost)) return
+    if (this.player.slam && this.player.slam.isCasting) return
+
+    return true
   }
 
   get timeLeft() {
@@ -70,7 +73,7 @@ class Skill {
       throw new Error(`Trying to use ${this.name} when can't use.`)
     }
 
-    this.cooldown.use()
+    if (this.name !== 'Slam') this.cooldown.use()
     this.log.count++
 
     const result = this.getSkillResult()
@@ -94,7 +97,7 @@ class Skill {
     if (result === this.consts.SKILL_RESULT_CRIT) {
       dmg *= this.player.skillCritMul
       this.log.crit++
-      this.player.flurry.apply()
+      this.player.flurry && this.player.flurry.apply()
     }
 
     if (result === this.consts.SKILL_RESULT_HIT) this.log.hit++

@@ -7,6 +7,10 @@ class Cooldown {
 
   // Getters
 
+  get duration() {
+    return this._duration
+  }
+
   get timeLeft() {
     return this._timeLeft
   }
@@ -35,6 +39,10 @@ class Cooldown {
 
   reset() {
     this._timeLeft = 0
+  }
+
+  forceUse() {
+    this._timeLeft = this._duration
   }
 }
 

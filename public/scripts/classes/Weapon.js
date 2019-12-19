@@ -128,7 +128,10 @@ class Weapon {
   }
 
   get canUse() {
-    return this.swingTimer.canUse
+    if (!this.swingTimer.canUse) return
+    if (this.player.slam && this.player.slam.isCasting) return
+
+    return true
   }
 
   get timeLeft() {
@@ -222,7 +225,7 @@ class Weapon {
     if (result === this.consts.SWING_RESULT_CRIT) {
       dmg *= 2
       this.log.crit++
-      this.player.flurry.apply()
+      this.player.flurry && this.player.flurry.apply()
     }
 
     if (result === this.consts.SWING_RESULT_HIT) this.log.hit++
