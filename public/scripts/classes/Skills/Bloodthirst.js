@@ -1,6 +1,6 @@
 class Bloodthirst extends Skill {
   constructor(player, useWhen) {
-    super('Bloodthirst', 30, 6, true, useWhen, player)
+    super('Bloodthirst', 30, 6, true, player, useWhen)
   }
 
   // Getters

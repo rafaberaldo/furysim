@@ -55,6 +55,7 @@ function run(cfg) {
       player.bloodthirst,
       player.slam.cast,
       player.whirlwind,
+      player.heroicStrike.queue,
       player.hamstring,
 
       player.bloodrage.periodic,
@@ -73,7 +74,7 @@ function run(cfg) {
       // Get the next event with lower cooldown that can be usable,
       // respecting priority order
       const nextEvent = events.reduce((prio, next) => {
-        // if (next === player.slam.cast) debugger;
+        // if (next === player.heroicStrike.queue) debugger;
         if (!next.canUse) return prio
         if (prio.timeLeft <= next.timeLeft && prio.canUse) return prio
         return next
@@ -99,9 +100,6 @@ function run(cfg) {
       // Handle events
       if (nextEvent.swing) nextEvent.swing()
       if (nextEvent.use) nextEvent.use()
-
-      // TODO: Put HS in event queue as well
-      player.heroicStrike.tryToQueue()
     }
 
     const progress = m.round(i / maxIterations * 100) + '%'

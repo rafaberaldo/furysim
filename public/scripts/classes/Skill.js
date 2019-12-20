@@ -1,5 +1,5 @@
 class Skill {
-  constructor(name, cost, cooldown, triggerGcd, useWhen, player) {
+  constructor(name, cost, cooldown, triggerGcd, player, useWhen) {
     this.consts = {
       SKILL_RESULT_MISS: 'SKILL_MISS',
       SKILL_RESULT_DODGE: 'SKILL_DODGE',

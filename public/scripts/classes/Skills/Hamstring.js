@@ -1,6 +1,6 @@
 class Hamstring extends Skill {
   constructor(player, useWhen) {
-    super('Hamstring', 10, 0, true, useWhen, player)
+    super('Hamstring', 10, 0, true, player, useWhen)
   }
 
   // Getters

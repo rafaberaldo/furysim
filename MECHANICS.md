@@ -22,7 +22,7 @@ are assumptions due to lack of data.
 * Deep Wounds is not implemented.
 * Battle Shout triggers a GCD at the start of fight.
 * Execute phase is the last 14% of fight duration.
-* Slam implementation is the "Slam macro" version.
+* Slam implementation is the Autoslam ("Slam macro") version.
 * Windfury and items with extra-attack mechanic have a 100 ms internal cooldown.
   * This prevents procs off itself, and proccing twice in the same swing.
 * Timeline for ``debug: true``:

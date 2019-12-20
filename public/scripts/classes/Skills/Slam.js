@@ -1,10 +1,10 @@
 class Slam extends Skill {
   constructor(player, useWhen) {
-    super('Slam', 15, 0, false, useWhen, player)
+    super('Slam', 15, 0, false, player, useWhen)
 
     this.isPlayerInput = false
     this.isCasting = false
-    this.cast = new SlamCast(this, useWhen, player)
+    this.cast = new SlamCast(this, player, useWhen)
     this.swingTimer = player.mainhand.swingTimer
   }
 

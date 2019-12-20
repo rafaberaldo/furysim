@@ -1,6 +1,6 @@
 class Whirlwind extends Skill {
   constructor(player, useWhen) {
-    super('Whirlwind', 25, 10, true, useWhen, player)
+    super('Whirlwind', 25, 10, true, player, useWhen)
 
     // WW and Cleve do not refund
     // https://github.com/magey/classic-warrior/issues/27

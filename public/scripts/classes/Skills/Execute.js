@@ -1,6 +1,6 @@
 class Execute extends Skill {
   constructor(player, useWhen) {
-    super('Execute', player.executeCost, 0, true, useWhen, player)
+    super('Execute', player.executeCost, 0, true, player, useWhen)
 
     // NC: Execute refund 84% of extra rage only
     this.missRefundMul = 1

@@ -1,5 +1,5 @@
 class SlamCast extends CooldownGCD {
-  constructor(slam, useWhen, player) {
+  constructor(slam, player, useWhen) {
     super('SlamCast', player.slamCast, 0, player)
 
     this.slam = slam
@@ -14,7 +14,6 @@ class SlamCast extends CooldownGCD {
   }
 
   get canUse() {
-    // debugger;
     if (!this.useWhen.canUse) return
     if (this.slam.isCasting) return
     if (!super.canUse) return

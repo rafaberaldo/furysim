@@ -116,7 +116,7 @@
           },
           slam: {
             canUse: true,
-            spamRage: 80,
+            spamRage: 90,
             btCooldown: 1,
             swing: 1.1
           },
