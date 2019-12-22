@@ -1,0 +1,46 @@
+{
+  "1H Axes": [
+    { "title": "Deathbringer", "min": 114, "max": 213, "speed": 2.9, "type": "ONE_HANDED" },
+    { "title": "Frostbite", "min": 80, "max": 150, "speed": 2.7, "type": "ONE_HANDED" },
+    { "title": "Flurry Axe", "min": 37, "max": 69, "speed": 1.5, "type": "ONE_HANDED",
+      "proc": { "type": "extraAttack", "percent": 4.66, "amount": 1 }
+    },
+    { "title": "Bone Slicing Hatchet", "min": 48, "max": 90, "speed": 1.7, "type": "ONE_HANDED" },
+    { "title": "Rivenspike", "min": 77, "max": 144, "speed": 2.9, "type": "ONE_HANDED" }
+  ],
+
+  "1H Swords": [
+    { "title": "Vis'kag", "min": 100, "max": 187, "speed": 2.6, "type": "ONE_HANDED" },
+    { "title": "Brutality Blade", "min": 90, "max": 168, "speed": 2.5, "type": "ONE_HANDED" },
+    { "title": "Quel'Serrar", "min": 84, "max": 126, "speed": 2, "type": "ONE_HANDED" },
+    { "title": "Dal'Rend MH", "min": 81, "max": 151, "speed": 2.8, "type": "ONE_HANDED" },
+    { "title": "Dal'Rend OH", "min": 52, "max": 97, "speed": 1.8, "type": "ONE_HANDED" },
+    { "title": "Mirah's Song", "min": 57, "max": 87, "speed": 1.8, "type": "ONE_HANDED" },
+    { "title": "Thrash Blade", "min": 66, "max": 124, "speed": 2.7, "type": "ONE_HANDED",
+      "proc": { "type": "extraAttack", "percent": 4.4, "amount": 1 }
+    }
+  ],
+
+  "1H Maces": [
+    { "title": "Empyrean Demolisher (No Proc)", "min": 94, "max": 175, "speed": 2.8, "type": "ONE_HANDED",
+      "proc": { "type": null, "percent": 4.85, "amount": 20 }
+    },
+    { "title": "Ironfoe", "min": 73, "max": 136, "speed": 2.4, "type": "ONE_HANDED",
+      "proc": { "type": "extraAttack", "percent": 3.21, "amount": 2 }
+    }
+  ],
+
+  "Daggers": [
+    { "title": "Perdition's Blade", "min": 73, "max": 137, "speed": 1.8, "type": "DAGGER" },
+    { "title": "Core Hound Tooth", "min": 57, "max": 107, "speed": 1.6, "type": "DAGGER" }
+  ],
+
+  "2H": [
+    { "title": "Bonereaver's Edge", "min": 206, "max": 310, "speed": 3.4, "type": "TWO_HANDED" },
+    { "title": "Spinal Reaper", "min": 203, "max": 305, "speed": 3.4, "type": "TWO_HANDED" },
+    { "title": "Obsidian Edged Blade", "min": 176, "max": 264, "speed": 3.4, "type": "TWO_HANDED" },
+    { "title": "The Unstoppable Force", "min": 175, "max": 292, "speed": 3.8, "type": "TWO_HANDED" },
+    { "title": "Treant's Bane", "min": 128, "max": 193, "speed": 2.7, "type": "TWO_HANDED" },
+    { "title": "Barbarous Blade", "min": 138, "max": 207, "speed": 3.2, "type": "TWO_HANDED" }
+  ]
+}

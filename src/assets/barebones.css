@@ -1,0 +1,492 @@
+/*
+* Barebones V3
+* Copyright 2019 Steve Cochran
+*
+* Based of Skeleton by Dave Gamache
+*
+* Free to use under the MIT license.
+*/
+
+/* Table of contents
+––––––––––––––––––––––––––––––––––––––––––––––––––
+- Media Breakpoints
+- Variables
+- Grid
+- Base Styles
+- Typography
+- Links
+- Buttons
+- Forms
+- Lists
+- Code
+- Tables
+- Spacing
+- Utilities
+- Clearing
+- Media Queries
+*/
+
+/* ENV Variables
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+/* Media breakpoint variables for use in media queries
+* 	Note: this section is currently commented out pending release of
+* 	final CSS env() spec
+*  Breakpoints based on
+*	 https://medium.freecodecamp.org/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862
+*
+*/
+
+
+
+/* CSS Variables
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+html {
+  /* dark theme: light background, dark text, blue accent */
+  --theme-hue: 0;					/* black */
+  --accent-hue: 0;			/* grey */
+
+  --text-color-richer: hsl(var(--theme-hue), 0%, 95%);		/* 		*/
+  --text-color-normal: hsl(var(--theme-hue), 0%, 80%);		/* text color; button:hover:focus color */
+  --text-color-softer: hsl(var(--theme-hue), 0%, 67%);		/* button color; button:hover border */
+
+  --accent-color: hsl(var(--accent-hue), 0%, 35%);				/* link; button-primary bg+border; textarea,select:focus border */
+  --accent-color-hover: hsl(var(--accent-hue), 0%, 42%);	/* button-primary:hover:focus bg+border */
+
+  --border-color: hsl(var(--theme-hue), 0%, 27%);					/* button border */
+  --border-color-softer: hsl(var(--theme-hue), 0%, 20%);	/* textarea,select,code,td,hr border	 */
+  --border-color-hover: hsl(var(--theme-hue), 0%, 38%);	/* textarea,select,code,td,hr border	 */
+
+  --background-color: hsl(var(--theme-hue), 0%, 12%);			/* body background; textarea,select background */
+  --background-color-softer: hsl(var(--theme-hue), 0%, 25%);
+  --code-background: hsl(var(--theme-hue), 0%, 5%);				/* code background*/
+
+  --link-color: hsl(204, 86%, 57%);
+  --link-color-hover: white;
+
+  --button-primary-color: white;
+
+  /* Note: Skeleton was based off a 10px font sizing for REM  */
+  /* 62.5% of typical 16px browser default = 10px */
+  --base-font-size: 62.5%;
+
+  /* Grid Defaults - default to match orig skeleton settings */
+  --grid-max-width: 960px;
+
+  --font-family: 'PT Sans Narrow', 'Segoe UI', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-family-title: 'Oswald', 'PT Sans Narrow', 'Segoe UI', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/*  Light Theme
+	Note: prefers-color-scheme selector support is still limited, but
+	included for future and an example of defining a different base 'theme'
+*/
+@media (prefers-color-scheme: light) {
+  html {
+    /* light theme: light background, dark text, blue accent */
+    --theme-hue: 0;					/* white */
+
+    --text-color-richer: hsl(var(--theme-hue), 0%, 5%);			/* #0d0d0d		*/
+    --text-color-normal: hsl(var(--theme-hue), 0%, 13%);		/* #222222 		text color; button:hover:focus color */
+    --text-color-softer: hsl(var(--theme-hue), 0%, 33%);		/* #555555 		button color; button:hover border */
+
+    --border-color: hsl(var(--theme-hue), 0%, 73%);					/* #bbbbbb		button border */
+    --border-color-softer: hsl(var(--theme-hue), 0%, 82%);	/* #d1d1d1		textarea,select,code,td,hr border	 */
+
+    --background-color: hsl(var(--theme-hue), 0%, 100%);		/* transparent body background; textarea,select background */
+    --background-color-softer: hsl(var(--theme-hue), 0%, 90%);
+    --code-background: hsl(var(--theme-hue), 0%, 95%);			/* #f1f1f1 		code background*/
+
+    --button-primary-color: white;
+
+    --link-color-hover: black;
+  }
+}
+
+
+/* Grid
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+/* CSS Grid depends much more on CSS than HTML, so there is less boilerplate
+	 than with skeleton. Only basic 1-4 column grids are included.
+	 Any additional needs should be made using custom CSS directives */
+
+
+.grid-container {
+	position: relative;
+	max-width: var(--grid-max-width);
+	margin: 0 auto;
+	padding: 20px;
+	display: grid;
+	grid-gap: 30px;
+  gap: 30px;
+
+	/* by default use min 200px wide columns auto-fit into width */
+	grid-template-columns: minmax(200px, 1fr);
+}
+
+/* grids to 3 columns above mobile sizes */
+@media (min-width: 768px) {
+	/* .grid-container {
+		grid-template-columns: repeat(3, 1fr);
+		padding: 10px 0;
+	} */
+
+	/* basic grids */
+	.grid-container.fifths {
+		grid-template-columns: repeat(5, 1fr);
+	}
+	.grid-container.quarters {
+		grid-template-columns: repeat(4, 1fr);
+	}
+	.grid-container.thirds {
+		grid-template-columns: repeat(3, 1fr);
+	}
+	.grid-container.halves {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.grid-container.full {
+		grid-template-columns: 1fr;
+	}
+
+}
+
+
+
+
+
+/* Base Styles
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+html {
+  font-size: var(--base-font-size);
+  scroll-behavior: smooth;
+}
+body {
+  font-size: 1.6rem;		/* changed from 15px in orig skeleton */
+  line-height: 1.5;
+  font-weight: 400;
+  font-family: var(--font-family);
+  color: var(--text-color-normal);
+  background-color: var(--background-color);;
+}
+
+
+/* Typography
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 300; }
+h1 { font-family: var(--font-family-title); font-size: 4.0rem; line-height: 1.2;  letter-spacing: -.1rem;}
+h2 { font-family: var(--font-family-title); font-size: 3.6rem; line-height: 1.25; letter-spacing: -.1rem; }
+h3 { font-family: var(--font-family-title); font-size: 3.0rem; line-height: 1.3;  letter-spacing: -.1rem; }
+h4 { font-family: var(--font-family-title); font-size: 2.4rem; line-height: 1.35; letter-spacing: -.08rem; }
+h5 { font-family: var(--font-family-title); font-size: 1.8rem; line-height: 1.5;  letter-spacing: -.05rem; }
+h6 { font-family: var(--font-family-title); font-size: 1.5rem; line-height: 1.6;  letter-spacing: 0; }
+
+/* Larger than phablet */
+@media (min-width: 600px) {
+  h1 { font-size: 5.0rem; }
+  h2 { font-size: 4.2rem; }
+  h3 { font-size: 3.6rem; }
+  h4 { font-size: 3.0rem; }
+  h5 { font-size: 2.4rem; }
+  h6 { font-size: 1.5rem; }
+}
+
+p {
+  margin-top: 0; }
+
+
+/* Links
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+a {
+  cursor: pointer;
+  color: var(--link-color); }
+a:hover {
+  color: var(--link-color-hover); }
+
+
+/* Buttons
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: var(--text-color-softer);
+  text-align: center;
+  font-size: 90%;
+  font-weight: 700;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  box-sizing: border-box;
+  font-family: var(--font-family); }
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  color: var(--text-color-normal);
+  border-color: var(--text-color-softer);
+  outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+  color: var(--button-primary-color);
+  background-color: var(--accent-color);
+  border-color: var(--accent-color); }
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+  color: var(--button-primary-color);
+  background-color: var(--accent-color-hover);
+  border-color: var(--accent-color-hover); }
+
+
+/* Forms
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+  color: var(--text-color-normal);
+  height: 34px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color-softer);
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;
+  font-size: 90%;
+  font-family: var(--font-family); }
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+input[type="button"],
+input[type="submit"],
+textarea {
+  -webkit-appearance: textfield;
+     -moz-appearance: textfield;
+          appearance: textfield; }
+textarea {
+  min-height: 65px;
+  padding-top: 6px;
+  padding-bottom: 6px; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid var(--border-color-hover);
+  outline: 0; }
+input[type="email"]:hover,
+input[type="number"]:hover,
+input[type="search"]:hover,
+input[type="text"]:hover,
+input[type="tel"]:hover,
+input[type="url"]:hover,
+input[type="password"]:hover,
+textarea:hover,
+select:hover {
+  border: 1px solid var(--border-color-hover);
+  outline: 0; }
+input[type="email"]:invalid,
+input[type="number"]:invalid,
+input[type="search"]:invalid,
+input[type="text"]:invalid,
+input[type="tel"]:invalid,
+input[type="url"]:invalid,
+input[type="password"]:invalid,
+textarea:invalid,
+select:invalid {
+  border: 1px solid hsl(0, 86%, 62%);
+  outline: 0; }
+label,
+legend {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 700; }
+fieldset {
+  padding: 0;
+  border-width: 0; }
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline; }
+label > .label-body {
+  display: inline-block;
+  margin-left: .5rem;
+  font-weight: normal; }
+select optgroup {
+  background-color: var(--background-color-softer); }
+
+
+/* Lists
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+ul {
+  list-style: circle inside; }
+ol {
+  list-style: decimal inside; }
+ol, ul {
+  padding-left: 0;
+  margin-top: 0; }
+ul ul, ul ol, ol ol, ol ul {
+	font-size: 100%;
+	margin: 1rem 0 1rem 3rem;
+	color: var(--text-color-softer);
+}
+li {
+  margin-bottom: 0.5rem; }
+
+
+/* Code
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+code {
+  padding: .2rem .5rem;
+  margin: 0 .2rem;
+  font-size: 80%;
+  white-space: nowrap;
+  background: var(--code-background);
+  border: 1px solid var(--border-color-softer);
+  border-radius: 4px; }
+pre > code {
+  display: block;
+  padding: 1rem 1.5rem;
+  white-space: pre;
+  overflow: auto; }
+
+
+/* Tables
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color-softer); }
+th:first-child,
+td:first-child {
+  padding-left: 0; }
+th:last-child,
+td:last-child {
+  padding-right: 0; }
+
+
+/* Spacing
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+button,
+.button {
+  margin-bottom: 1rem; }
+pre,
+blockquote,
+dl,
+figure,
+table,
+p,
+ul,
+ol,
+form {
+  margin-bottom: 2.5rem; }
+
+
+/* Utilities
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.u-full-width {
+  width: 100%;
+  box-sizing: border-box; }
+.u-max-full-width {
+  max-width: 100%;
+  box-sizing: border-box; }
+.u-pull-right {
+  float: right; }
+.u-pull-left {
+  float: left; }
+.u-align-left {
+	text-align: left; }
+.u-align-right {
+	text-align: right; }
+.u-marginless {
+  margin: 0; }
+.u-block {
+  margin-bottom: 2rem !important; }
+.u-weight-bold {
+  font-weight: 700 !important; }
+.u-family-title {
+  font-family: var(--font-family-title); }
+.u-overflow-hidden {
+  overflow: hidden; }
+
+/* Misc
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+hr {
+  margin-top: 3rem;
+  margin-bottom: 3.5rem;
+  border-width: 0;
+  border-top: 1px solid var(--border-color-softer); }
+
+
+/* Clearing
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+/* Self Clearing Goodness */
+.container:after,
+.row:after,
+.u-cf {
+  content: "";
+  display: table;
+  clear: both; }
+
+
+/* Media Queries
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+/*
+Note: The best way to structure the use of media queries is to create the queries
+near the relevant code. For example, if you wanted to change the styles for buttons
+on small devices, paste the mobile query code up in the buttons section and style it
+there.
+*/
+
+
+/* Larger than mobile (default point when grid becomes active) */
+@media (min-width: 600px) {}
+
+/* Larger than phablet */
+@media (min-width: 900px) {}
+
+/* Larger than tablet */
+@media (min-width: 1200px) {}

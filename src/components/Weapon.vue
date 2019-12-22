@@ -1,0 +1,171 @@
+<template>
+  <div class="u-block">
+    <label v-if="!mainhand" class="u-block">
+      <input type="checkbox" v-model="value.canUse">
+      <h4 class="u-marginless" style="margin-left: 0.5rem; cursor: pointer;">Offhand</h4>
+    </label>
+    <h4 v-else>Mainhand</h4>
+
+    <div :class="{'disabled': !value.canUse }">
+      <label>
+        <select v-model="preset" class="u-full-width" :disabled="!value.canUse">
+          <option disabled :value="null">Presets</option>
+          <optgroup v-for="(options, name) in presets" :key="name" :label="name">
+            <option v-for="item in options" :key="item.title" :value="item">
+              {{ item.title }}
+            </option>
+          </optgroup>
+        </select>
+      </label>
+      <div class="horizontal">
+        <label>Min/Max</label>
+        <input
+          v-model.number="value.min"
+          type="number"
+          min="1"
+          max="600"
+          :disabled="!value.canUse">
+        <input
+          v-model.number="value.max"
+          type="number"
+          min="1"
+          max="600"
+          :disabled="!value.canUse">
+      </div>
+      <div class="horizontal">
+        <label>Speed</label>
+        <input
+          v-model.number="value.speed"
+          type="number"
+          min="1"
+          max="600"
+          step="0.1"
+          :disabled="!value.canUse">
+      </div>
+      <div class="horizontal">
+        <label>Skill</label>
+        <input
+          v-model.number="value.skill"
+          type="number"
+          min="1"
+          max="600"
+          :disabled="!value.canUse">
+      </div>
+      <div class="horizontal">
+        <label>Proc</label>
+        <select v-model="value.proc.type" :disabled="!value.canUse">
+          <option :value="null">None</option>
+          <option value="extraAttack">Extra Attack</option>
+          <option value="atkSpeed" disabled>Atk. Speed (Soon&trade;)</option>
+        </select>
+      </div>
+      <div v-if="value.proc.type" class="ident">
+        <div class="horizontal">
+          <label>Proc Chance (%)</label>
+          <input
+            v-model.number="value.proc.percent"
+            type="number"
+            min="0"
+            max="20"
+            step="0.01"
+            :disabled="!value.canUse">
+        </div>
+        <div class="horizontal">
+          <label>Proc Amount</label>
+          <input
+            v-model.number="value.proc.amount"
+            type="number"
+            min="0"
+            max="50"
+            :disabled="!value.canUse">
+        </div>
+      </div>
+      <div class="horizontal">
+        <label :disabled="!value.canUse">
+          <input
+            v-model="value.type"
+            type="radio"
+            value="ONE_HANDED"
+            :disabled="!value.canUse">
+          <span class="label-body">1H</span>
+        </label>
+        <label v-if="mainhand" :disabled="!value.canUse">
+          <input
+            v-model="value.type"
+            type="radio"
+            value="TWO_HANDED"
+            :disabled="!value.canUse">
+          <span class="label-body">2H</span>
+        </label>
+        <label :disabled="!value.canUse">
+          <input
+            v-model="value.type"
+            type="radio"
+            value="DAGGER"
+            :disabled="!value.canUse">
+          <span class="label-body">Dagger</span>
+        </label>
+      </div>
+      <label :disabled="!value.canUse">
+        <input type="checkbox" v-model="value.enchant" :disabled="!value.canUse">
+        <span class="label-body">Crusader</span>
+      </label>
+    </div>
+  </div>
+</template>
+
+<script>
+import weaponsData from '@/data/weapons'
+
+export default {
+  name: 'Weapon',
+  props: {
+    obj: Object,
+    mainhand: Boolean
+  },
+  data() {
+    return {
+      p_value: this.obj,
+      preset: this.mainhand
+        ? weaponsData['1H Axes'].find(w => w.title === 'Deathbringer')
+        : weaponsData['1H Axes'].find(w => w.title === 'Frostbite')
+    }
+  },
+  computed: {
+    value: {
+      set(value) {
+        this.p_value = value
+        this.$emit('update:obj', value)
+      },
+      get() {
+        if (this.p_value.canUse === undefined) {
+          const obj = Object.assign({
+            canUse: true,
+            skill: 305,
+            enchant: true,
+            proc: { type: null },
+          }, this.preset)
+          this.$emit('update:obj', obj)
+          return obj
+        }
+        return this.p_value
+      }
+    },
+    presets() {
+      const presets = weaponsData
+      const presetsOh = Object.assign({}, presets)
+      delete presetsOh['2H']
+
+      return this.mainhand
+        ? presets
+        : presetsOh
+    }
+  },
+  watch: {
+    preset(value) {
+      this.value.proc = { type: null }
+      this.value = Object.assign(this.value, value)
+    }
+  }
+}
+</script>

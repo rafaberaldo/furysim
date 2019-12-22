@@ -47,19 +47,20 @@ are assumptions due to lack of data.
 * You lose 1% hit from gear if the delta between weapon skill and target defense is > 10.
 * Whirlwind and Cleave do not refund rage.
 * Execute damage calculation is instantly but rage removal happens on next batch.
-  * *To roughly simulate batching, rage is removed after any extra-attacks occur.*
+  * *To roughly simulate batching, rage is removed after any procs occur.*
 * A single attack can proc both weapon enchant and an extra-attack.
 * A single attack can't proc multiple extra-attacks (if procced by swing).
 
 ## Non confirmed
 
 * Dual Wield penalty is ``80% * base_miss + 20%``.
-* Offhand initial swing delay/desync is between 200 and 300 ms.
+* Offhand initial swing start at 50%.
 * Skill miss refunds 80% of rage. Execute miss refunds 84% of extra rage.
 * Dodged swing rage gain is 75% of average damage.
 * Glanced swing rage gain is based on the damage.
 * Winfury don't consume charges on misses.
 * Priority for extra-attacks is WF > MH / OH > Trinket.
+* Armor can't go negative.
 
 ## Sources
 
