@@ -58,7 +58,7 @@
       <div class="horizontal">
         <label>Proc</label>
         <select v-model="value.proc.type" :disabled="!value.canUse">
-          <option :value="null">None</option>
+          <option :value="undefined">None</option>
           <option value="extraAttack">Extra Attack</option>
           <option value="atkSpeed" disabled>Atk. Speed (Soon&trade;)</option>
         </select>
@@ -130,37 +130,15 @@ import weaponsData from '@/data/weapons'
 export default {
   name: 'Weapon',
   props: {
-    obj: Object,
+    value: Object,
     mainhand: Boolean
   },
   data() {
     return {
-      p_value: this.obj,
-      preset: this.mainhand
-        ? weaponsData['1H Axes'].find(w => w.title === 'Deathbringer')
-        : weaponsData['1H Axes'].find(w => w.title === 'Frostbite')
+      preset: null
     }
   },
   computed: {
-    value: {
-      set(value) {
-        this.p_value = value
-        this.$emit('update:obj', value)
-      },
-      get() {
-        if (this.p_value.canUse === undefined) {
-          const obj = Object.assign({
-            canUse: true,
-            skill: 305,
-            enchant: true,
-            proc: { type: null },
-          }, this.preset)
-          this.$emit('update:obj', obj)
-          return obj
-        }
-        return this.p_value
-      }
-    },
     presets() {
       const presets = weaponsData
       const presetsOh = Object.assign({}, presets)
@@ -173,11 +151,15 @@ export default {
   },
   watch: {
     preset(value) {
-      this.value.proc = { type: null }
-      this.value = Object.assign(this.value, value)
-    },
-    obj(value) {
-      this.p_value = value
+      this.value.min = value.min
+      this.value.max = value.max
+      this.value.speed = value.speed
+      this.value.type = value.type
+      this.value.proc = {
+         type: value.proc && value.proc.type,
+         percent: value.proc && value.proc.percent,
+         amount: value.proc && value.proc.amount
+      }
     }
   }
 }

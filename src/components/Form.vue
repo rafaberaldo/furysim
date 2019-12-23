@@ -107,8 +107,8 @@
           </label>
         </div>
 
-        <Weapon :obj.sync="formData.player.mainhand" :mainhand="true" :key="weaponKey1"/>
-        <Weapon :obj.sync="formData.player.offhand" :mainhand="false" :key="weaponKey2"/>
+        <Weapon v-model="formData.player.mainhand" :mainhand="true"/>
+        <Weapon v-model="formData.player.offhand" :mainhand="false"/>
       </section>
 
       <section class="grid-item" style="grid-column: span 2">
@@ -309,6 +309,7 @@
         <Report v-if="result.finishedIn" :data="result" simple/>
       </section>
     </div>
+    <pre>{{ cfg }}</pre>
   </form>
 </template>
 
@@ -316,6 +317,7 @@
 import Worker from '@/scripts/sim.worker'
 import Report from '@/components/Report'
 import Weapon from '@/components/Weapon'
+import weaponsData from '@/data/weapons'
 import { m, parseTalents } from '@/scripts/helpers'
 
 export default {
@@ -325,13 +327,14 @@ export default {
     Weapon
   },
   data() {
+    const defaultMh = weaponsData['1H Axes'].find(w => w.title === 'Deathbringer')
+    const defaultOh = weaponsData['1H Axes'].find(w => w.title === 'Frostbite')
+
     return {
       worker: new Worker(),
       result: {},
       message: {},
       isLoading: false,
-      weaponKey1: 'weaponKey1',
-      weaponKey2: 'weaponKey2',
       formData: {
         duration: 90,
         iterations: process.env.NODE_ENV === 'production' ? 50000 : 500,
@@ -354,8 +357,34 @@ export default {
             'ony', 'dm', 'sf', 'mark', 'bloodFury', 'strTotem', 'wf', 'jujuPower',
             'roids', 'firewater', 'sunfruit', 'mrp', 'mongoose', 'eleStoneOh'
           ],
-          mainhand: {},
-          offhand: {},
+          mainhand: {
+            canUse: true,
+            min: defaultMh.min,
+            max: defaultMh.max,
+            speed: defaultMh.speed,
+            type: defaultMh.type,
+            skill: 305,
+            enchant: true,
+            proc: {
+              type: defaultMh.proc &&  defaultMh.proc.type,
+              percent: defaultMh.proc &&  defaultMh.proc.percent,
+              amount: defaultMh.proc &&  defaultMh.proc.amount
+            }
+          },
+          offhand: {
+            canUse: true,
+            min: defaultOh.min,
+            max: defaultOh.max,
+            speed: defaultOh.speed,
+            type: defaultOh.type,
+            skill: 305,
+            enchant: true,
+            proc: {
+              type: defaultOh.proc &&  defaultOh.proc.type,
+              percent: defaultOh.proc &&  defaultOh.proc.percent,
+              amount: defaultOh.proc &&  defaultOh.proc.amount
+            }
+          },
           bloodFury: {
             waitCrusader: true,
             waitDeathWish: true
@@ -616,9 +645,6 @@ export default {
     reset() {
       Object.assign(this.$data, this.$options.data.apply(this))
       this.$emit('report', this.result)
-      // Force update
-      this.weaponKey1 += 1
-      this.weaponKey2 += 1
     }
   },
   mounted() {
