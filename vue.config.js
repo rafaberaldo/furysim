@@ -1,5 +1,4 @@
 module.exports = {
-  parallel: false,
   chainWebpack: (config) => {
     config.module
       .rule('js').exclude
