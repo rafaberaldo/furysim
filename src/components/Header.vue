@@ -1,7 +1,7 @@
 <template>
   <header>
     <h1 class="u-marginless">FurySim</h1>
-    <p class="u-marginless">{{ description }} (v{{ version }})</p>
+    <p class="u-marginless">{{ description }}</p>
   </header>
 </template>
 

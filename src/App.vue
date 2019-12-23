@@ -3,7 +3,44 @@
     <Header/>
     <Form @report="r => result = r"/>
     <Report v-if="result.finishedIn" :data="result"/>
-    <Footer/>
+    <Modal ref="modal">
+      <h4>About</h4>
+      <strong>Are you tracking me or using cookies?</strong>
+      <p>
+        Although this site don't use cookies, I do save your last sim configuration
+        into your local storage for convenience. Other than that it's pretty much
+        a static page with no database or tracking.
+      </p>
+
+      <strong>Is it open source?</strong>
+      <p>
+        <a href="https://github.com/rafaelpimpa/furysim"
+          target="_blank"
+          rel="noopener">Yes</a>.
+      </p>
+
+      <strong>Where did you get the formulas? How spell X works?</strong>
+      <p>
+        <a href="https://github.com/rafaelpimpa/furysim/blob/master/MECHANICS.md"
+          target="_blank"
+          rel="noopener">Read about the mechanics</a>
+        if you're interested. Sources are there too.
+      </p>
+
+      <strong>Found a bug. Where do I report?</strong>
+      <p>
+        <a href="https://github.com/rafaelpimpa/furysim/issues"
+          target="_blank"
+          rel="noopener">Here</a>. But post a valid source.
+      </p>
+
+      <strong>Why did you make this?</strong>
+      <p>
+        Always wanted to learn how to simulate something. Also wanted to know if Flurry
+        Axe is worth buying. Spoiler: <span class="spoiler">Nope.</span>
+      </p>
+    </Modal>
+    <Footer @about="$refs.modal.show()"/>
   </div>
 </template>
 
@@ -11,6 +48,7 @@
 import Footer from '@/components/Footer'
 import Form from '@/components/Form'
 import Header from '@/components/Header'
+import Modal from '@/components/Modal'
 import Report from '@/components/Report'
 
 export default {
@@ -19,6 +57,7 @@ export default {
     Footer,
     Form,
     Header,
+    Modal,
     Report
   },
   data() {
@@ -38,5 +77,12 @@ export default {
     padding: 10px;
     max-width: 980px;
     margin: 0 auto;
+  }
+  .spoiler {
+    color: var(--code-background);
+    background: currentColor;
+  }
+  .spoiler::selection {
+    color: var(--text-color-normal);
   }
 </style>

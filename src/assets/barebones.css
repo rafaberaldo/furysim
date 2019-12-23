@@ -54,13 +54,14 @@ html {
 
   --border-color: hsl(var(--theme-hue), 0%, 27%);					/* button border */
   --border-color-softer: hsl(var(--theme-hue), 0%, 20%);	/* textarea,select,code,td,hr border	 */
-  --border-color-hover: hsl(var(--theme-hue), 0%, 38%);	/* textarea,select,code,td,hr border	 */
+  --border-color-hover: hsl(var(--theme-hue), 0%, 42%);	/* textarea,select,code,td,hr border	 */
 
   --background-color: hsl(var(--theme-hue), 0%, 12%);			/* body background; textarea,select background */
   --background-color-softer: hsl(var(--theme-hue), 0%, 25%);
   --code-background: hsl(var(--theme-hue), 0%, 5%);				/* code background*/
 
   --link-color: hsl(207, 86%, 57%);
+  --link-color-opacity: hsl(207, 86%, 57%, 0.35);
   --link-color-hover: white;
 
   --button-primary-color: white;
@@ -158,6 +159,7 @@ html {
 html {
   font-size: var(--base-font-size);
   scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
 }
 body {
   font-size: 1.6rem;		/* changed from 15px in orig skeleton */
@@ -183,7 +185,7 @@ h5, .h5 { font-family: var(--font-family-title); font-size: 1.8rem; line-height:
 h6, .h6 { font-family: var(--font-family-title); font-size: 1.5rem; line-height: 1.6;  letter-spacing: 0; }
 
 /* Larger than phablet */
-@media (min-width: 600px) {
+@media (min-width: 768px) {
   h1, .h1 { font-size: 5.0rem; }
   h2, .h2 { font-size: 4.2rem; }
   h3, .h3 { font-size: 3.6rem; }
@@ -200,7 +202,8 @@ p {
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 a {
   cursor: pointer;
-  color: var(--link-color); }
+  color: var(--link-color);
+  text-decoration: underline; }
 a:hover {
   color: var(--link-color-hover); }
 
@@ -300,17 +303,6 @@ textarea {
   min-height: 65px;
   padding-top: 6px;
   padding-bottom: 6px; }
-input[type="email"]:focus,
-input[type="number"]:focus,
-input[type="search"]:focus,
-input[type="text"]:focus,
-input[type="tel"]:focus,
-input[type="url"]:focus,
-input[type="password"]:focus,
-textarea:focus,
-select:focus {
-  border: 1px solid var(--border-color-hover);
-  outline: 0; }
 input[type="email"]:hover,
 input[type="number"]:hover,
 input[type="search"]:hover,
@@ -321,6 +313,17 @@ input[type="password"]:hover,
 textarea:hover,
 select:hover {
   border: 1px solid var(--border-color-hover);
+  outline: 0; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid var(--link-color);
   outline: 0; }
 input[type="email"]:invalid,
 input[type="number"]:invalid,
@@ -480,7 +483,7 @@ there.
 
 
 /* Larger than mobile (default point when grid becomes active) */
-@media (min-width: 600px) {}
+@media (min-width: 768px) {}
 
 /* Larger than phablet */
 @media (min-width: 900px) {}
@@ -493,6 +496,17 @@ there.
 
 /* Overrites
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: none;
+}
+
+input:focus,
+button:focus,
+select:focus {
+  box-shadow: 0 0 0 2px var(--link-color-opacity);
+}
 
 input[type="number"] {
   text-align: right;
@@ -524,13 +538,14 @@ input[type="checkbox"] {
   border-radius: 2px;
   flex-shrink: 0;
   cursor: pointer;
-}
-input[type="checkbox"]:hover {
-  border: 1px solid var(--border-color-hover);
+  outline: none;
 }
 input[type="checkbox"]:checked {
   border: 1px solid var(--background-color-softer);
   background: var(--background-color-softer);
+}
+input[type="checkbox"]:not(:disabled):hover {
+  border: 1px solid var(--border-color-hover);
 }
 input[type="checkbox"]:checked:after {
   content: "";
@@ -554,13 +569,14 @@ input[type="radio"] {
   border-radius: 50%;
   flex-shrink: 0;
   cursor: pointer;
-}
-input[type="radio"]:hover {
-  border: 1px solid var(--border-color-hover);
+  outline: none;
 }
 input[type="radio"]:checked {
   border: 1px solid var(--background-color-softer);
   background: var(--background-color-softer);
+}
+input[type="radio"]:not(:disabled):hover {
+  border: 1px solid var(--border-color-hover);
 }
 input[type="radio"]:checked:after {
   content: "";

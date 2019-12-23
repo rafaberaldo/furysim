@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="submit">
     <div class="grid-container quarters">
-      <section class="u-overflow-hidden">
+      <section class="grid-item">
         <h4>Player Stats w/ Gear</h4>
         <p>
           With gear, unbuffed and untalented. I recommend
@@ -52,7 +52,7 @@
         </div>
       </section>
 
-      <section class="u-overflow-hidden">
+      <section class="grid-item">
         <h4>Buffs</h4>
         <label v-for="item in formGenerator.buffs" :key="item.value">
           <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
@@ -60,7 +60,7 @@
         </label>
       </section>
 
-      <section class="u-overflow-hidden">
+      <section class="grid-item">
         <h4>Consumables</h4>
         <label v-for="item in formGenerator.consumables" :key="item.value">
           <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
@@ -68,7 +68,7 @@
         </label>
       </section>
 
-      <section class="u-overflow-hidden">
+      <section class="grid-item">
         <h4>Target Stats</h4>
         <div class="horizontal">
           <label>Level</label>
@@ -98,7 +98,7 @@
     </div>
 
     <div class="grid-container quarters">
-      <section class="u-overflow-hidden">
+      <section class="grid-item">
         <div class="u-block">
           <h4>Trinkets</h4>
           <label>
@@ -111,7 +111,7 @@
         <Weapon :obj.sync="formData.player.offhand" :mainhand="false" :key="weaponKey2"/>
       </section>
 
-      <section class="u-overflow-hidden" style="grid-column: span 2">
+      <section class="grid-item" style="grid-column: span 2">
         <h4>Rotation</h4>
         <p>Skills follow this priority order (can't change for now)</p>
         <label v-if="hasDeathWish">
@@ -253,7 +253,7 @@
         </div>
       </section>
 
-      <section class="u-overflow-hidden">
+      <section class="grid-item">
         <h4>Stats After Buffs</h4>
         <div class="u-block">
           <div class="horizontal">
@@ -291,8 +291,8 @@
         </label>
         <div class="horizontal u-block" :class="{ 'disabled': !formData.latency.active }">
           <label>Min/Max</label>
-          <input type="number" :required="formData.latency.active" min="0" max="500" v-model.number="formData.latency.min">
-          <input type="number" :required="formData.latency.active" min="0" max="500" v-model.number="formData.latency.max">
+          <input type="number" :required="formData.latency.active" :disabled="!formData.latency.active" min="0" max="500" v-model.number="formData.latency.min">
+          <input type="number" :required="formData.latency.active" :disabled="!formData.latency.active" min="0" max="500" v-model.number="formData.latency.max">
         </div>
 
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
@@ -533,6 +533,7 @@ export default {
         if (value === 'eleStoneOh') crit += 2
       })
       crit += this.talents.cruelty
+      crit = Number(crit.toFixed(2))
 
       let haste = this.formData.player.haste
       haste += this.formData.player.buffs.indexOf('wcb') > -1 ? 15 : 0
