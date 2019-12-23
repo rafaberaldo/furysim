@@ -10,8 +10,6 @@ function run(cfg) {
   const log = new Log(cfg.duration, cfg.iterations)
   const exists = (e) => !!e
 
-  console.log(cfg)
-
   for (let i = 0; i < cfg.iterations; i++) {
     const isLastLoop = i === cfg.iterations - 1
     const player = new Player(cfg, log, isLastLoop)
@@ -80,9 +78,13 @@ function run(cfg) {
     const progress = m.floor(i / cfg.iterations * 100)
     postMessage({ progress })
 
-    if (process.env.NODE_ENV === 'production' || !isLastLoop) continue
+    if (!isLastLoop) continue
 
     player.addTimelineToLog()
+
+    if (process.env.NODE_ENV === 'production') continue
+
+    console.log(cfg)
     console.log(player)
     console.log(log)
   }

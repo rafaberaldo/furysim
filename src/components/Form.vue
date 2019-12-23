@@ -313,7 +313,6 @@
         <Report v-if="result.finishedIn" :data="result" simple/>
       </section>
     </div>
-    <pre>{{ cfg }}</pre>
   </form>
 </template>
 
@@ -418,7 +417,7 @@ export default {
             swing: 0.5
           },
           execute: {
-            percent: 14,
+            percent: 12,
             bloodthirst: {
               priority: true,
               ap: 2000

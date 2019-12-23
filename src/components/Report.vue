@@ -15,6 +15,7 @@
         :style="{ width: `${flurry.uptime}%` }"/>
       <span class="label">{{ flurry.title }} Uptime ({{ flurry.uptime }}%)</span>
     </div>
+    <hr style="margin: 1rem 0">
     <div v-for="item in skills" :key="item.title" class="progress-bar">
       <span
         class="progress"

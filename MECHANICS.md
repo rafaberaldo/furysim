@@ -7,17 +7,14 @@ What was not tested/confirmed from Mage's Github is found here: https://vanilla-
 Other stuff that is not documented anywhere was asked on Fight Club's Discord.
 Non confirmed mechanics are assumptions due to lack of data.
 
-FurySim doesn't average anything, all the things that should be rolled is being rolled on the fly.
-
-**Everything on this list is already implemented**
-
 ## Sim specifics / Limitations
 
 * Sim is Patchwerk-style fight.
+* Weapon damage is randomized like everything else.
 * Rage gain, Damage dealt and Attack power are rounded.
 * Attack speed is not rounded.
 * Flurry buff duration is not tracked (would never run off).
-* Only Fury tree and up to Two-Hand Spec and Impale from Arms are tracked (for now).
+* Only Fury tree and up to Two-Hand Spec and Impale from Arms are tracked.
 * Sim assumes you're never taking any damage (so no Enrage, Parry haste etc).
 * Batching is not implemented.
 * Deep Wounds is not implemented.
