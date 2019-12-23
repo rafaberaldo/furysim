@@ -298,9 +298,9 @@
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
           <span
             class="progress"
-            :style="{ transform: `translateX(${-100 + result.progress}%)` }"/>
+            :style="{ transform: `translateX(${-100 + message.progress}%)` }"/>
           <span class="u-pos-relative">
-            {{ isLoading ? `${result.progress}%` : 'Simulate!' }}
+            {{ isLoading ? `${message.progress}%` : 'Simulate!' }}
           </span>
         </button>
 
@@ -328,6 +328,7 @@ export default {
     return {
       worker: new Worker(),
       result: {},
+      message: {},
       isLoading: false,
       weaponKey1: 'weaponKey1',
       weaponKey2: 'weaponKey2',
@@ -596,13 +597,14 @@ export default {
       if (this.isLoading) return
 
       this.worker.onmessage = (e) => {
-        this.result = e.data
-        if (this.result.finishedIn) {
+        this.message = e.data
+        if (this.message.finishedIn) {
+          this.result = e.data
           this.isLoading = false
           this.$emit('report', this.result)
         }
       }
-      this.worker.onerror = (e) => this.result = `Error: ${e}`
+      this.worker.onerror = (e) => this.message = `Error: ${e}`
       this.worker.postMessage(this.cfg)
       this.isLoading = true
       localStorage.formData = JSON.stringify(this.formData)
@@ -612,6 +614,7 @@ export default {
     },
     reset() {
       Object.assign(this.$data, this.$options.data.apply(this))
+      this.$emit('report', this.result)
       // Force update
       this.weaponKey1 += 1
       this.weaponKey2 += 1

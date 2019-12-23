@@ -2,13 +2,14 @@
 
 ## About
 
-FurySim follows strictly everything in this Wiki: [https://github.com/magey/classic-warrior/wiki].
-Some stuff that is not found on that Wiki was found in this one: [https://vanilla-wow.fandom.com/wiki/Vanilla_WoW_Wiki].
-Other stuff that was not found anywhere was asked on Fight Club's Discord.
+FurySim follows strictly everything in this Wiki: https://github.com/magey/classic-warrior/wiki.
+What was not tested/confirmed from Mage's Github is found here: https://vanilla-wow.fandom.com/wiki/Vanilla_WoW_Wiki.
+Other stuff that is not documented anywhere was asked on Fight Club's Discord.
+Non confirmed mechanics are assumptions due to lack of data.
 
-FurySim does not average anything, everything is rolled on the fly.
-Everything on this list is already implemented, non confirmed mechanics
-are assumptions due to lack of data.
+FurySim doesn't average anything, all the things that should be rolled is being rolled on the fly.
+
+**Everything on this list is already implemented**
 
 ## Sim specifics / Limitations
 
@@ -21,11 +22,9 @@ are assumptions due to lack of data.
 * Batching is not implemented.
 * Deep Wounds is not implemented.
 * Battle Shout triggers a GCD at the start of fight.
-* Execute phase is the last 14% of fight duration.
 * Slam implementation is the Autoslam ("Slam macro") version.
-* Windfury and items with extra-attack mechanic have a 100 ms internal cooldown.
-  * This prevents procs off itself, and proccing twice in the same swing.
-* Timeline for ``debug: true``:
+* Windfury have a 100 ms internal cooldown to prevent procs off itself and/or multiple procs on a chain.
+* About Timeline:
   * Events at same time does not always shows in correct order.
   * ``BUFF_FADED`` is not shown at the exact time, it logs after next event happens.
 
@@ -64,9 +63,9 @@ are assumptions due to lack of data.
 
 ## Sources
 
-* [https://github.com/magey/classic-warrior/wiki/Attack-table]
-* [https://github.com/magey/classic-warrior/wiki/Windfury-Totem]
-* [https://github.com/magey/classic-warrior/wiki/Crit-aura-suppression]
-* [https://github.com/magey/classic-warrior/wiki/Spell-batching]
-* [https://www.wowhead.com/news=292085/hit-cap-in-classic-wow-clarifications]
-* [https://us.forums.blizzard.com/en/wow/t/wow-classic-not-a-bug-list-updated-12-13-2019/175887]
+* https://github.com/magey/classic-warrior/wiki/Attack-table
+* https://github.com/magey/classic-warrior/wiki/Windfury-Totem
+* https://github.com/magey/classic-warrior/wiki/Crit-aura-suppression
+* https://github.com/magey/classic-warrior/wiki/Spell-batching
+* https://www.wowhead.com/news=292085/hit-cap-in-classic-wow-clarifications
+* https://us.forums.blizzard.com/en/wow/t/wow-classic-not-a-bug-list-updated-12-13-2019/175887

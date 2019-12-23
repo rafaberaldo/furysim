@@ -156,7 +156,7 @@ export default class Player {
   }
 
   checkSlamCd(min) {
-    return this.slam && this.slam.canUse
+    return this.slam.cast && this.slam.cast.canUse
       ? this.slam.cast.timeLeft >= min
       : true
   }

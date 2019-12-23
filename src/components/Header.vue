@@ -1,9 +1,22 @@
 <template>
   <header>
     <h1 class="u-marginless">FurySim</h1>
-    <p>Fury Warrior DPS simulator for Classic WoW</p>
+    <p class="u-marginless">{{ description }} (v{{ version }})</p>
   </header>
 </template>
+
+<script>
+export default {
+  computed: {
+    description() {
+      return process.env.DESCRIPTION
+    },
+    version() {
+      return process.env.VERSION
+    }
+  }
+}
+</script>
 
 <style>
   header {

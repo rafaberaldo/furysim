@@ -37,10 +37,12 @@
       <template v-for="item in skills">
         <h4 :key="`${item.title}-header`">{{ item.title }}</h4>
         <div :key="item.title" class="report-grid">
-          <div v-for="{ title, key, suffix } in skillKeys" :key="key">
+          <div
+            v-for="({ title, key, suffix }, i) in skillKeys"
+            :key="key"
+            :style="{ gridColumn: i === 2 ? 'span 3' : null }">
             <span class="label">{{ title }}</span>
             <span class="u-family-title">{{ getReportText(item.title, key, item, suffix) }}</span>
-
             <div v-if="suffix === '%'" class="progress-bar small">
               <span class="progress" :style="{ width: `${item[key]}%` }"/>
             </div>
@@ -106,14 +108,14 @@ export default {
     },
     skillKeys() {
       return [
+        { key: 'portion', title: 'Dmg Portion', suffix: '%' },
+        { key: 'dmgPerHit', title: 'Dmg / Hit', suffix: '' },
+        { key: 'countPerFight', title: 'Count / Fight', suffix: '' },
         { key: 'misses', title: 'Misses', suffix: '%' },
         { key: 'dodges', title: 'Dodges', suffix: '%' },
         { key: 'glances', title: 'Glances', suffix: '%' },
         { key: 'crits', title: 'Crits', suffix: '%' },
         { key: 'hits', title: 'Hits', suffix: '%' },
-        { key: 'portion', title: 'Dmg Portion', suffix: '%' },
-        { key: 'dmgPerHit', title: 'Dmg / Hit', suffix: '' },
-        { key: 'countPerFight', title: 'Count / Fight', suffix: '' },
       ]
     },
     procsKeys() {

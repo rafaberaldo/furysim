@@ -2,6 +2,18 @@
   "name": "furysim",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://furysim.github.io",
+  "author": {
+    "name": "Rafael Beraldo",
+    "email": "rafael.pimpa@gmail.com",
+    "url": "https://twitter.com/rafaelpimpa"
+  },
+  "description": "Fury Warrior DPS simulator for Classic WoW",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rafaelpimpa/furysim.git"
+  },
+  "license": "GPL-3.0",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
