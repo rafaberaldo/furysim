@@ -23,25 +23,31 @@ export default class Log {
   }
 
   get report() {
-    const toPercent = (count, total) => (count / total * 100).toFixed(1) + '%'
-    const report = {}
+    const toPercent = (count, total) => Number((count / total * 100).toFixed(1))
+    const report = []
     Object.entries(this.events).forEach(([key, obj]) => {
       if (!obj.count) return
-      report[key] = !obj.isProc ? {
-          portion: toPercent(obj.dmg, this.totalDmg),
-          dmgPerHit: m.round(obj.dmg / obj.count),
-          misses: toPercent(obj.miss, obj.count),
-          dodges: toPercent(obj.dodge, obj.count),
-          glances: toPercent(obj.glance, obj.count),
-          crits: toPercent(obj.crit, obj.count),
-          hits: toPercent(obj.hit, obj.count),
-          countPerFight: (obj.count / this.iterations).toFixed(1),
-        } : {
-          countPerFight: (obj.count / this.iterations).toFixed(1),
-          uptime: toPercent(obj.uptime, this.totalDuration),
-          ppm: (obj.count / (this.totalDuration / 60)).toFixed(1)
-        }
-      if (key === 'Mainhand') report[key].chainedPerFight = (obj.chain / this.iterations).toFixed(2)
+      const add = !obj.isProc ? {
+        title: key,
+        procOrAura: false,
+        portion: toPercent(obj.dmg, this.totalDmg),
+        dmgPerHit: m.round(obj.dmg / obj.count),
+        misses: toPercent(obj.miss, obj.count),
+        dodges: toPercent(obj.dodge, obj.count),
+        glances: toPercent(obj.glance, obj.count),
+        crits: toPercent(obj.crit, obj.count),
+        hits: toPercent(obj.hit, obj.count),
+        countPerFight: Number((obj.count / this.iterations).toFixed(1)),
+      } : {
+        title: key,
+        procOrAura: true,
+        countPerFight: Number((obj.count / this.iterations).toFixed(1)),
+        uptime: toPercent(obj.uptime, this.totalDuration),
+        ppm: Number((obj.count / (this.totalDuration / 60)).toFixed(1))
+      }
+      if (key === 'Mainhand') add.chainedPerFight = Number((obj.chain / this.iterations).toFixed(2))
+
+      report.push(add)
     })
     return report
   }

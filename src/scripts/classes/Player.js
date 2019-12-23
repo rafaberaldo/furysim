@@ -44,7 +44,8 @@ export default class Player {
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.player.bloodFury)
 
     this.mainhand = new Weapon('Mainhand', cfg.player.mainhand, this)
-    this.offhand = cfg.player.offhand && new Weapon('Offhand', cfg.player.offhand, this)
+    this.offhand = cfg.player.offhand && cfg.player.offhand.canUse
+      ? new Weapon('Offhand', cfg.player.offhand, this) : null
     this.isDw = !!this.offhand
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
 

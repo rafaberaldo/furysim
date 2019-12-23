@@ -21,12 +21,14 @@
         <label>Min/Max</label>
         <input
           v-model.number="value.min"
+          :required="mainhand || !mainhand && value.canUse"
           type="number"
           min="1"
           max="600"
           :disabled="!value.canUse">
         <input
           v-model.number="value.max"
+          :required="mainhand || !mainhand && value.canUse"
           type="number"
           min="1"
           max="600"
@@ -36,6 +38,7 @@
         <label>Speed</label>
         <input
           v-model.number="value.speed"
+          :required="mainhand || !mainhand && value.canUse"
           type="number"
           min="1"
           max="600"
@@ -46,6 +49,7 @@
         <label>Skill</label>
         <input
           v-model.number="value.skill"
+          :required="mainhand || !mainhand && value.canUse"
           type="number"
           min="1"
           max="600"
@@ -84,6 +88,8 @@
         <label :disabled="!value.canUse">
           <input
             v-model="value.type"
+            :required="mainhand || !mainhand && value.canUse"
+            :name="mainhand ? 'mhType' : 'ohType'"
             type="radio"
             value="ONE_HANDED"
             :disabled="!value.canUse">
@@ -92,6 +98,8 @@
         <label v-if="mainhand" :disabled="!value.canUse">
           <input
             v-model="value.type"
+            :required="mainhand || !mainhand && value.canUse"
+            :name="mainhand ? 'mhType' : 'ohType'"
             type="radio"
             value="TWO_HANDED"
             :disabled="!value.canUse">
@@ -100,6 +108,8 @@
         <label :disabled="!value.canUse">
           <input
             v-model="value.type"
+            :required="mainhand || !mainhand && value.canUse"
+            :name="mainhand ? 'mhType' : 'ohType'"
             type="radio"
             value="DAGGER"
             :disabled="!value.canUse">
@@ -165,6 +175,9 @@ export default {
     preset(value) {
       this.value.proc = { type: null }
       this.value = Object.assign(this.value, value)
+    },
+    obj(value) {
+      this.p_value = value
     }
   }
 }

@@ -10,6 +10,8 @@ function run(cfg) {
   const log = new Log(cfg.duration, cfg.iterations)
   const exists = (e) => !!e
 
+  console.log(cfg)
+
   for (let i = 0; i < cfg.iterations; ++i) {
     const isLastLoop = i === cfg.iterations - 1
     const player = new Player(cfg, log, isLastLoop)
