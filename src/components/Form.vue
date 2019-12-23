@@ -198,6 +198,10 @@
         </label>
         <div class="ident" :class="{ 'disabled': !formData.player.slam.canUse }">
           <div class="horizontal">
+            <span>If <code>rage &gt;=</code></span>
+            <input type="number" min="0" max="100" v-model.number="formData.player.slam.rage">
+          </div>
+          <div class="horizontal">
             <span>If Bloodthirst <code>cooldown left &gt;=</code></span>
             <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.slam.btCooldown">
           </div>
@@ -408,6 +412,7 @@ export default {
           },
           slam: {
             canUse: false,
+            rage: 15,
             spamRage: 80,
             btCooldown: 1,
             swing: 0.5

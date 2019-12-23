@@ -60,6 +60,7 @@ FurySim doesn't average anything, all the things that should be rolled is being 
 * Winfury don't consume charges on misses.
 * Priority for extra-attacks is WF > MH / OH > Trinket.
 * Armor can't go negative.
+* When Autoslam miss/dodge, swing don't connect.
 
 ## Sources
 

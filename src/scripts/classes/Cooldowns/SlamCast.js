@@ -21,9 +21,11 @@ export default class SlamCast extends CooldownGCD {
     if (!this.useWhen.canUse) return false
     if (this.slam.isCasting) return false
     if (!super.canUse) return false
+
+    if (this.canSpam) return true // Spam bypass
+
     if (!this.player.rage.has(this.useWhen.rage || this.slam.cost)) return false
     if (!this.player.checkBtCd(this.useWhen.btCooldown || 0)) return false
-
     const lessThanSwing = this.swingTimer.timeLeft + this.timeLeft < this.useWhen.swing
     if (!this.canSpam && lessThanSwing) return false
 
