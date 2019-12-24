@@ -304,7 +304,7 @@
             class="progress"
             :style="{ transform: `translateX(${-100 + message.progress}%)` }"/>
           <span class="u-pos-relative">
-            {{ isLoading ? `${message.progress}%` : 'Simulate!' }}
+            {{ isLoading && message.progress ? `${message.progress}%` : 'Simulate!' }}
           </span>
         </button>
 
@@ -317,7 +317,6 @@
 </template>
 
 <script>
-import Worker from '@/scripts/sim.worker'
 import Report from '@/components/Report'
 import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
@@ -334,13 +333,13 @@ export default {
     const defaultOh = weaponsData['1H Axes'].find(w => w.title === 'Frostbite')
 
     return {
-      worker: new Worker(),
+      worker: new Worker('@/scripts/sim.worker', { type: 'module' }),
       result: {},
       message: {},
       isLoading: false,
       formData: {
         duration: 90,
-        iterations: process.env.NODE_ENV === 'production' ? 50000 : 500,
+        iterations: process.env.NODE_ENV === 'production' ? 10000 : 500,
         latency: {
           active: false,
           min: 60,
@@ -630,16 +629,18 @@ export default {
     submit() {
       if (this.isLoading) return
 
+      this.worker.onerror = (e) => this.message = `Error: ${e}`
+      this.worker.postMessage(JSON.stringify(this.cfg))
       this.worker.onmessage = (e) => {
-        this.message = e.data
+        if (!e.data) return
+        this.message = JSON.parse(e.data)
         if (this.message.finishedIn) {
-          this.result = e.data
+          this.result = this.message
           this.isLoading = false
           this.$emit('report', this.result)
         }
       }
-      this.worker.onerror = (e) => this.message = `Error: ${e}`
-      this.worker.postMessage(this.cfg)
+
       this.isLoading = true
       localStorage.formData = JSON.stringify(this.formData)
     },

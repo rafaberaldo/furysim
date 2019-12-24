@@ -39,13 +39,11 @@
 
       <strong>What's the tech used?</strong>
       <p>
-        Javascript mainly —
-        Default stack from
+        The simulator itself runs in pure Javascript (Web Worker).
+        Interface is the default stack from
         <a href="https://cli.vuejs.org/"
           target="_blank"
-          rel="noopener">Vue CLI</a> plus a
-        <a href="https://github.com/webpack-contrib/worker-loader">worker-loader</a>
-        to use Web Workers within Vuejs/Webpack.
+          rel="noopener">Vue CLI</a>.
         CSS lib is
         <a href="https://acahir.github.io/Barebones/"
           target="_blank"

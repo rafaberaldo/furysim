@@ -76,12 +76,9 @@ function run(cfg) {
     }
 
     const progress = m.floor(i / cfg.iterations * 100)
-    postMessage({ progress })
+    postMessage(JSON.stringify({ progress }))
 
     if (!isLastLoop) continue
-
-    player.addTimelineToLog()
-
     if (process.env.NODE_ENV === 'production') continue
 
     console.log(cfg)
@@ -91,17 +88,17 @@ function run(cfg) {
 
   const endTime = new Date().getTime()
   const finishedIn = ((endTime - startTime) / 1000)
-  postMessage({
+  postMessage(JSON.stringify({
     progress: 100,
     finishedIn,
     iterations: cfg.iterations,
     dps: log.dps,
     report: log.report,
     lastTimeline: log.timeline
-  })
+  }))
 }
 
 onmessage = function (e) {
-  const cfg = e.data
-  run(cfg)
+  if (!e.data) return
+  run(JSON.parse(e.data))
 }

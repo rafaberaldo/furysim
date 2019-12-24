@@ -21,10 +21,9 @@ import { Cooldown } from      '@/scripts/classes/Cooldown'
 import { m, parseTalents } from '@/scripts/helpers'
 
 export default class Player {
-  constructor(cfg, log, timelineToConsole = false) {
-    this.timeline = []
+  constructor(cfg, log, logTimeline = false) {
     this.log = log
-    this.timelineToConsole = timelineToConsole
+    this.logTimeline = logTimeline
 
     this._str = cfg.player.str
     this._ap = cfg.player.ap
@@ -161,17 +160,15 @@ export default class Player {
       : true
   }
 
-  addTimelineToLog() {
-    this.log.timeline = this.timeline
-  }
-
   addTimeline(name, type, value = null) {
-    this.timeline.push(!value
+    if (!this.logTimeline) return
+
+    this.log.timeline.push(!value
       ? `${this.time.toFixed(3)}: ${name} ${type} (${this.rage.current} rage / ${this.ap} ap)`
       : `${this.time.toFixed(3)}: ${name} ${type} for ${value} (${this.rage.current} rage / ${this.ap} ap)`
     )
 
-    if (process.env.NODE_ENV === 'production' || !this.timelineToConsole) return
+    if (process.env.NODE_ENV === 'production') return
 
     !value
       ? console.log(this.time, ':', name, type, '(', this.rage.current, 'rage /', this.ap, 'ap )')
