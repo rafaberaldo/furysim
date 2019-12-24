@@ -23,7 +23,7 @@
       </li>
       <li><a role="button" @click="$emit('about')">About</a></li>
     </ul>
-    <p><small>Classic WoW is a trademark of Blizzard Entertainment.</small></p>
+    <p class="small">Classic WoW is a trademark of Blizzard Entertainment.</p>
   </footer>
 </template>
 
@@ -40,15 +40,16 @@ export default {
 <style>
   footer {
     text-align: center;
-    font-size: 1.8rem;
+    margin-bottom: 3rem;
   }
   footer ul {
-    list-style: none;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     grid-gap: 10px;
   }
-  footer ul li {
-    margin-bottom: 0;
+  footer .small {
+    font-size: 0.75rem;
+    color: var(--text-color-softer);
+    margin: 1.5rem 0;
   }
 </style>

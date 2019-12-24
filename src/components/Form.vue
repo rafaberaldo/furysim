@@ -54,18 +54,26 @@
 
       <section class="grid-item">
         <h4>Buffs</h4>
-        <label v-for="item in formGenerator.buffs" :key="item.value">
-          <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
-          <span class="label-body">{{ item.title }}</span>
-        </label>
+        <ul>
+          <li v-for="item in formGenerator.buffs" :key="item.value" class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
+              <span class="label-body">{{ item.title }}</span>
+            </label>
+          </li>
+        </ul>
       </section>
 
       <section class="grid-item">
         <h4>Consumables</h4>
-        <label v-for="item in formGenerator.consumables" :key="item.value">
-          <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
-          <span class="label-body">{{ item.title }}</span>
-        </label>
+        <ul>
+          <li v-for="item in formGenerator.consumables" :key="item.value" class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
+              <span class="label-body">{{ item.title }}</span>
+            </label>
+          </li>
+        </ul>
       </section>
 
       <section class="grid-item">
@@ -90,10 +98,14 @@
           <span class="u-family-title">{{ targetMitigation }}%</span>
         </div>
 
-        <label v-for="item in formGenerator.debuffs" :key="item.value">
-          <input type="checkbox" v-model="formData.target.debuffs" :value="item.value">
-          <span class="label-body">{{ item.title }}</span>
-        </label>
+        <ul>
+          <li v-for="item in formGenerator.debuffs" :key="item.value" class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.target.debuffs" :value="item.value">
+              <span class="label-body">{{ item.title }}</span>
+            </label>
+          </li>
+        </ul>
       </section>
     </div>
 
@@ -114,60 +126,82 @@
       <section class="grid-item" style="grid-column: span 2">
         <h4>Rotation</h4>
         <p>Skills follow this priority order (can't change for now)</p>
-        <label v-if="hasDeathWish">
-          <input class="disabled" type="checkbox" checked disabled>
-          <span class="label-body u-weight-bold">Death Wish </span>
-        </label>
-        <div class="ident">
-          <label>
-            <input type="checkbox" v-model="formData.player.deathWish.last30">
-            <span class="label-body">In the last 30 secs of fight</span>
+        <div class="u-flex">
+          <label v-if="hasDeathWish">
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">Death Wish </span>
           </label>
         </div>
-
-        <label>
-          <input class="disabled" type="checkbox" checked disabled>
-          <span class="label-body u-weight-bold">Bloodrage</span>
-        </label>
         <div class="ident">
-          <div class="horizontal">
-            <span>If <code>rage &lt;=</code></span>
-            <input type="number" min="0" max="100" v-model.number="formData.player.bloodrage.rage">
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.deathWish.last30">
+              <span class="label-body">In the last 30 secs of fight</span>
+            </label>
           </div>
         </div>
 
-        <label v-if="hasMrp">
-          <input class="disabled" type="checkbox" checked disabled>
-          <span class="label-body u-weight-bold">MRP</span>
-        </label>
+        <div class="u-flex">
+          <label>
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">Bloodrage</span>
+          </label>
+        </div>
+        <div class="ident">
+          <div class="horizontal">
+            If
+            <code>rage &lt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.bloodrage.rage">
+            </code>
+          </div>
+        </div>
+
+        <div class="u-flex">
+          <label v-if="hasMrp">
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">MRP</span>
+          </label>
+        </div>
         <div v-if="hasMrp" class="ident">
           <div class="horizontal">
-            <span>If <code>rage &lt;=</code></span>
-            <input type="number" min="0" max="100" v-model.number="formData.player.mrp.rage">
+            If
+            <code>rage &lt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.mrp.rage">
+            </code>
           </div>
-          <label>
-            <input type="checkbox" v-model="formData.player.mrp.waitDeathWish">
-            <span class="label-body">Wait for Death Wish</span>
-          </label>
-          <label>
-            <input type="checkbox" v-model="formData.player.mrp.waitCrusader">
-            <span class="label-body">Wait for Crusader Proc</span>
-          </label>
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.mrp.waitDeathWish">
+              <span class="label-body">Wait for Death Wish</span>
+            </label>
+          </div>
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.mrp.waitCrusader">
+              <span class="label-body">Wait for Crusader Proc</span>
+            </label>
+          </div>
         </div>
 
-        <label v-if="hasBloodFury">
-          <input class="disabled" type="checkbox" checked disabled>
-          <span class="label-body u-weight-bold">Blood Fury</span>
-        </label>
+        <div class="u-flex">
+          <label v-if="hasBloodFury">
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">Blood Fury</span>
+          </label>
+        </div>
         <div v-if="hasBloodFury" class="ident">
-          <label>
-            <input type="checkbox" v-model="formData.player.bloodFury.waitDeathWish">
-            <span class="label-body">Wait for Death Wish</span>
-          </label>
-          <label>
-            <input type="checkbox" v-model="formData.player.bloodFury.waitCrusader">
-            <span class="label-body">Wait for Crusader Proc</span>
-          </label>
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.bloodFury.waitDeathWish">
+              <span class="label-body">Wait for Death Wish</span>
+            </label>
+          </div>
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.bloodFury.waitCrusader">
+              <span class="label-body">Wait for Crusader Proc</span>
+            </label>
+          </div>
         </div>
 
         <label>
@@ -176,83 +210,118 @@
         </label>
         <div class="ident">
           <div class="horizontal">
-            <span>Execute Phase lasts <code>{{ executeDuration }} secs =</code></span>
-            <input type="number" required min="0" max="100" step="0.5" v-model.number="formData.player.execute.percent">
-            <span>%</span>
+            Execute Phase lasts
+            <code>{{ executeDuration }} secs =
+              <input type="number" required min="0" max="100" step="0.5" v-model.number="formData.player.execute.percent">
+              %
+            </code>
           </div>
-          <label>
-            <input type="checkbox" v-model="formData.player.execute.bloodthirst.priority">
-            <span class="label-body">Use Bloodthirst on Execute Phase if <code>AP >=</code></span>
-            <input type="number" min="0" max="5000" v-model.number="formData.player.execute.bloodthirst.ap">
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.execute.bloodthirst.priority">
+              <span class="label-body">Use Bloodthirst on Execute Phase if
+                <code>AP >=
+                  <input type="number" min="0" max="5000" v-model.number="formData.player.execute.bloodthirst.ap">
+                </code>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="u-flex">
+          <label v-if="hasBloodthirst">
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">Bloodthirst whenever available</span>
           </label>
         </div>
 
-        <label v-if="hasBloodthirst">
-          <input class="disabled" type="checkbox" checked disabled>
-          <span class="label-body u-weight-bold">Bloodthirst whenever available</span>
-        </label>
-
-        <label>
-          <input type="checkbox" v-model="formData.player.slam.canUse">
-          <span class="label-body u-weight-bold">AutoSlam</span>
-        </label>
-        <div class="ident" :class="{ 'disabled': !formData.player.slam.canUse }">
+        <div class="u-flex">
+          <label>
+            <input type="checkbox" v-model="formData.player.slam.canUse">
+            <span class="label-body u-weight-bold">AutoSlam</span>
+          </label>
+        </div>
+        <div v-if="formData.player.slam.canUse" class="ident">
           <div class="horizontal">
-            <span>If <code>rage &gt;=</code></span>
-            <input type="number" min="0" max="100" v-model.number="formData.player.slam.rage">
+            If
+            <code>rage &gt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.slam.rage">
+            </code>
           </div>
           <div class="horizontal">
-            <span>If Bloodthirst <code>cooldown left &gt;=</code></span>
-            <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.slam.btCooldown">
+            If Bloodthirst
+            <code>cooldown left &gt;=
+              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.slam.btCooldown">
+            </code>
           </div>
           <div class="horizontal">
-            <span>If swing <code>time left &lt;= {{ slamCastTime }}</code> and <code>&gt;=</code></span>
-            <input type="number" min="0" max="4" step="0.1" v-model.number="formData.player.slam.swing">
+            If swing <code>time left &lt;= {{ slamCastTime }}</code> and
+            <code>&gt;=
+              <input type="number" min="0" max="4" step="0.1" v-model.number="formData.player.slam.swing">
+            </code>
           </div>
           <div class="horizontal">
-            <span>Spam Slam if <code>rage &gt;=</code></span>
-            <input type="number" min="0" max="100" v-model.number="formData.player.slam.spamRage">
+            Spam Slam if
+            <code>rage &gt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.slam.spamRage">
+            </code>
           </div>
         </div>
 
-        <label>
-          <input type="checkbox" v-model="formData.player.whirlwind.canUse">
-          <span class="label-body u-weight-bold">Whirlwind</span>
-        </label>
-        <div class="ident" :class="{ 'disabled': !formData.player.whirlwind.canUse }">
+        <div class="u-flex">
+          <label>
+            <input type="checkbox" v-model="formData.player.whirlwind.canUse">
+            <span class="label-body u-weight-bold">Whirlwind</span>
+          </label>
+        </div>
+        <div v-if="formData.player.whirlwind.canUse" class="ident">
           <div class="horizontal">
-            <span>If <code>rage &gt;=</code></span>
-            <input type="number" min="0" max="100" v-model.number="formData.player.whirlwind.rage">
+            If
+            <code>rage &gt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.whirlwind.rage">
+            </code>
           </div>
           <div class="horizontal">
-            <span>If Bloodthirst and AutoSlam <code>cooldown left &gt;=</code></span>
-            <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.whirlwind.btSlamCooldown">
+            If Bloodthirst and AutoSlam
+            <code>cooldown left &gt;=
+              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.whirlwind.btSlamCooldown">
+            </code>
           </div>
         </div>
 
-        <label>
-          <input type="checkbox" v-model="formData.player.heroicStrike.canUse">
-          <span class="label-body u-weight-bold">Heroic Strike</span>
-        </label>
-        <div class="ident" :class="{ 'disabled': !formData.player.heroicStrike.canUse }">
+        <div class="u-flex">
+          <label>
+            <input type="checkbox" v-model="formData.player.heroicStrike.canUse">
+            <span class="label-body u-weight-bold">Heroic Strike</span>
+          </label>
+        </div>
+        <div v-if="formData.player.heroicStrike.canUse" class="ident">
           <div class="horizontal">
-            <span>If <code>rage &gt;=</code></span>
-            <input type="number" min="0" max="100" v-model.number="formData.player.heroicStrike.rage">
+            If
+            <code>rage &gt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.heroicStrike.rage">
+            </code>
           </div>
         </div>
 
-        <label>
-          <input type="checkbox" v-model="formData.player.hamstring.canUse">
-          <span class="label-body u-weight-bold">Hamstring</span>
-        </label>
-        <div class="ident" :class="{ 'disabled': !formData.player.hamstring.canUse }">
+        <div class="u-flex">
+          <label>
+            <input type="checkbox" v-model="formData.player.hamstring.canUse">
+            <span class="label-body u-weight-bold">Hamstring</span>
+          </label>
+        </div>
+        <div v-if="formData.player.hamstring.canUse" class="ident">
           <div class="horizontal">
-            <span>If <code>rage &gt;=</code></span>
-            <input type="number" min="0" max="100" v-model.number="formData.player.hamstring.rage">
+            If
+            <code>rage &gt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.hamstring.rage">
+            </code>
           </div>
           <div class="horizontal">
-            <span>If Bloodthirst, WW and AutoSlam <code>cooldown left &gt;=</code></span>
-            <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.hamstring.btWwSlamCooldown">
+            If Bloodthirst, WW and AutoSlam
+            <code>cooldown left &gt;=
+              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.hamstring.btWwSlamCooldown">
+            </code>
           </div>
         </div>
       </section>
@@ -280,6 +349,7 @@
         </div>
 
         <h4>Simulation</h4>
+        <p><small><a role="button" @click="reset">Reset everything to default</a></small></p>
         <div class="horizontal">
           <label>Duration of Fight (secs)</label>
           <input type="number" required min="10" max="3600" v-model.number="formData.duration">
@@ -305,8 +375,6 @@
             {{ isLoading && message.progress ? `${Math.round(message.progress)}%` : 'Simulate!' }}
           </span>
         </button>
-
-        <small><a role="button" @click="reset">Reset everything to default</a></small>
 
         <Report v-if="result.finishedIn" :data="result" simple/>
       </section>
@@ -663,19 +731,17 @@ export default {
   .horizontal {
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
   }
   .horizontal label {
     margin-bottom: 0;
-    margin-right: 10px;
+    margin-right: 0.5rem;
     flex-basis: 0;
     flex-grow: 1;
     flex-shrink: 0;
   }
   .horizontal .title { margin: 0; }
-  .horizontal input[type="number"] + input[type="number"] {
-    margin-left: 5px;
-  }
+  .horizontal input + input { margin-left: 0.25rem; }
 
   button .progress {
     position: absolute;
@@ -698,5 +764,23 @@ export default {
   }
   .ident {
     margin-left: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .ident code {
+    display: inline-flex;
+    align-items: center;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin: 0 0.5rem;
+  }
+  .ident input[type="number"] {
+    height: auto;
+    padding: 0;
+    text-align: center;
+    max-width: 2.75rem;
+    border-color: transparent;
+    background: transparent;
+    font-size: 0.9rem;
+    color: var(--link-color);
   }
 </style>

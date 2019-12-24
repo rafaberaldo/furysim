@@ -157,13 +157,12 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    height: 2.5rem;
+    height: 1.5rem;
     overflow: hidden;
-    width: 100%;
     position: relative;
     border: var(--border-color);
     background: var(--background-color-softer);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
   }
   .progress-bar.small {
     height: 2px;
@@ -181,7 +180,7 @@ export default {
   }
   .progress-bar .label {
     position: relative;
-    margin-left: 0.5rem;
+    margin-right: 0.25rem;
     font-weight: 600;
   }
 
@@ -189,7 +188,7 @@ export default {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-gap: 10px;
-    margin-bottom: 3.5rem;
+    margin-bottom: 2.5rem;
   }
   .report-grid .label {
     display: block;
@@ -197,7 +196,7 @@ export default {
   }
   .report-grid .u-family-title {
     font-weight: 300;
-    font-size: 2rem;
+    font-size: 1.35rem;
   }
   .report-section {
     max-width: 580px;
