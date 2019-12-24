@@ -44,9 +44,9 @@ export default {
   }
   footer ul {
     list-style: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-gap: 10px;
   }
   footer ul li {
     margin-bottom: 0;

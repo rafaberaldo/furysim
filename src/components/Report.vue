@@ -189,7 +189,7 @@ export default {
   .report-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
+    grid-gap: 10px;
     margin-bottom: 3.5rem;
   }
   .report-grid .label {
