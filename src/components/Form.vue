@@ -300,11 +300,9 @@
         </div>
 
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
-          <span
-            class="progress"
-            :style="{ transform: `translateX(${-100 + message.progress}%)` }"/>
+          <span class="progress" :style="{ width: `${message.progress}%` }"/>
           <span class="u-pos-relative">
-            {{ isLoading && message.progress ? `${message.progress}%` : 'Simulate!' }}
+            {{ isLoading && message.progress ? `${Math.round(message.progress)}%` : 'Simulate!' }}
           </span>
         </button>
 
@@ -631,11 +629,12 @@ export default {
 
       this.worker.onerror = (e) => this.message = `Error: ${e}`
       this.worker.postMessage(JSON.stringify(this.cfg))
-      this.worker.onmessage = (e) => {
-        if (!e.data) return
-        this.message = JSON.parse(e.data)
+      this.worker.onmessage = ({ data }) => {
+        this.message = data
         if (this.message.finishedIn) {
-          this.result = this.message
+          this.result = data
+          this.result.report = JSON.parse(data.report)
+          this.result.timeline = JSON.parse(data.timeline)
           this.isLoading = false
           this.$emit('report', this.result)
         }

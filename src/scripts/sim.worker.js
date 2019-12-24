@@ -75,8 +75,8 @@ function run(cfg) {
       if (nextEvent.use) nextEvent.use()
     }
 
-    const progress = m.floor(i / cfg.iterations * 100)
-    postMessage(JSON.stringify({ progress }))
+    const progress = Number((i / cfg.iterations * 100).toFixed(1))
+    postMessage({ progress })
 
     if (!isLastLoop) continue
     if (process.env.NODE_ENV === 'production') continue
@@ -88,17 +88,16 @@ function run(cfg) {
 
   const endTime = new Date().getTime()
   const finishedIn = ((endTime - startTime) / 1000)
-  postMessage(JSON.stringify({
+  postMessage({
     progress: 100,
     finishedIn,
     iterations: cfg.iterations,
     dps: log.dps,
-    report: log.report,
-    lastTimeline: log.timeline
-  }))
+    report: JSON.stringify(log.report),
+    timeline: JSON.stringify(log.timeline)
+  })
 }
 
-onmessage = function (e) {
-  if (!e.data) return
-  run(JSON.parse(e.data))
+onmessage = function ({ data }) {
+  run(JSON.parse(data))
 }

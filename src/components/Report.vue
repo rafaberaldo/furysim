@@ -128,7 +128,7 @@ export default {
     },
     timeline() {
       let timeline = ''
-      this.data.lastTimeline.forEach(line => timeline += `${line}\r\n`)
+      this.data.timeline.forEach(line => timeline += `${line}\r\n`)
       return timeline
     }
   },
@@ -176,7 +176,6 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    transition: transform 80ms ease;
     pointer-events: none;
     background: var(--link-color);
   }
