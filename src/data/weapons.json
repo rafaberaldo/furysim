@@ -36,7 +36,7 @@
   ],
 
   "2H": [
-    { "title": "Bonereaver's Edge", "min": 206, "max": 310, "speed": 3.4, "type": "TWO_HANDED" },
+    { "title": "Bonereaver's Edge (No Proc)", "min": 206, "max": 310, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "Spinal Reaper", "min": 203, "max": 305, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "Obsidian Edged Blade", "min": 176, "max": 264, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "The Unstoppable Force", "min": 175, "max": 292, "speed": 3.8, "type": "TWO_HANDED" },

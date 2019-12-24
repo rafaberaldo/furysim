@@ -92,12 +92,12 @@ export default {
     skills() {
       return this.data.report
         .filter(s => !s.procOrAura)
-        .sort((a, b) => b.portion > a.portion)
+        .sort((a, b) => b.portion > a.portion ? 1 : -1)
     },
     procs() {
       return this.data.report
         .filter(s => s.procOrAura)
-        .sort((a, b) => b.uptime > a.uptime)
+        .sort((a, b) => b.uptime > a.uptime ? 1 : -1)
     },
     flurry() {
       const flurry = this.data.report.filter(s => s.title === 'Flurry')
