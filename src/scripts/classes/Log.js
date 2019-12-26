@@ -13,21 +13,20 @@ export default class Log {
   // Getters
 
   get dps() {
-    return (this.totalDmg / this.totalDuration).toFixed(1)
+    return Number((this.totalDmg / this.totalDuration).toFixed(1))
   }
 
   get totalDmg() {
-    let dmg = 0
-    Object.values(this.events).forEach((obj) => dmg += obj.dmg)
-    return dmg
+    return Object.values(this.events).reduce((s, e) => s += e.dmg, 0)
   }
 
   get report() {
     const toPercent = (count, total) => Number((count / total * 100).toFixed(1))
-    const report = []
-    Object.entries(this.events).forEach(([key, obj]) => {
+    const report = {}
+    Object.keys(this.events).forEach(key => {
+      const obj = this.events[key]
       if (!obj.count) return
-      const add = !obj.isProc ? {
+      report[key] = !obj.isProc ? {
         title: key,
         procOrAura: false,
         portion: toPercent(obj.dmg, this.totalDmg),
@@ -45,9 +44,7 @@ export default class Log {
         uptime: toPercent(obj.uptime, this.totalDuration),
         ppm: Number((obj.count / (this.totalDuration / 60)).toFixed(1))
       }
-      if (key === 'Mainhand') add.chainedPerFight = Number((obj.chain / this.iterations).toFixed(2))
-
-      report.push(add)
+      if (key === 'Mainhand') report[key].chainedPerFight = Number((obj.chain / this.iterations).toFixed(2))
     })
     return report
   }

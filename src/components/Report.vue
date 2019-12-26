@@ -9,13 +9,21 @@
       <span class="u-family-title">{{ data.finishedIn }} secs</span>
     </div>
 
-    <div v-if="flurry" class="progress-bar">
+    <div v-for="item in ep" :key="item.name" class="progress-bar">
       <span
         class="progress"
-        :style="{ width: `${flurry.uptime}%` }"/>
-      <span class="label">{{ flurry.title }} Uptime ({{ flurry.uptime }}%)</span>
+        :style="{ width: `${item.value / 50 * 100 }%` }"/>
+      <span class="label">{{ item.name }}: {{ item.value }}</span>
     </div>
-    <hr style="margin: 1rem 0">
+
+    <hr v-if="ep" style="margin: 1rem 0">
+
+    <div v-if="data.report.Flurry" class="progress-bar">
+      <span
+        class="progress"
+        :style="{ width: `${data.report.Flurry.uptime}%` }"/>
+      <span class="label">Flurry Uptime ({{ data.report.Flurry.uptime }}%)</span>
+    </div>
     <div v-for="item in skills" :key="item.title" class="progress-bar">
       <span
         class="progress"
@@ -32,7 +40,21 @@
   </div>
 
   <div v-else id="report">
+    <section v-if="ep" class="report-section">
+      <h2>EP values</h2>
+      <div class="report-grid">
+        <div v-for="item in ep" :key="item.name">
+          <span class="label">{{ item.name }}</span>
+          <span class="u-family-title">{{ item.value }}</span>
+          <div class="progress-bar small">
+            <span class="progress" :style="{ width: `${item.value / 50 * 100 }%` }"/>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <hr>
+
     <section class="report-section">
       <h2>Skills / Swings</h2>
       <template v-for="item in skills">
@@ -89,23 +111,21 @@ export default {
     simple: Boolean
   },
   computed: {
+    ep() {
+      if (!this.data.epValues) return
+
+      return [...this.data.epValues]
+        .sort((a, b) => b.value > a.value ? 1 : -1)
+    },
     skills() {
-      return this.data.report
+      return Object.values(this.data.report)
         .filter(s => !s.procOrAura)
         .sort((a, b) => b.portion > a.portion ? 1 : -1)
     },
     procs() {
-      return this.data.report
+      return Object.values(this.data.report)
         .filter(s => s.procOrAura)
         .sort((a, b) => b.uptime > a.uptime ? 1 : -1)
-    },
-    flurry() {
-      const flurry = this.data.report.filter(s => s.title === 'Flurry')
-      return flurry && flurry[0]
-    },
-    heroicStrike() {
-      const hs = this.data.report.filter(s => s.title === 'Heroic Strike')
-      return hs && hs[0]
     },
     skillKeys() {
       return [
@@ -142,8 +162,9 @@ export default {
     },
     getReportText(title, key, item, suffix) {
       if (key === 'dmgPerHit') return item[key]
-      if (title === 'Mainhand' && key === 'countPerFight' && this.heroicStrike) {
-        return `${item[key].toFixed(1)}${suffix} (+${this.heroicStrike.countPerFight})`
+      const hs = this.data.report.heroicStrike
+      if (title === 'Mainhand' && key === 'countPerFight' && hs) {
+        return `${item[key].toFixed(1)}${suffix} (+${hs.countPerFight})`
       }
 
       return `${item[key].toFixed(1)}${suffix}`

@@ -356,18 +356,23 @@
         </div>
         <div class="horizontal">
           <label>Total Iterations</label>
-          <input type="number" required min="1" max="100000" v-model.number="formData.iterations">
+          <input type="number" required :min="isCalcEP && isProd ? 10000 : 1" max="100000" v-model.number="formData.iterations">
         </div>
 
         <label>
           <input type="checkbox" v-model="formData.latency.active">
           <span class="label-body u-weight-bold">Add latency to every action</span>
         </label>
-        <div class="horizontal u-block" :class="{ 'disabled': !formData.latency.active }">
+        <div class="horizontal" :class="{ 'disabled': !formData.latency.active }">
           <label>Min/Max</label>
           <input type="number" :required="formData.latency.active" :disabled="!formData.latency.active" min="0" max="500" v-model.number="formData.latency.min">
           <input type="number" :required="formData.latency.active" :disabled="!formData.latency.active" min="0" max="500" v-model.number="formData.latency.max">
         </div>
+
+        <label class="u-block">
+          <input type="checkbox" v-model="isCalcEP">
+          <span class="label-body u-weight-bold">Calculate EP values (6x slower)</span>
+        </label>
 
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
           <span class="progress" :style="{ width: `${message.progress}%` }"/>
@@ -376,7 +381,7 @@
           </span>
         </button>
 
-        <Report v-if="result.finishedIn" :data="result" simple/>
+        <Report v-if="result.finishedIn" :data="result" :ep="epValues" simple/>
       </section>
     </div>
   </form>
@@ -386,7 +391,7 @@
 import Report from '@/components/Report'
 import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
-import { m, parseTalents } from '@/scripts/helpers'
+import { parseTalents } from '@/scripts/helpers'
 
 export default {
   name: 'app',
@@ -402,12 +407,15 @@ export default {
       worker: new Worker('@/scripts/sim.worker', { type: 'module' }),
       result: {},
       message: {},
+      epValues: [],
       isLoading: false,
+      isCalcEP: false,
+      isProd: process.env.NODE_ENV === 'production',
       formData: {
-        duration: 90,
+        duration: 75,
         iterations: process.env.NODE_ENV === 'production' ? 10000 : 500,
         latency: {
-          active: false,
+          active: true,
           min: 60,
           max: 200
         },
@@ -422,8 +430,8 @@ export default {
           startRage: 0,
           talents: 'https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051',
           buffs: [
-            'ony', 'dm', 'sf', 'mark', 'bloodFury', 'strTotem', 'wf', 'jujuPower',
-            'roids', 'firewater', 'sunfruit', 'mrp', 'mongoose', 'eleStoneOh'
+            'ony', 'dm', 'sf', 'wcb', 'mark', 'bloodFury', 'strTotem', 'wf', 'jujuPower',
+            'roids', 'jujuMight', 'sunfruit', 'mrp', 'mongoose', 'eleStoneOh'
           ],
           mainhand: {
             canUse: true,
@@ -455,7 +463,7 @@ export default {
           },
           bloodFury: {
             waitCrusader: true,
-            waitDeathWish: true
+            waitDeathWish: false
           },
           deathWish: {
             last30: true
@@ -470,7 +478,7 @@ export default {
             btSlamCooldown: 1
           },
           hamstring: {
-            canUse: true,
+            canUse: false,
             rage: 80,
             btWwSlamCooldown: 1
           },
@@ -493,7 +501,7 @@ export default {
           },
           mrp: {
             rage: 50,
-            waitCrusader: true,
+            waitCrusader: false,
             waitDeathWish: true
           }
         },
@@ -512,7 +520,7 @@ export default {
           { title: 'Rallying Cry (Onyxia Head)', value: 'ony' },
           { title: 'Fengus\' Ferocity (DM AP)', value: 'dm' },
           { title: 'Songflower Serenade', value: 'sf' },
-          { title: 'Warchief\'s Blessing (Rend)', value: 'wcb' },
+          { title: 'Warchief\'s Blessing (WCB/Rend)', value: 'wcb' },
           { title: 'Mark of the Wild', value: 'mark' },
           { title: 'Leader of the Pack', value: 'lotp' },
           { title: 'Trueshot Aura', value: 'trueshot' },
@@ -526,9 +534,9 @@ export default {
         consumables: [
           { title: 'Juju Power', value: 'jujuPower' },
           { title: 'Elixir of Giants', value: 'giants' },
-          { title: 'R.O.I.D.S.', value: 'roids' },
           { title: 'Juju Might', value: 'jujuMight' },
           { title: 'Winterfall Firewater', value: 'firewater' },
+          { title: 'R.O.I.D.S.', value: 'roids' },
           { title: 'Blessed Sunfruit', value: 'sunfruit' },
           { title: 'Mighty Rage Potion (MRP)', value: 'mrp' },
           { title: 'Elixir of the Mongoose', value: 'mongoose' },
@@ -541,54 +549,6 @@ export default {
           { title: 'Curse of Recklessness', value: 'cor' },
           { title: 'Annihilator', value: 'anni' },
         ]
-      }
-    },
-    cfg() {
-      const form = this.formData
-      if (!form.player.mainhand.canUse) return
-
-      form.player.execute.start = form.duration * (1 - form.player.execute.percent / 100)
-      form.player.mainhand.proc.chance = form.player.mainhand.proc.percent / 100
-      form.player.offhand.proc.chance = form.player.offhand.proc.percent / 100
-      form.player.deathWish.timeLeft = form.player.deathWish.last30 ? m.max(0, form.duration - 30) : 0
-
-      return {
-        iterations: form.iterations,
-        duration: form.duration,
-        latency: form.latency,
-        player: {
-          lvl: form.player.lvl,
-          str: this.playerStats.str,
-          ap: this.playerStats.ap,
-          crit: this.playerStats.crit,
-          haste: this.playerStats.haste,
-          hit: form.player.hit,
-          startRage: form.player.startRage,
-          talents: form.player.talents,
-          buffs: {
-            wf: form.player.buffs.indexOf('wf') > -1,
-            improvedWf: form.player.buffs.indexOf('improvedWf') > -1,
-            bok: form.player.buffs.indexOf('bok') > -1,
-            bloodFury: form.player.buffs.indexOf('bloodFury') > -1,
-            mrp: form.player.buffs.indexOf('mrp') > -1
-          },
-          hoj: form.player.hoj,
-          mainhand: form.player.mainhand,
-          offhand: form.player.offhand,
-          bloodFury: form.player.bloodFury,
-          heroicStrike: form.player.heroicStrike,
-          whirlwind: form.player.whirlwind,
-          hamstring: form.player.hamstring,
-          slam: form.player.slam,
-          bloodrage: form.player.bloodrage,
-          mrp: form.player.mrp,
-          execute: form.player.execute,
-          deathWish: form.player.deathWish
-        },
-        target: {
-          lvl: form.target.lvl,
-          armor: this.targetArmor
-        }
       }
     },
     playerStats() {
@@ -665,7 +625,7 @@ export default {
         if (value === 'cor') armor -= 640
         if (value === 'anni') armor -= 600
       })
-      return m.max(0, armor)
+      return Math.max(0, armor)
     },
     targetMitigation() {
       const mitig = this.targetArmor / (this.targetArmor + 400 + 85 * this.formData.player.lvl)
@@ -692,11 +652,62 @@ export default {
     }
   },
   methods: {
+    getCfg(mod = {}) {
+      const form = this.formData
+      if (!form.player.mainhand.canUse) return
+
+      form.player.execute.start = form.duration * (1 - form.player.execute.percent / 100)
+      form.player.mainhand.proc.chance = form.player.mainhand.proc.percent / 100
+      form.player.offhand.proc.chance = form.player.offhand.proc.percent / 100
+      form.player.deathWish.timeLeft = form.player.deathWish.last30 ? Math.max(0, form.duration - 30) : 0
+
+      return {
+        iterations: form.iterations,
+        duration: form.duration,
+        latency: form.latency,
+        player: {
+          lvl: form.player.lvl,
+          str: this.playerStats.str + (mod.str ? mod.str : 0),
+          ap: this.playerStats.ap + (mod.ap ? mod.ap : 0) + (mod.str ? mod.str * 2 : 0),
+          crit: this.playerStats.crit + (mod.crit ? mod.crit : 0),
+          haste: this.playerStats.haste + (mod.haste ? mod.haste : 0),
+          hit: form.player.hit + (mod.hit ? mod.hit : 0),
+          startRage: form.player.startRage,
+          talents: form.player.talents,
+          buffs: {
+            wf: form.player.buffs.indexOf('wf') > -1,
+            improvedWf: form.player.buffs.indexOf('improvedWf') > -1,
+            bok: form.player.buffs.indexOf('bok') > -1,
+            bloodFury: form.player.buffs.indexOf('bloodFury') > -1,
+            mrp: form.player.buffs.indexOf('mrp') > -1
+          },
+          hoj: form.player.hoj,
+          mainhand: form.player.mainhand,
+          offhand: form.player.offhand,
+          bloodFury: form.player.bloodFury,
+          heroicStrike: form.player.heroicStrike,
+          whirlwind: form.player.whirlwind,
+          hamstring: form.player.hamstring,
+          slam: form.player.slam,
+          bloodrage: form.player.bloodrage,
+          mrp: form.player.mrp,
+          execute: form.player.execute,
+          deathWish: form.player.deathWish
+        },
+        target: {
+          lvl: form.target.lvl,
+          armor: this.targetArmor
+        }
+      }
+    },
     submit() {
       if (this.isLoading) return
+      if (this.isCalcEP) {
+        this.epWorkerChain()
+        return
+      }
 
-      this.worker.onerror = (e) => this.message = `Error: ${e}`
-      this.worker.postMessage(JSON.stringify(this.cfg))
+      this.worker.postMessage(JSON.stringify(this.getCfg()))
       this.worker.onmessage = ({ data }) => {
         this.message = data
         if (this.message.finishedIn) {
@@ -710,6 +721,66 @@ export default {
 
       this.isLoading = true
       localStorage.formData = JSON.stringify(this.formData)
+    },
+    epWorkerChain() {
+      this.isLoading = true
+
+      let count = 0
+      const chain = {
+        base:  { cfg: this.getCfg() },
+        ap:    { cfg: this.getCfg({ ap: 25 }) },
+        crit:  { cfg: this.getCfg({ crit: 1 }) },
+        hit:   { cfg: this.getCfg({ hit: 1 }) },
+        haste: { cfg: this.getCfg({ haste: 1 }) },
+        str:   { cfg: this.getCfg({ str: 8 }) },
+      }
+      const chainValues = Object.values(chain)
+
+      chainValues.forEach(item => {
+        const worker = new Worker('@/scripts/sim.worker', { type: 'module' })
+
+        worker.postMessage(JSON.stringify(item.cfg))
+        worker.onmessage = ({ data }) => {
+          item.progress = data.progress
+          const sum = chainValues.reduce((s, w) => w.progress ? s += w.progress : 0, 0)
+          this.message = { progress: sum / chainValues.length }
+          if (data.finishedIn) {
+            count++
+            item.result = data
+            item.result.report = JSON.parse(data.report)
+            item.dps = Number(item.result.dps)
+            item.finishedIn = data.finishedIn
+            if (count === chainValues.length) {
+              this.result = chain.base.result
+              this.result.timeline = JSON.parse(this.result.timeline)
+              this.result.finishedIn = chainValues.reduce((s, w) => s += w.finishedIn, 0).toFixed(3)
+              this.result.epValues = this.calculateEp(chain)
+              this.$emit('report', this.result)
+              this.isLoading = false
+            }
+            worker.terminate()
+          }
+        }
+      })
+    },
+    calculateEp(chain) {
+      const base = chain.base
+      const ap = chain.ap
+      const dpsEp = 25 / (ap.dps - base.dps)
+
+      const result = []
+      Object.keys(chain).forEach(key => {
+        if (key === 'base' || key === 'ap') return
+
+        const item = chain[key]
+        const ep = Math.max(0, (item.dps - base.dps) * dpsEp)
+        result.push({
+          name: key === 'str' ? `8 ${key} EP` : `1% ${key} EP`,
+          value: Number(ep.toFixed(2))
+        })
+      })
+
+      return result
     },
     getBaseAp(str) {
       return (this.formData.player.lvl * 3 - 20) + str * 2
@@ -752,6 +823,7 @@ export default {
     background: #000;
     opacity: 0.35;
     pointer-events: none;
+    width: 0;
   }
 
   .disabled {

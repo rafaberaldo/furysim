@@ -168,7 +168,9 @@ export default class Player {
       : `${this.time.toFixed(3)}: ${name} ${type} for ${value} (${this.rage.current} rage / ${this.ap} ap)`
     )
 
-    if (process.env.NODE_ENV === 'production') return
+    // eslint-disable-next-line no-constant-condition
+    if (true) return
+    // if (process.env.NODE_ENV === 'production') return
 
     !value
       ? console.log(this.time, ':', name, type, '(', this.rage.current, 'rage /', this.ap, 'ap )')
