@@ -1,11 +1,16 @@
+import EventEmitter from 'events'
+
 import { m, ppmToChance } from '@/scripts/helpers'
 
-export default class Aura {
-  constructor(name, duration, ppm, speed, player) {
+export default class Aura extends EventEmitter {
+  constructor(name, duration, ppmOrChance, player) {
+    super()
     this._buffDurationLeft = 0
     this._buffDuration = duration
     this.name = name
-    this.chance = ppmToChance(ppm, speed)
+    this.chance = ppmOrChance.ppm
+      ? ppmToChance(ppmOrChance.ppm, ppmOrChance.speed)
+      : ppmOrChance.chance
     this.log = player.log.set(name, true)
 
     this.player = player
@@ -26,12 +31,14 @@ export default class Aura {
     this.log.uptime += m.min(secs, this._buffDurationLeft)
 
     if (this.isActive) return
+    this.emit('fade')
     this.player.addTimeline(this.name, 'BUFF_FADED')
   }
 
   apply() {
     this._buffDurationLeft = this._buffDuration
     this.log.count++
+    this.emit('proc', this.isActive)
     this.player.addTimeline(this.name, 'BUFF_APPLIED', this._buffDuration)
   }
 

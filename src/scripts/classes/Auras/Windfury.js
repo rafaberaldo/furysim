@@ -5,11 +5,10 @@ import { m } from '@/scripts/helpers'
 
 export default class Windfury extends Aura {
   constructor(player) {
-    super('Windfury AP', 1.5, null, null, player)
+    super('Windfury AP', 1.5, { chance: 0.2 }, player)
     this.name = 'Windfury AP'
     this.charges = 2
     this.chargesLeft = 0
-    this.chance = 0.2
 
     this.cooldown = new Cooldown(this.name, 0.1, 0)
 

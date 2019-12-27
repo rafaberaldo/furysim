@@ -444,7 +444,8 @@ export default {
             proc: {
               type: defaultMh.proc &&  defaultMh.proc.type,
               percent: defaultMh.proc &&  defaultMh.proc.percent,
-              amount: defaultMh.proc &&  defaultMh.proc.amount
+              amount: defaultMh.proc &&  defaultMh.proc.amount,
+              duration: defaultMh.proc &&  defaultMh.proc.duration
             }
           },
           offhand: {
@@ -458,7 +459,8 @@ export default {
             proc: {
               type: defaultOh.proc &&  defaultOh.proc.type,
               percent: defaultOh.proc &&  defaultOh.proc.percent,
-              amount: defaultOh.proc &&  defaultOh.proc.amount
+              amount: defaultOh.proc &&  defaultOh.proc.amount,
+              duration: defaultOh.proc &&  defaultOh.proc.duration
             }
           },
           bloodFury: {
@@ -787,6 +789,9 @@ export default {
     },
     reset() {
       Object.assign(this.$data, this.$options.data.apply(this))
+      this.$children.forEach(child => {
+        Object.assign(child.$data, child.$options.data.apply(child))
+      })
       this.$emit('report', this.result)
     }
   },

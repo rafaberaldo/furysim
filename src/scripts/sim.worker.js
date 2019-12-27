@@ -8,7 +8,6 @@ import { m, getRandom } from '@/scripts/helpers'
 function run(cfg) {
   const startTime = new Date().getTime()
   const log = new Log(cfg.duration, cfg.iterations)
-  const exists = (e) => !!e
 
   for (let i = 0; i < cfg.iterations; i++) {
     const isLastLoop = i === cfg.iterations - 1
@@ -34,14 +33,7 @@ function run(cfg) {
 
       player.bloodrage.periodic,
       player.angerManagement
-    ].filter(exists)
-
-    const otherCooldowns = [
-      player.gcd,
-      player.flurry,
-      player.windfury,
-      player.hoj
-    ].filter(exists)
+    ].filter(e => !!e)
 
     let time = 0
     while (time < cfg.duration) {
@@ -62,11 +54,12 @@ function run(cfg) {
       player.time = time
 
       // Tick cooldowns for next event
-      otherCooldowns.forEach((e) => e.tick(secs))
       events.forEach((e) => e.tick(secs))
+      player.tick(secs)
 
       // Some requirements for skills changes after advacing time
       if (!nextEvent.canUse) continue
+      if (nextEvent.timeLeft > 0) continue
 
       if (time > cfg.duration) break
 

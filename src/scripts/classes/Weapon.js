@@ -29,15 +29,24 @@ export default class Weapon {
     this.max = weapon.max
     this.speed = weapon.speed
     switch (weapon.proc.type) {
-      case 'extraAttack':
+      case 'extraAttack': {
         this.proc = new ExtraAttack(
           `${name} Proc`, weapon.proc.chance, weapon.proc.amount, true, player
         )
         break
-        // TODO case 'extraAttack':
+      }
+
+      case 'atkSpeed': {
+        this.proc = new Aura(
+          `${name} Proc`, weapon.proc.duration, { chance: weapon.proc.chance }, player
+        )
+        this.proc.on('proc', (isActive) => isActive && player.increaseAtkSpeed(weapon.proc.amount))
+        this.proc.on('fade', () => player.decreaseAtkSpeed(weapon.proc.amount))
+        break
+      }
     }
     this.enchant = weapon.enchant && new Aura(
-      `Crusader ${this.name}`, 15, 1, this.speed, player
+      `Crusader ${this.name}`, 15, { ppm: 1, speed: this.speed }, player
     )
 
     this.player = player
@@ -45,7 +54,7 @@ export default class Weapon {
     this.windfury = player.windfury
 
     // NC: Initial offhand swing start at 50%
-    const hastedSpeed = this.speed / this.player.haste
+    const hastedSpeed = this.speed / (1 + this.player.haste / 100)
     const swingOffset = this.isOffhand ? hastedSpeed * 0.5 : 0
     this.swingTimer = new AttackSpeed(this.name, hastedSpeed, swingOffset)
   }
@@ -154,6 +163,7 @@ export default class Weapon {
   tick(secs) {
     this.swingTimer.tick(secs)
     this.enchant && this.enchant.tick(secs)
+    this.proc && this.proc.tick && this.proc.tick(secs)
   }
 
   getMissChance(isSwing = true) {

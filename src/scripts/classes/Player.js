@@ -29,7 +29,7 @@ export default class Player {
     this._ap = cfg.player.ap
     this.lvl = cfg.player.lvl
     this.hit = cfg.player.hit
-    this.haste = 1 + cfg.player.haste / 100
+    this.haste = cfg.player.haste
     this.crit = cfg.player.crit
     this.gcd = new Cooldown('GCD', 1.5)
     this.rage = new Rage(this, cfg.player.startRage)
@@ -58,7 +58,7 @@ export default class Player {
     this.skillCritMul = 2 + talents.impale * 0.1
     this.weaponSpecDmgMul = this.isDw ? 1 : (1 + talents.twoHandSpec * 0.01)
     this.offhandDmgMul = 0.5 + talents.dualWieldSpec * 0.025
-    this.flurryHaste = 1 + (talents.flurry && (talents.flurry + 1) * 0.05) || 0
+    this.flurryHaste = talents.flurry ? (talents.flurry + 1) * 5 : 0
     this.angerManagement = talents.angerManagement ? new AngerManagement(this) : null
     this.extraRageChance = talents.unbridledWrath * 0.08
     this.slamCast = 1.5 - talents.improvedSlam * 0.1
@@ -131,6 +131,12 @@ export default class Player {
   }
 
   // Methods
+
+  tick(secs) {
+    this.gcd.tick(secs)
+    this.flurry && this.flurry.tick(secs)
+    this.windfury && this.windfury.tick(secs)
+  }
 
   increaseAtkSpeed(percent) {
     this.mainhand.swingTimer.increaseAtkSpeed(percent)

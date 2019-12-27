@@ -7,14 +7,16 @@ export default class AttackSpeed extends Cooldown {
 
   // Methods
 
+  // "30" for 30%
   increaseAtkSpeed(percent) {
-    this._duration /= percent
-    this._timeLeft /= percent
+    this._duration /= 1 + percent / 100
+    this._timeLeft /= 1 + percent / 100
   }
 
+  // "30" for 30%
   decreaseAtkSpeed(percent) {
-    this._duration *= percent
-    this._timeLeft *= percent
+    this._duration *= 1 + percent / 100
+    this._timeLeft *= 1 + percent / 100
   }
 
   restart() {

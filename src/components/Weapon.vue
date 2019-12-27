@@ -60,7 +60,7 @@
         <select v-model="value.proc.type" :disabled="!value.canUse">
           <option :value="undefined">None</option>
           <option value="extraAttack">Extra Attack</option>
-          <option value="atkSpeed" disabled>Atk. Speed (Soon&trade;)</option>
+          <option value="atkSpeed">Atk. Speed</option>
         </select>
       </div>
       <div v-if="value.proc.type" class="ident">
@@ -69,9 +69,10 @@
           <input
             v-model.number="value.proc.percent"
             type="number"
-            min="0"
+            min="0.01"
             max="20"
             step="0.01"
+            required
             :disabled="!value.canUse">
         </div>
         <div class="horizontal">
@@ -79,8 +80,19 @@
           <input
             v-model.number="value.proc.amount"
             type="number"
-            min="0"
+            min="1"
             max="50"
+            required
+            :disabled="!value.canUse">
+        </div>
+        <div v-if="value.proc.type === 'atkSpeed'" class="horizontal">
+          <label>Proc Duration</label>
+          <input
+            v-model.number="value.proc.duration"
+            type="number"
+            min="1"
+            max="300"
+            required
             :disabled="!value.canUse">
         </div>
       </div>
@@ -151,6 +163,8 @@ export default {
   },
   watch: {
     preset(value) {
+      if (!value) return
+
       this.value.min = value.min
       this.value.max = value.max
       this.value.speed = value.speed
@@ -158,7 +172,8 @@ export default {
       this.value.proc = {
          type: value.proc && value.proc.type,
          percent: value.proc && value.proc.percent,
-         amount: value.proc && value.proc.amount
+         amount: value.proc && value.proc.amount,
+         duration: value.proc && value.proc.duration
       }
     }
   }

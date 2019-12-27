@@ -22,8 +22,8 @@
   ],
 
   "1H Maces": [
-    { "title": "Empyrean Demolisher (No Proc)", "min": 94, "max": 175, "speed": 2.8, "type": "ONE_HANDED",
-      "proc": { "type": null, "percent": 4.85, "amount": 20 }
+    { "title": "Empyrean Demolisher", "min": 94, "max": 175, "speed": 2.8, "type": "ONE_HANDED",
+      "proc": { "type": "atkSpeed", "percent": 4.85, "amount": 20, "duration": 10 }
     },
     { "title": "Ironfoe", "min": 73, "max": 136, "speed": 2.4, "type": "ONE_HANDED",
       "proc": { "type": "extraAttack", "percent": 3.21, "amount": 2 }
@@ -36,7 +36,7 @@
   ],
 
   "2H": [
-    { "title": "Bonereaver's Edge (No Proc)", "min": 206, "max": 310, "speed": 3.4, "type": "TWO_HANDED" },
+    { "title": "Bonereaver's Edge", "min": 206, "max": 310, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "Spinal Reaper", "min": 203, "max": 305, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "Obsidian Edged Blade", "min": 176, "max": 264, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "The Unstoppable Force", "min": 175, "max": 292, "speed": 3.8, "type": "TWO_HANDED" },
