@@ -72,6 +72,11 @@ export default class Skill {
     return this.consts.SKILL_RESULT_HIT
   }
 
+  isResultMiss(result) {
+    [this.consts.SKILL_RESULT_MISS,
+    this.consts.SKILL_RESULT_DODGE].indexOf(result) > -1
+  }
+
   use(isExtra = false) {
     if (!this.canUse) {
       throw new Error(`Trying to use ${this.name} when can't use.`)
@@ -84,14 +89,14 @@ export default class Skill {
 
     if (result === this.consts.SKILL_RESULT_MISS) {
       this.log.miss++
-      this.player.rage.use(m.round(this.cost * this.missRefundMul))
+      this.player.rage.use(this.cost * this.missRefundMul)
       this.player.addTimeline(this.name, result)
       return result
     }
 
     if (result === this.consts.SKILL_RESULT_DODGE) {
       this.log.dodge++
-      this.player.rage.use(m.round(this.cost * this.missRefundMul))
+      this.player.rage.use(this.cost * this.missRefundMul)
       this.player.addTimeline(this.name, result)
       return result
     }

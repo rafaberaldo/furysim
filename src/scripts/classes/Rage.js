@@ -22,7 +22,7 @@ export default class Rage {
   }
 
   gain(value) {
-    this.current = clamp(this.current + value)
+    this.current = clamp(m.round(this.current + value))
   }
 
   use(value) {
@@ -30,7 +30,7 @@ export default class Rage {
       throw new Error(`Trying use ${value} rage while only has ${this.current}`)
     }
 
-    this.current = clamp(this.current - value)
+    this.current = clamp(m.round(this.current - value))
   }
 
   has(value) {

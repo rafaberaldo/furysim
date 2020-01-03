@@ -37,14 +37,10 @@ export default class Slam extends Skill {
     const result = super.use()
     this.isCasting = false
 
-    const resultMiss =
-      [this.consts.SKILL_RESULT_MISS,
-       this.consts.SKILL_RESULT_DODGE].indexOf(result) > -1
-
     // If Autoslam finish before swing timer, swing don't connect
     if (this.swingTimer.timeLeft > 0) this.swingTimer.forceUse()
 
     // NC: if Slam miss, swing also don't connect
-    if (resultMiss) this.swingTimer.forceUse()
+    if (this.isResultMiss(result)) this.swingTimer.forceUse()
   }
 }

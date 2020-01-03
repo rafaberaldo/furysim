@@ -790,6 +790,7 @@ export default {
     reset() {
       Object.assign(this.$data, this.$options.data.apply(this))
       this.$children.forEach(child => {
+        if (!child.$options.data) return
         Object.assign(child.$data, child.$options.data.apply(child))
       })
       this.$emit('report', this.result)

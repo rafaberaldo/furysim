@@ -1,7 +1,5 @@
 import Skill from '@/scripts/classes/Skill'
 
-import { m } from '@/scripts/helpers'
-
 export default class Execute extends Skill {
   constructor(player, useWhen) {
     super('Execute', player.executeCost, 0, true, player, useWhen)
@@ -34,12 +32,9 @@ export default class Execute extends Skill {
 
   use() {
     const result = super.use()
-    const resultMiss =
-      [this.consts.SKILL_RESULT_MISS,
-       this.consts.SKILL_RESULT_DODGE].indexOf(result) > -1
 
-    resultMiss
-      ? this.player.rage.use(m.round(this.player.rage.current * this.extraMissRefundMul))
+    this.isResultMiss(result)
+      ? this.player.rage.use(this.player.rage.current * this.extraMissRefundMul)
       : this.player.rage.current = 0
 
     this.player.addTimeline(this.name, 'RAGE_REMOVAL')

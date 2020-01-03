@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import Flurry from            '@/scripts/classes/Flurry'
 import Rage from              '@/scripts/classes/Rage'
 import Target from            '@/scripts/classes/Target'
@@ -33,6 +32,8 @@ export default class Player {
     this.crit = cfg.player.crit
     this.gcd = new Cooldown('GCD', 1.5)
     this.rage = new Rage(this, cfg.player.startRage)
+    const baseAp = this.getBaseAp(this.lvl, this._str)
+    this.flatAp = this._ap - baseAp
 
     this.target = new Target(cfg.target, this)
 
@@ -43,8 +44,7 @@ export default class Player {
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.player.bloodFury)
 
     this.mainhand = new Weapon('Mainhand', cfg.player.mainhand, this)
-    this.offhand = cfg.player.offhand && cfg.player.offhand.canUse
-      ? new Weapon('Offhand', cfg.player.offhand, this) : null
+    this.offhand = cfg.player.offhand && cfg.player.offhand.canUse && new Weapon('Offhand', cfg.player.offhand, this)
     this.isDw = !!this.offhand
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
 
@@ -56,10 +56,10 @@ export default class Player {
     const talents = parseTalents(cfg.player.talents)
     this.heroicCost = 15 - talents.improvedHS
     this.skillCritMul = 2 + talents.impale * 0.1
-    this.weaponSpecDmgMul = this.isDw ? 1 : (1 + talents.twoHandSpec * 0.01)
+    this.twoHandSpecMul = 1 + talents.twoHandSpec * 0.01
     this.offhandDmgMul = 0.5 + talents.dualWieldSpec * 0.025
     this.flurryHaste = talents.flurry ? (talents.flurry + 1) * 5 : 0
-    this.angerManagement = talents.angerManagement ? new AngerManagement(this) : null
+    this.angerManagement = talents.angerManagement && new AngerManagement(this)
     this.extraRageChance = talents.unbridledWrath * 0.08
     this.slamCast = 1.5 - talents.improvedSlam * 0.1
     this.executeCost = 15 - (talents.impExecute && talents.impExecute * 3 - 1) || 0
@@ -79,7 +79,7 @@ export default class Player {
   // Setters
 
   set time(value) {
-    this._time = Number(value.toFixed(3))
+    this._time = value.toFixed(3)
   }
 
   // Getters
@@ -89,9 +89,11 @@ export default class Player {
   }
 
   get dmgMul() {
-    if (this.deathWish && this.deathWish.isActive) return this.weaponSpecDmgMul * 1.2
+    let dmgMul = this.isDw ? 1 : this.twoHandSpecMul
 
-    return this.weaponSpecDmgMul
+    if (this.deathWish && this.deathWish.isActive) dmgMul *= 1.2
+
+    return dmgMul
   }
 
   get str() {
@@ -108,11 +110,8 @@ export default class Player {
   }
 
   get ap() {
-    const initBaseAp = (this.lvl * 3 - 20) + this._str * 2
-    const initExtraAp = this._ap - initBaseAp
-
-    const baseAp = (this.lvl * 3 - 20) + this.str * 2
-    let ap = baseAp + initExtraAp
+    const baseAp = this.getBaseAp(this.lvl, this.str)
+    let ap = baseAp + this.flatAp
 
     if (this.battleShout.isActive) ap += this.battleShoutApMul * 193
     if (this.bloodFury && this.bloodFury.isActive) ap += baseAp * 0.25
@@ -126,6 +125,7 @@ export default class Player {
       this.offhand && this.offhand.enchant && this.offhand.enchant.isActive
   }
 
+  // UseWhen helper
   get isDeathWishActive() {
     return this.deathWish ? this.deathWish.isActive : true
   }
@@ -138,6 +138,10 @@ export default class Player {
     this.windfury && this.windfury.tick(secs)
   }
 
+  getBaseAp(lvl, str) {
+    return (lvl * 3 - 20) + str * 2
+  }
+
   increaseAtkSpeed(percent) {
     this.mainhand.swingTimer.increaseAtkSpeed(percent)
     this.isDw && this.offhand.swingTimer.increaseAtkSpeed(percent)
@@ -148,21 +152,24 @@ export default class Player {
     this.isDw && this.offhand.swingTimer.decreaseAtkSpeed(percent)
   }
 
-  checkBtCd(min) {
+  // UseWhen helper
+  checkBtCd(secs) {
     return this.bloodthirst
-      ? this.bloodthirst.cooldown.timeLeft >= min
+      ? this.bloodthirst.cooldown.timeLeft >= secs
       : true
   }
 
-  checkWwCd(min) {
+  // UseWhen helper
+  checkWwCd(secs) {
     return this.whirlwind && this.whirlwind.canUse
-      ? this.whirlwind.cooldown.timeLeft >= min
+      ? this.whirlwind.cooldown.timeLeft >= secs
       : true
   }
 
-  checkSlamCd(min) {
+  // UseWhen helper
+  checkSlamCd(secs) {
     return this.slam.cast && this.slam.cast.canUse
-      ? this.slam.cast.timeLeft >= min
+      ? this.slam.cast.timeLeft >= secs
       : true
   }
 
@@ -170,16 +177,8 @@ export default class Player {
     if (!this.logTimeline) return
 
     this.log.timeline.push(!value
-      ? `${this.time.toFixed(3)}: ${name} ${type} (${this.rage.current} rage / ${this.ap} ap)`
-      : `${this.time.toFixed(3)}: ${name} ${type} for ${value} (${this.rage.current} rage / ${this.ap} ap)`
+      ? `${this.time}: ${name} ${type} (${this.rage.current} rage / ${this.ap} ap)`
+      : `${this.time}: ${name} ${type} for ${value} (${this.rage.current} rage / ${this.ap} ap)`
     )
-
-    // eslint-disable-next-line no-constant-condition
-    if (true) return
-    // if (process.env.NODE_ENV === 'production') return
-
-    !value
-      ? console.log(this.time, ':', name, type, '(', this.rage.current, 'rage /', this.ap, 'ap )')
-      : console.log(this.time, ':', name, type, 'for', value, '(', this.rage.current, 'rage /', this.ap, 'ap )')
   }
 }
