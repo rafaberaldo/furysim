@@ -40,7 +40,7 @@ export default class Weapon {
         this.proc = new Aura(
           `${name} Proc`, weapon.proc.duration, { chance: weapon.proc.chance }, player
         )
-        this.proc.on('proc', (isActive) => isActive && player.increaseAtkSpeed(weapon.proc.amount))
+        this.proc.on('proc', (wasActive) => !wasActive && player.increaseAtkSpeed(weapon.proc.amount))
         this.proc.on('fade', () => player.decreaseAtkSpeed(weapon.proc.amount))
         break
       }

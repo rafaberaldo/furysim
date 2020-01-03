@@ -36,9 +36,9 @@ export default class Aura extends EventEmitter {
   }
 
   apply() {
+    this.emit('proc', this.isActive)
     this._buffDurationLeft = this._buffDuration
     this.log.count++
-    this.emit('proc', this.isActive)
     this.player.addTimeline(this.name, 'BUFF_APPLIED', this._buffDuration)
   }
 
