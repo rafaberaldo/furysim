@@ -1,7 +1,6 @@
 {
   "name": "furysim",
   "version": "0.3.1",
-  "private": true,
   "homepage": "https://furysim.github.io",
   "author": {
     "name": "Rafael Beraldo",
@@ -30,6 +29,7 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "lodash.debounce": "^4.0.8",
     "vue-template-compiler": "^2.6.10",
     "worker-plugin": "^3.2.0"
   },

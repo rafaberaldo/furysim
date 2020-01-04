@@ -42,13 +42,28 @@
           <input type="number" required min="0" max="100" v-model.number="formData.player.startRage">
         </div>
 
-        <div class="horizontal">
+        <div class="horizontal select-edit">
           <label><a :href="talentsUrl" rel="noopener" target="_blank">Talents</a></label>
           <input
+            v-if="formData.isCustomTalent"
             type="url"
             required
             pattern="https?://classic\.wowhead\.com/talent-calc/warrior/.+"
+            style="flex-grow: 1"
             v-model="formData.player.talents">
+          <select v-else v-model="formData.player.talents">
+            <option value="https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051">
+              Default Dual Wield
+            </option>
+            <option value="https://classic.wowhead.com/talent-calc/warrior/20305011332-05052005025010051">
+              Default Two-Hand
+            </option>
+            <option value="https://classic.wowhead.com/talent-calc/warrior/20305011332-05050005005410051">
+              Default Slam
+            </option>
+            <option disabled>────────</option>
+            <option value="" @click="formData.isCustomTalent = true">Custom</option>
+          </select>
         </div>
       </section>
 
@@ -88,16 +103,6 @@
           <input type="number" required min="0" max="10000" v-model.number="formData.target.armor">
         </div>
 
-        <div class="horizontal">
-          <label>After Reductions</label>
-          <span class="u-family-title">{{ targetArmor }}</span>
-        </div>
-
-        <div class="horizontal">
-          <label>Mitigation</label>
-          <span class="u-family-title">{{ targetMitigation }}%</span>
-        </div>
-
         <ul>
           <li v-for="item in formGenerator.debuffs" :key="item.value" class="u-flex">
             <label>
@@ -106,16 +111,30 @@
             </label>
           </li>
         </ul>
+
+        <div class="horizontal">
+          <label>Armor After Reductions</label>
+          <span class="u-family-title">{{ targetArmor }}</span>
+        </div>
+
+        <div class="horizontal">
+          <label>Mitigation</label>
+          <span class="u-family-title">{{ targetMitigation }}%</span>
+        </div>
       </section>
     </div>
 
     <div class="grid-container quarters">
       <section class="grid-item">
         <div class="u-block">
-          <h4>Trinkets</h4>
+          <h4>Trinkets / Other</h4>
           <label>
             <input type="checkbox" v-model="formData.player.hoj">
             <span class="label-body">Hand of Justice</span>
+          </label>
+          <label>
+            <input type="checkbox" v-model="formData.player.cloudkeeper.canUse">
+            <span class="label-body">Cloudkeeper Legplates</span>
           </label>
         </div>
 
@@ -126,13 +145,13 @@
       <section class="grid-item" style="grid-column: span 2">
         <h4>Rotation</h4>
         <p>Skills follow this priority order (can't change for now)</p>
-        <div class="u-flex">
-          <label v-if="hasDeathWish">
+        <div v-if="hasDeathWish" class="u-flex">
+          <label>
             <input class="disabled" type="checkbox" checked disabled>
             <span class="label-body u-weight-bold">Death Wish </span>
           </label>
         </div>
-        <div class="ident">
+        <div v-if="hasDeathWish" class="ident">
           <div class="u-flex">
             <label>
               <input type="checkbox" v-model="formData.player.deathWish.last30">
@@ -200,6 +219,21 @@
             <label>
               <input type="checkbox" v-model="formData.player.bloodFury.waitCrusader">
               <span class="label-body">Wait for Crusader Proc</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="u-flex">
+          <label v-if="formData.player.cloudkeeper.canUse">
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">Cloudkeeper Legplates</span>
+          </label>
+        </div>
+        <div v-if="formData.player.cloudkeeper.canUse" class="ident">
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.cloudkeeper.last30">
+              <span class="label-body">In the last 30 secs of fight</span>
             </label>
           </div>
         </div>
@@ -363,10 +397,10 @@
           <input type="checkbox" v-model="formData.latency.active">
           <span class="label-body u-weight-bold">Add latency to every action</span>
         </label>
-        <div class="horizontal" :class="{ 'disabled': !formData.latency.active }">
+        <div v-if="formData.latency.active" class="ident horizontal" :class="{ 'disabled': !formData.latency.active }">
           <label>Min/Max</label>
-          <input type="number" :required="formData.latency.active" :disabled="!formData.latency.active" min="0" max="500" v-model.number="formData.latency.min">
-          <input type="number" :required="formData.latency.active" :disabled="!formData.latency.active" min="0" max="500" v-model.number="formData.latency.max">
+          <input type="number" min="0" max="500" v-model.number="formData.latency.min">
+          <input type="number" min="0" max="500" v-model.number="formData.latency.max">
         </div>
 
         <label class="u-block">
@@ -412,6 +446,7 @@ export default {
       isCalcEP: false,
       isProd: process.env.NODE_ENV === 'production',
       formData: {
+        isCustomTalent: false,
         duration: 75,
         iterations: process.env.NODE_ENV === 'production' ? 10000 : 500,
         latency: {
@@ -463,6 +498,10 @@ export default {
               duration: defaultOh.proc &&  defaultOh.proc.duration
             }
           },
+          cloudkeeper: {
+            canUse: false,
+            last30: true
+          },
           bloodFury: {
             waitCrusader: true,
             waitDeathWish: false
@@ -510,7 +549,7 @@ export default {
         target: {
           lvl: 63,
           armor: 3731,
-          debuffs: ['sunder', 'faerieFire', 'cor']
+          debuffs: ['sunder', 'ff', 'cor']
         },
       }
     }
@@ -547,7 +586,7 @@ export default {
         ],
         debuffs: [
           { title: 'Sunder Armor', value: 'sunder' },
-          { title: 'Faerie Fire', value: 'faerieFire' },
+          { title: 'Faerie Fire', value: 'ff' },
           { title: 'Curse of Recklessness', value: 'cor' },
           { title: 'Annihilator', value: 'anni' },
         ]
@@ -623,7 +662,7 @@ export default {
       let armor = this.formData.target.armor
       this.formData.target.debuffs.forEach((value) => {
         if (value === 'sunder') armor -= 2250
-        if (value === 'faerieFire') armor -= 505
+        if (value === 'ff') armor -= 505
         if (value === 'cor') armor -= 640
         if (value === 'anni') armor -= 600
       })
@@ -662,6 +701,7 @@ export default {
       form.player.mainhand.proc.chance = form.player.mainhand.proc.percent / 100
       form.player.offhand.proc.chance = form.player.offhand.proc.percent / 100
       form.player.deathWish.timeLeft = form.player.deathWish.last30 ? Math.max(0, form.duration - 30) : 0
+      form.player.cloudkeeper.timeLeft = form.player.cloudkeeper.last30 ? Math.max(0, form.duration - 30) : 0
 
       return {
         iterations: form.iterations,
@@ -686,6 +726,7 @@ export default {
           hoj: form.player.hoj,
           mainhand: form.player.mainhand,
           offhand: form.player.offhand,
+          cloudkeeper: form.player.cloudkeeper,
           bloodFury: form.player.bloodFury,
           heroicStrike: form.player.heroicStrike,
           whirlwind: form.player.whirlwind,
@@ -777,7 +818,7 @@ export default {
         const item = chain[key]
         const ep = Math.max(0, (item.dps - base.dps) * dpsEp)
         result.push({
-          name: key === 'str' ? `8 ${key} EP` : `1% ${key} EP`,
+          name: key === 'str' ? `8 ${key}` : `1% ${key}`,
           value: Number(ep.toFixed(2))
         })
       })
@@ -805,6 +846,8 @@ export default {
 </script>
 
 <style>
+  @media (max-width: 768px) { .grid-item { overflow: auto; } }
+
   .horizontal {
     display: flex;
     align-items: center;
@@ -841,7 +884,7 @@ export default {
     pointer-events: none;
   }
   .ident {
-    margin-left: 2.5rem;
+    margin-left: 1.5rem;
     margin-bottom: 0.5rem;
   }
   .ident code {

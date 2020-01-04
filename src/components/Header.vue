@@ -8,12 +8,8 @@
 <script>
 export default {
   computed: {
-    description() {
-      return process.env.DESCRIPTION
-    },
-    version() {
-      return process.env.VERSION
-    }
+    description: () => process.env.DESCRIPTION,
+    version: () => process.env.VERSION
   }
 }
 </script>

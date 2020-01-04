@@ -2,7 +2,7 @@ import EventEmitter from 'events'
 
 import { m, ppmToChance } from '@/scripts/helpers'
 
-export default class Aura extends EventEmitter {
+export default class Proc extends EventEmitter {
   constructor(name, duration, ppmOrChance, player) {
     super()
     this._buffDurationLeft = 0

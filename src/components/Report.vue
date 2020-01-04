@@ -13,7 +13,7 @@
       <span
         class="progress"
         :style="{ width: `${item.value / 50 * 100 }%` }"/>
-      <span class="label">{{ item.name }}: {{ item.value }}</span>
+      <span class="label">{{ item.name }} = {{ item.value }}</span>
     </div>
 
     <hr v-if="ep" style="margin: 1rem 0">
@@ -31,17 +31,16 @@
       <span class="label">{{ item.title }} ({{ item.portion }}%)</span>
     </div>
 
-    <div class="u-align-center" style="margin-top: 1.5rem">
-      <a role="button" @click="scrollDown('report')">See Details</a>
-    </div>
-    <div class="u-align-center">
-      <a role="button" @click="scrollDown('timeline')">See Timeline</a>
-    </div>
+    <ul class="u-align-center" style="margin-top: 1.5rem">
+      <li><a role="button" @click="scrollDown('report')">See Details</a></li>
+      <li><a role="button" @click="scrollDown('timeline')">See Timeline</a></li>
+    </ul>
   </div>
 
   <div v-else id="report">
+    <hr>
     <section v-if="ep" class="report-section">
-      <h2>EP values</h2>
+      <h2>Stat Weights</h2>
       <div class="report-grid">
         <div v-for="item in ep" :key="item.name">
           <span class="label">{{ item.name }}</span>
@@ -53,7 +52,7 @@
       </div>
     </section>
 
-    <hr>
+    <hr v-if="ep" class="transparent">
 
     <section class="report-section">
       <h2>Skills / Swings</h2>
@@ -74,7 +73,7 @@
       </template>
     </section>
 
-    <hr>
+    <hr class="transparent">
 
     <section class="report-section">
       <h2>Procs / Auras</h2>
@@ -93,22 +92,38 @@
       </template>
     </section>
 
-    <hr>
+    <hr class="transparent">
 
     <section id="timeline" class="report-section">
-      <h2>Timeline of one fight</h2>
-      <pre><code>{{ timeline }}</code></pre>
+      <h2>Fight Timeline</h2>
+      <label class="u-full-width">
+        <input
+          class="u-full-width"
+          type="text"
+          placeholder="Filter timeline"
+          @input="search">
+      </label>
+      <pre><code v-html="timeline"/></pre>
     </section>
 
-    <a role="button" @click="scrollUp()">Back to top</a>
+    <div class="u-align-center">
+      <a class="u-pull-right" role="button" @click="scrollUp()">&uarr; Back to top</a>
+    </div>
   </div>
 </template>
 
 <script>
+import debounce from 'lodash.debounce'
+
 export default {
   props: {
     data: Object,
     simple: Boolean
+  },
+  data() {
+    return {
+      searchInput: ''
+    }
   },
   computed: {
     ep() {
@@ -147,12 +162,15 @@ export default {
       ]
     },
     timeline() {
-      let timeline = ''
-      this.data.timeline.forEach(line => timeline += `${line}\r\n`)
-      return timeline
+      return this.data.timeline
+        .filter(e => !this.searchInput || e.toLowerCase().indexOf(this.searchInput.toLowerCase()) > -1)
+        .reduce((string, line) => string += `${line}\r\n`, '')
     }
   },
   methods: {
+    search: debounce(function (e) {
+      this.searchInput = e.target.value
+    }, 300),
     scrollDown(id) {
       const top = document.getElementById(id).offsetTop
       window.scroll({ top, behavior: 'smooth' })
@@ -188,7 +206,6 @@ export default {
   .progress-bar.small {
     height: 2px;
     margin-bottom: 0;
-    margin-top: 4px;
   }
   .progress-bar .progress {
     position: absolute;
@@ -205,15 +222,28 @@ export default {
     font-weight: 600;
   }
 
+  hr.transparent { border-color: transparent; }
+
+  #timeline pre code {
+    height: 650px;
+    margin: 0;
+  }
+  #timeline pre code .time { color: hsl(118, 38%, 52%); }
+  #timeline pre code .event { color: var(--link-color); }
+  #timeline pre code .value { color: hsl(340, 70%, 55%); }
+  #timeline pre code .extra-info { opacity: 0.6; }
+
   .report-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-gap: 10px;
+    grid-template-columns: repeat(5, minmax(50px, 1fr));
+    grid-gap: 15px;
     margin-bottom: 2.5rem;
   }
   .report-grid .label {
     display: block;
     font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
   }
   .report-grid .u-family-title {
     font-weight: 300;

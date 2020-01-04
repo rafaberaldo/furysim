@@ -48,6 +48,7 @@ Anything else that is not on this list consider not implemented.
   * *To roughly simulate batching, rage is removed after any procs occur.*
 * A single attack can proc both weapon enchant and an extra-attack.
 * A single attack can't proc multiple extra-attacks (if procced by swing, not implemented).
+* When increasing attack speed mid-swing the remainder of swing timer will be hastened.
 
 ## Non confirmed
 

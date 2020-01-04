@@ -2,8 +2,8 @@
   <footer>
     <hr>
     <ul>
-      <li>&copy; {{ new Date().getFullYear() }}</li>
       <li>
+        &copy; {{ new Date().getFullYear() }}
         FurySim by
         <a
           href="https://twitter.com/rafaelpimpa"
@@ -12,13 +12,18 @@
           @rafaelpimpa
         </a>
       </li>
-      <li><a role="button" @click="$emit('changelog')">v{{ version }}</a> (Phase 2.5)</li>
+      <li><a role="button" @click="$emit('changelog')">v{{ version }}</a></li>
       <li>
         <a
           href="https://github.com/rafaelpimpa/furysim/"
           target="_blank"
           rel="noopener">
           Github
+        </a>
+      </li>
+      <li>
+        <a role="button" @click="$emit('toggleTheme')">
+          {{ darkTheme ? 'Light' : 'Dark' }} Theme
         </a>
       </li>
       <li><a role="button" @click="$emit('about')">About</a></li>
@@ -29,23 +34,34 @@
 
 <script>
 export default {
+  props: {
+    darkTheme: Boolean
+  },
   computed: {
-    version() {
-      return process.env.VERSION
-    }
+    version: () => process.env.VERSION
   }
 }
 </script>
 
 <style>
   footer {
-    text-align: center;
     margin-bottom: 3rem;
   }
   footer ul {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    grid-gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  footer ul li {
+    text-align: center;
+    min-width: 74px;
+    margin-bottom: 0.5rem;
+  }
+  footer ul li:not(:last-child) {
+    margin-right: 0.5rem;
+  }
+  footer ul li:first-child {
+    text-align: left;
+    flex-grow: 1;
   }
   footer .small {
     font-size: 0.75rem;

@@ -15,9 +15,6 @@
         rel="noopener">Yes</a> — GPL-3.0.
     </p>
 
-    <strong>Does it have a light/dark theme?</strong>
-    <p>Yes, it should change based on your system preference.</p>
-
     <strong>Where did you get the formulas? How spell X works?</strong>
     <p>
       <a href="https://github.com/rafaelpimpa/furysim/blob/master/MECHANICS.md"

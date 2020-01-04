@@ -13,6 +13,11 @@ function run(cfg) {
     const isLastLoop = i === cfg.iterations - 1
     const player = new Player(cfg, log, isLastLoop)
 
+    if (isLastLoop && process.env.NODE_ENV === 'production') {
+      console.log(cfg)
+      console.log(player)
+    }
+
     const events = [
       player.slam,
       player.mainhand,
@@ -23,6 +28,7 @@ function run(cfg) {
       player.mrp,
       player.battleShout,
       player.bloodFury,
+      player.cloudkeeper,
 
       player.execute,
       player.bloodthirst,
@@ -71,12 +77,7 @@ function run(cfg) {
     const progress = Number((i / cfg.iterations * 100).toFixed(1))
     postMessage({ progress })
 
-    if (!isLastLoop) continue
-    if (process.env.NODE_ENV === 'production') continue
-
-    console.log(cfg)
-    console.log(player)
-    console.log(log)
+    if (isLastLoop && process.env.NODE_ENV === 'production') console.log(log)
   }
 
   const endTime = new Date().getTime()

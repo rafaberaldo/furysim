@@ -1,9 +1,9 @@
-import Aura from '@/scripts/classes/Aura'
+import Proc from '@/scripts/classes/Proc'
 import { Cooldown } from '@/scripts/classes/Cooldown'
 
 import { m } from '@/scripts/helpers'
 
-export default class Windfury extends Aura {
+export default class Windfury extends Proc {
   constructor(player) {
     super('Windfury AP', 1.5, { chance: 0.2 }, player)
     this.name = 'Windfury AP'

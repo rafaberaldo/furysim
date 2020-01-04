@@ -1,20 +1,20 @@
-import Flurry from            '@/scripts/classes/Flurry'
-import Rage from              '@/scripts/classes/Rage'
-import Target from            '@/scripts/classes/Target'
-import Weapon from            '@/scripts/classes/Weapon'
-import Windfury from          '@/scripts/classes/Auras/Windfury'
-import Buff from              '@/scripts/classes/Buff'
-import BloodFury from         '@/scripts/classes/Buffs/BloodFury'
-import MightyRagePotion from  '@/scripts/classes/Buffs/MightyRagePotion'
 import AngerManagement from   '@/scripts/classes/Cooldowns/AngerManagement'
+import BloodFury from         '@/scripts/classes/Buffs/BloodFury'
 import Bloodrage from         '@/scripts/classes/Cooldowns/Bloodrage'
-import ExtraAttack from       '@/scripts/classes/Cooldowns/ExtraAttack'
 import Bloodthirst from       '@/scripts/classes/Skills/Bloodthirst'
+import Buff from              '@/scripts/classes/Buff'
 import Execute from           '@/scripts/classes/Skills/Execute'
+import ExtraAttack from       '@/scripts/classes/Cooldowns/ExtraAttack'
+import Flurry from            '@/scripts/classes/Flurry'
 import Hamstring from         '@/scripts/classes/Skills/Hamstring'
 import HeroicStrike from      '@/scripts/classes/Skills/HeroicStrike'
+import MightyRagePotion from  '@/scripts/classes/Buffs/MightyRagePotion'
+import Rage from              '@/scripts/classes/Rage'
 import Slam from              '@/scripts/classes/Skills/Slam'
+import Target from            '@/scripts/classes/Target'
+import Weapon from            '@/scripts/classes/Weapon'
 import Whirlwind from         '@/scripts/classes/Skills/Whirlwind'
+import Windfury from          '@/scripts/classes/Procs/Windfury'
 import { Cooldown } from      '@/scripts/classes/Cooldown'
 
 import { m, parseTalents } from '@/scripts/helpers'
@@ -47,6 +47,8 @@ export default class Player {
     this.offhand = cfg.player.offhand && cfg.player.offhand.canUse && new Weapon('Offhand', cfg.player.offhand, this)
     this.isDw = !!this.offhand
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
+    this.cloudkeeper = cfg.player.cloudkeeper.canUse &&
+      new Buff('Cloudkeeper Legplates', 0, 30, 900, false, this, cfg.player.cloudkeeper.timeLeft)
 
     this.bloodrage = new Bloodrage(this, cfg.player.bloodrage)
     this.whirlwind = new Whirlwind(this, cfg.player.whirlwind)
@@ -113,9 +115,10 @@ export default class Player {
     const baseAp = this.getBaseAp(this.lvl, this.str)
     let ap = baseAp + this.flatAp
 
-    if (this.battleShout.isActive) ap += this.battleShoutApMul * 193
     if (this.bloodFury && this.bloodFury.isActive) ap += baseAp * 0.25
+    if (this.battleShout.isActive) ap += 193 * this.battleShoutApMul
     if (this.windfury && this.windfury.isActive) ap += 315 * this.windfuryApMul
+    if (this.cloudkeeper && this.cloudkeeper.isActive) ap += 100
 
     return m.round(ap)
   }
@@ -177,8 +180,8 @@ export default class Player {
     if (!this.logTimeline) return
 
     this.log.timeline.push(!value
-      ? `${this.time}: ${name} ${type} (${this.rage.current} rage / ${this.ap} ap)`
-      : `${this.time}: ${name} ${type} for ${value} (${this.rage.current} rage / ${this.ap} ap)`
+      ? `<span class="time">${this.time}</span>  ${name} <span class="event">${type}</span> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
+      : `<span class="time">${this.time}</span>  ${name} <span class="event">${type}</span> for <b class="value">${value}</b> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
     )
   }
 }

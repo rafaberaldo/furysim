@@ -17,15 +17,21 @@ export default {
   methods: {
     show() {
       this.active = true
+      document.documentElement.classList.add('clipped')
     },
     hide() {
       this.active = false
+      document.documentElement.classList.remove('clipped')
     }
   }
 }
 </script>
 
 <style>
+  html.clipped {
+    overflow: hidden;
+  }
+
   .modal {
     display: none;
     align-items: center;
@@ -53,7 +59,7 @@ export default {
   }
   .modal .content {
     margin: 0 auto;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100vh - 80px);
     width: 480px;
     overflow: auto;
     position: relative;

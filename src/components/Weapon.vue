@@ -7,7 +7,7 @@
     <h4 v-else>Mainhand</h4>
 
     <div :class="{'disabled': !value.canUse }">
-      <label>
+      <label class="u-full-width">
         <select v-model="preset" class="u-full-width" :disabled="!value.canUse">
           <option disabled :value="null">Presets</option>
           <optgroup v-for="(options, name) in presets" :key="name" :label="name">

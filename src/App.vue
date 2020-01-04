@@ -6,8 +6,10 @@
     <About ref="about"/>
     <Changelog ref="changelog"/>
     <Footer
+      :dark-theme="isDarkTheme"
       @about="$refs.about.$refs.modal.show()"
       @changelog="$refs.changelog.$refs.modal.show()"
+      @toggleTheme="toggleTheme()"
     />
   </div>
 </template>
@@ -32,7 +34,21 @@ export default {
   },
   data() {
     return {
-      result: {}
+      result: {},
+      isDarkTheme: true
+    }
+  },
+  methods: {
+    toggleTheme() {
+      this.isDarkTheme = !this.isDarkTheme
+      localStorage.isDarkTheme = JSON.stringify(this.isDarkTheme)
+      document.documentElement.classList.toggle('light-theme', !this.isDarkTheme)
+    }
+  },
+  mounted() {
+    if (localStorage.isDarkTheme) {
+      this.isDarkTheme = JSON.parse(localStorage.isDarkTheme)
+      document.documentElement.classList.toggle('light-theme', !this.isDarkTheme)
     }
   }
 }

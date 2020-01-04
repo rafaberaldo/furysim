@@ -1,4 +1,4 @@
-import Aura from '@/scripts/classes/Aura'
+import Proc from '@/scripts/classes/Proc'
 import AttackSpeed from '@/scripts/classes/Cooldowns/AttackSpeed'
 import ExtraAttack from '@/scripts/classes/Cooldowns/ExtraAttack'
 
@@ -37,7 +37,7 @@ export default class Weapon {
       }
 
       case 'atkSpeed': {
-        this.proc = new Aura(
+        this.proc = new Proc(
           `${name} Proc`, weapon.proc.duration, { chance: weapon.proc.chance }, player
         )
         this.proc.on('proc', (wasActive) => !wasActive && player.increaseAtkSpeed(weapon.proc.amount))
@@ -45,7 +45,7 @@ export default class Weapon {
         break
       }
     }
-    this.enchant = weapon.enchant && new Aura(
+    this.enchant = weapon.enchant && new Proc(
       `Crusader ${this.name}`, 15, { ppm: 1, speed: this.speed }, player
     )
 

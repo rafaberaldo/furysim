@@ -37,15 +37,15 @@
 */
 
 
-
 /* CSS Variables
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-html {
-  /* dark theme: light background, dark text, blue accent */
-  --theme-hue: 0;					/* black */
-  --accent-hue: 0;			/* grey */
 
-  --text-color-richer: hsl(var(--theme-hue), 0%, 95%);		/* 		*/
+html {
+  /* dark theme: light background, dark text, grey/blue accent */
+  --theme-hue: 0;
+  --accent-hue: 0;
+
+  --text-color-richer: hsl(var(--theme-hue), 0%, 95%);
   --text-color-normal: hsl(var(--theme-hue), 0%, 80%);		/* text color; button:hover:focus color */
   --text-color-softer: hsl(var(--theme-hue), 0%, 67%);		/* button color; button:hover border */
 
@@ -54,13 +54,13 @@ html {
 
   --border-color: hsl(var(--theme-hue), 0%, 27%);					/* button border */
   --border-color-softer: hsl(var(--theme-hue), 0%, 20%);	/* textarea,select,code,td,hr border	 */
-  --border-color-hover: hsl(var(--theme-hue), 0%, 42%);	/* textarea,select,code,td,hr border	 */
+  --border-color-hover: hsl(var(--theme-hue), 0%, 42%);	  /* textarea,select,code,td,hr border	 */
 
   --background-color: hsl(var(--theme-hue), 0%, 12%);			/* body background; textarea,select background */
   --background-color-softer: hsl(var(--theme-hue), 0%, 25%);
   --code-background: hsl(var(--theme-hue), 0%, 5%);				/* code background*/
 
-  --link-color: hsl(207, 86%, 57%);
+  --link-color: hsl(210, 85%, 55%);
   --link-color-opacity: hsl(207, 86%, 57%, 0.35);
   --link-color-hover: white;
 
@@ -76,30 +76,20 @@ html {
   --font-family-title: 'Oswald', 'PT Sans Narrow', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
-/*  Light Theme
-	Note: prefers-color-scheme selector support is still limited, but
-	included for future and an example of defining a different base 'theme'
-*/
-@media (prefers-color-scheme: light) {
-  html {
-    /* light theme: light background, dark text, blue accent */
-    --theme-hue: 0;					/* white */
+html.light-theme {
+  /* light theme: light background, dark text, grey/blue accent */
+  --text-color-richer: hsl(var(--theme-hue), 0%, 5%);
+  --text-color-normal: hsl(var(--theme-hue), 0%, 13%);		/* text color; button:hover:focus color */
+  --text-color-softer: hsl(var(--theme-hue), 0%, 33%);		/* button color; button:hover border */
 
-    --text-color-richer: hsl(var(--theme-hue), 0%, 5%);			/* #0d0d0d		*/
-    --text-color-normal: hsl(var(--theme-hue), 0%, 13%);		/* #222222 		text color; button:hover:focus color */
-    --text-color-softer: hsl(var(--theme-hue), 0%, 33%);		/* #555555 		button color; button:hover border */
+  --border-color: hsl(var(--theme-hue), 0%, 73%);					/* button border */
+  --border-color-softer: hsl(var(--theme-hue), 0%, 82%);	/* textarea,select,code,td,hr border	 */
 
-    --border-color: hsl(var(--theme-hue), 0%, 73%);					/* #bbbbbb		button border */
-    --border-color-softer: hsl(var(--theme-hue), 0%, 82%);	/* #d1d1d1		textarea,select,code,td,hr border	 */
+  --background-color: hsl(var(--theme-hue), 0%, 100%);		/* transparent body background; textarea,select background */
+  --background-color-softer: hsl(var(--theme-hue), 0%, 90%);
+  --code-background: hsl(var(--theme-hue), 0%, 95%);			/* code background*/
 
-    --background-color: hsl(var(--theme-hue), 0%, 100%);		/* transparent body background; textarea,select background */
-    --background-color-softer: hsl(var(--theme-hue), 0%, 90%);
-    --code-background: hsl(var(--theme-hue), 0%, 95%);			/* #f1f1f1 		code background*/
-
-    --button-primary-color: white;
-
-    --link-color-hover: black;
-  }
+  --link-color-hover: black;
 }
 
 
