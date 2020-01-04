@@ -1,5 +1,9 @@
 {
   "1H Axes": [
+    { "title": "Hatchet of Sundered Bone", "min": 119, "max": 221, "speed": 2.6, "type": "ONE_HANDED" },
+    { "title": "Blessed Qiraji War Axe", "min": 110, "max": 205, "speed": 2.6, "type": "ONE_HANDED" },
+    { "title": "Crul'shorukh, Edge of Chaos", "min": 101, "max": 188, "speed": 2.3, "type": "ONE_HANDED" },
+    { "title": "Doom's Edge", "min": 83, "max": 154, "speed": 2.3, "type": "ONE_HANDED" },
     { "title": "Deathbringer", "min": 114, "max": 213, "speed": 2.9, "type": "ONE_HANDED" },
     { "title": "Frostbite", "min": 80, "max": 150, "speed": 2.7, "type": "ONE_HANDED" },
     { "title": "Flurry Axe", "min": 37, "max": 69, "speed": 1.5, "type": "ONE_HANDED",
@@ -10,6 +14,12 @@
   ],
 
   "1H Swords": [
+    { "title": "Gressil, Dawn of Ruin", "min": 138, "max": 257, "speed": 2.7, "type": "ONE_HANDED" },
+    { "title": "The Hungering Cold", "min": 76, "max": 143, "speed": 1.5, "type": "ONE_HANDED" },
+    { "title": "Iblis, Blade of the Fallen Seraph", "min": 70, "max": 131, "speed": 1.6, "type": "ONE_HANDED" },
+    { "title": "Ancient Qiraji Ripper", "min": 114, "max": 213, "speed": 2.8, "type": "ONE_HANDED" },
+    { "title": "Chromatically Tempered Sword", "min": 106, "max": 198, "speed": 2.6, "type": "ONE_HANDED" },
+    { "title": "Maladath", "min": 86, "max": 162, "speed": 2.2, "type": "ONE_HANDED" },
     { "title": "Vis'kag", "min": 100, "max": 187, "speed": 2.6, "type": "ONE_HANDED" },
     { "title": "Brutality Blade", "min": 90, "max": 168, "speed": 2.5, "type": "ONE_HANDED" },
     { "title": "Quel'Serrar", "min": 84, "max": 126, "speed": 2, "type": "ONE_HANDED" },
@@ -22,25 +32,43 @@
   ],
 
   "1H Maces": [
+    { "title": "The Castigator", "min": 119, "max": 221, "speed": 2.6, "type": "ONE_HANDED" },
+    { "title": "Misplaced Servo Arm", "min": 128, "max": 238, "speed": 2.8, "type": "ONE_HANDED" },
+    { "title": "Anubisath Warhammer", "min": 66, "max": 123, "speed": 1.8, "type": "ONE_HANDED" },
+    { "title": "Spineshatter", "min": 99, "max": 184, "speed": 2.6, "type": "ONE_HANDED" },
     { "title": "Empyrean Demolisher", "min": 94, "max": 175, "speed": 2.8, "type": "ONE_HANDED",
       "proc": { "type": "atkSpeed", "percent": 4.85, "amount": 20, "duration": 10 }
     },
     { "title": "Ironfoe", "min": 73, "max": 136, "speed": 2.4, "type": "ONE_HANDED",
       "proc": { "type": "extraAttack", "percent": 3.21, "amount": 2 }
-    }
+    },
+    { "title": "Stormstrike Hammer", "min": 80, "max": 150, "speed": 2.7, "type": "ONE_HANDED" }
   ],
 
   "Daggers": [
+    { "title": "Kingsfall", "min": 105, "max": 158, "speed": 1.8, "type": "DAGGER" },
+    { "title": "Maexxna's Fang", "min": 94, "max": 141, "speed": 1.8, "type": "DAGGER" },
+    { "title": "Death's Sting", "min": 95, "max": 144, "speed": 1.8, "type": "DAGGER" },
+    { "title": "Dragonfang Blade", "min": 69, "max": 130, "speed": 1.8, "type": "DAGGER" },
     { "title": "Perdition's Blade", "min": 73, "max": 137, "speed": 1.8, "type": "DAGGER" },
-    { "title": "Core Hound Tooth", "min": 57, "max": 107, "speed": 1.6, "type": "DAGGER" }
+    { "title": "Core Hound Tooth", "min": 57, "max": 107, "speed": 1.6, "type": "DAGGER" },
+    { "title": "The Lobotomizer", "min": 59, "max": 111, "speed": 1.8, "type": "DAGGER" },
+    { "title": "Distracting Dagger", "min": 42, "max": 64, "speed": 1.3, "type": "DAGGER" }
   ],
 
   "2H": [
+    { "title": "Might of Menethil", "min": 289, "max": 435, "speed": 3.8, "type": "TWO_HANDED" },
+    { "title": "Corrupted Ashbringer", "min": 259, "max": 389, "speed": 3.6, "type": "TWO_HANDED" },
+    { "title": "Claymore of Holy Unmight", "min": 235, "max": 354, "speed": 3.6, "type": "TWO_HANDED" },
+    { "title": "Dark Edge of Insanity", "min": 242, "max": 364, "speed": 3.5, "type": "TWO_HANDED" },
+    { "title": "Ashkandi, Greatsword of the Brotherhood", "min": 229, "max": 344, "speed": 3.5, "type": "TWO_HANDED" },
+    { "title": "Sulfuras, Hand of Ragnaros", "min": 223, "max": 372, "speed": 3.7, "type": "TWO_HANDED" },
     { "title": "Bonereaver's Edge", "min": 206, "max": 310, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "Spinal Reaper", "min": 203, "max": 305, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "Obsidian Edged Blade", "min": 176, "max": 264, "speed": 3.4, "type": "TWO_HANDED" },
     { "title": "The Unstoppable Force", "min": 175, "max": 292, "speed": 3.8, "type": "TWO_HANDED" },
     { "title": "Treant's Bane", "min": 128, "max": 193, "speed": 2.7, "type": "TWO_HANDED" },
-    { "title": "Barbarous Blade", "min": 138, "max": 207, "speed": 3.2, "type": "TWO_HANDED" }
+    { "title": "Barbarous Blade", "min": 138, "max": 207, "speed": 3.2, "type": "TWO_HANDED" },
+    { "title": "The Nicker", "min": 159, "max": 239, "speed": 4.0, "type": "TWO_HANDED" }
   ]
 }

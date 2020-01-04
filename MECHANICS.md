@@ -3,9 +3,11 @@
 ## About
 
 FurySim follows strictly everything in this Wiki: https://github.com/magey/classic-warrior/wiki.
-What was not tested/confirmed from Mage's Github is found here: https://vanilla-wow.fandom.com/wiki/Vanilla_WoW_Wiki.
+What was not tested/confirmed from Magey's Github is found here: https://vanilla-wow.fandom.com/wiki/Vanilla_WoW_Wiki.
 Other stuff that is not documented anywhere was asked on Fight Club's Discord.
 Non confirmed mechanics are assumptions due to lack of data.
+
+Anything else that is not on this list consider not implemented.
 
 ## Sim specifics / Limitations
 
@@ -21,7 +23,7 @@ Non confirmed mechanics are assumptions due to lack of data.
 * Battle Shout triggers a GCD at the start of fight.
 * Slam implementation is the Autoslam ("Slam macro") version.
 * Windfury have a 100 ms internal cooldown to prevent procs off itself and/or multiple procs on a chain.
-* About Timeline:
+* About fight timeline:
   * Events at same time does not always shows in correct order.
   * ``BUFF_FADED`` is not shown at the exact time, it logs after next event happens.
 
@@ -45,7 +47,7 @@ Non confirmed mechanics are assumptions due to lack of data.
 * Execute damage calculation is instantly but rage removal happens on next batch.
   * *To roughly simulate batching, rage is removed after any procs occur.*
 * A single attack can proc both weapon enchant and an extra-attack.
-* A single attack can't proc multiple extra-attacks (if procced by swing).
+* A single attack can't proc multiple extra-attacks (if procced by swing, not implemented).
 
 ## Non confirmed
 
@@ -57,7 +59,7 @@ Non confirmed mechanics are assumptions due to lack of data.
 * Winfury don't consume charges on misses.
 * Priority for extra-attacks is WF > MH / OH > Trinket.
 * Armor can't go negative.
-* When Autoslam miss/dodge, swing don't connect.
+* When Autoslam miss/dodge, swing is lost.
 
 ## Sources
 

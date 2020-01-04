@@ -12,7 +12,7 @@
           @rafaelpimpa
         </a>
       </li>
-      <li>v{{ version }}</li>
+      <li><a role="button" @click="$emit('changelog')">v{{ version }}</a> (Phase 2.5)</li>
       <li>
         <a
           href="https://github.com/rafaelpimpa/furysim/"

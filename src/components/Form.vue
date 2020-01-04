@@ -371,7 +371,7 @@
 
         <label class="u-block">
           <input type="checkbox" v-model="isCalcEP">
-          <span class="label-body u-weight-bold">Calculate EP values (6x slower)</span>
+          <span class="label-body u-weight-bold">Calculate stat weights (6x slower)</span>
         </label>
 
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
