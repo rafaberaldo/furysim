@@ -636,6 +636,7 @@ export default {
         if (value === 'eleStoneOh') crit += 2
       })
       crit += this.talents.cruelty
+      crit += 3 // Berserker Stance
       crit = Number(crit.toFixed(2))
 
       let haste = this.formData.player.haste
