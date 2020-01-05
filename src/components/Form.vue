@@ -294,11 +294,13 @@
               <input type="number" min="0" max="4" step="0.1" v-model.number="formData.player.slam.swing">
             </code>
           </div>
-          <div class="horizontal">
-            Spam Slam if
-            <code>rage &gt;=
-              <input type="number" min="0" max="100" v-model.number="formData.player.slam.spamRage">
-            </code>
+          <div style="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.slam.canSpam">
+              <span class="label-body">Spam Slam if
+                <code>rage &gt;=
+                  <input type="number" min="0" max="100" v-model.number="formData.player.slam.spamRage">
+                </code>
           </div>
         </div>
 
@@ -530,7 +532,8 @@ export default {
           slam: {
             canUse: false,
             rage: 15,
-            spamRage: 80,
+            canSpam: false,
+            spamRage: 90,
             btCooldown: 1,
             swing: 0.5
           },

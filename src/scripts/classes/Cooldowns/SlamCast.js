@@ -14,7 +14,7 @@ export default class SlamCast extends CooldownGCD {
   // Getters
 
   get canSpam() {
-    return this.useWhen.spamRage && this.player.rage.has(this.useWhen.spamRage)
+    return this.useWhen.canSpam && this.player.rage.has(this.useWhen.spamRage)
   }
 
   get canUse() {
