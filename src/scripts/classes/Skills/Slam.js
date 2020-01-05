@@ -1,8 +1,6 @@
 import Skill from '@/scripts/classes/Skill'
 import SlamCast from '@/scripts/classes/Cooldowns/SlamCast'
 
-import { m } from '@/scripts/helpers'
-
 export default class Slam extends Skill {
   constructor(player, useWhen) {
     super('Slam', 15, 0, false, player, useWhen)
@@ -27,7 +25,8 @@ export default class Slam extends Skill {
   }
 
   get timeLeft() {
-    return m.max(this.cooldown.timeLeft, this.cast.timeLeft)
+    // Have to get private because GCD
+    return this.cast._timeLeft
   }
 
   // Methods
@@ -37,10 +36,10 @@ export default class Slam extends Skill {
     const result = super.use()
     this.isCasting = false
 
-    // If Autoslam finish before swing timer, swing don't connect
+    // If Slam finish before swing timer, swing is lost
     if (this.swingTimer.timeLeft > 0) this.swingTimer.forceUse()
 
-    // NC: if Slam miss, swing also don't connect
+    // NC: if Slam miss, swing is lost
     if (this.isResultMiss(result)) this.swingTimer.forceUse()
   }
 }
