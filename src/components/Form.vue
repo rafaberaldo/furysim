@@ -422,10 +422,13 @@
 </template>
 
 <script>
+import satisfies from 'semver/functions/satisfies'
 import Report from '@/components/Report'
 import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
 import { parseTalents } from '@/scripts/helpers'
+
+const RESET_STORAGE_RANGE = '<= 0.3.1'
 
 export default {
   name: 'app',
@@ -446,6 +449,7 @@ export default {
       isCalcEP: false,
       isProd: process.env.NODE_ENV === 'production',
       formData: {
+        version: process.env.VERSION,
         isCustomTalent: false,
         duration: 75,
         iterations: process.env.NODE_ENV === 'production' ? 10000 : 500,
@@ -834,13 +838,21 @@ export default {
         if (!child.$options.data) return
         Object.assign(child.$data, child.$options.data.apply(child))
       })
+      delete localStorage.formData
       this.$emit('report', this.result)
+    },
+    loadData() {
+      if (!localStorage.formData) return
+
+      const storageData = JSON.parse(localStorage.formData)
+      if (!storageData.version) return
+      if (satisfies(storageData.version, RESET_STORAGE_RANGE)) return
+
+      this.formData = storageData
     }
   },
   mounted() {
-    if (localStorage.formData) {
-      this.formData = JSON.parse(localStorage.formData)
-    }
+    this.loadData()
   }
 }
 </script>
