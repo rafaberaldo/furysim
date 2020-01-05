@@ -13,7 +13,7 @@ function run(cfg) {
     const isLastLoop = i === cfg.iterations - 1
     const player = new Player(cfg, log, isLastLoop)
 
-    if (isLastLoop && process.env.NODE_ENV === 'production') {
+    if (isLastLoop && process.env.NODE_ENV !== 'production') {
       console.log(cfg)
       console.log(player)
     }
@@ -77,7 +77,7 @@ function run(cfg) {
     const progress = Number((i / cfg.iterations * 100).toFixed(1))
     postMessage({ progress })
 
-    if (isLastLoop && process.env.NODE_ENV === 'production') console.log(log)
+    if (isLastLoop && process.env.NODE_ENV !== 'production') console.log(log)
   }
 
   const endTime = new Date().getTime()
