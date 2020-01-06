@@ -507,7 +507,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   text-align: right;
   font-family: var(--font-family-title);
-  width: 3.5rem;
+  width: 3.75rem;
 }
 
 label {

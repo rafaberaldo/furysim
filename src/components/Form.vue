@@ -400,7 +400,12 @@
         </div>
         <div class="horizontal">
           <label>Total Iterations</label>
-          <input type="number" required :min="isCalcEP && isProd ? 10000 : 1" max="100000" v-model.number="formData.iterations">
+          <input
+            type="number"
+            required
+            :min="isCalcEP && isProd ? 25000 : 1"
+            max="100000"
+            v-model.number="formData.iterations">
         </div>
 
         <label>
@@ -415,7 +420,7 @@
 
         <label class="u-block">
           <input type="checkbox" v-model="isCalcEP">
-          <span class="label-body u-weight-bold">Calculate stat weights (6x slower)</span>
+          <span class="label-body u-weight-bold">Calculate stat weights</span>
         </label>
 
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
@@ -933,6 +938,7 @@ export default {
     padding-bottom: 1px;
     margin: 0 0.5rem;
   }
+  input[type="number"].invisible,
   .ident input[type="number"] {
     height: auto;
     padding: 0;

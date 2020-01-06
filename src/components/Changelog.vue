@@ -3,7 +3,7 @@
     <h3>Changelog</h3>
     <h5>v0.4.0</h5>
     <ul>
-      <li>Fix not accounting berserker stance</li>
+      <li>Fix not accounting Berserker Stance</li>
       <li>Add option to not spam Slam</li>
       <li>Fix Slam cast time when talented</li>
       <li>Internal changes in hope to make sim faster</li>

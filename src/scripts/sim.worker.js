@@ -85,7 +85,8 @@ function run(cfg) {
   if (process.env.NODE_ENV !== 'production') console.log(log)
 
   const endTime = new Date().getTime()
-  const finishedIn = ((endTime - startTime) / 1000)
+  let finishedIn = (endTime - startTime) / 1000
+  finishedIn = finishedIn < 1 ? finishedIn : Number(finishedIn.toFixed(1))
   postMessage({
     progress: 100,
     finishedIn,
