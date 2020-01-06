@@ -12,12 +12,16 @@ export default class Log {
 
   // Getters
 
-  get dps() {
-    return Number((this.totalDmg / this.totalDuration).toFixed(1))
+  get totalDmg() {
+    const value = Object.values(this.events).reduce((s, e) => s += e.dmg, 0)
+    Object.defineProperty(this, 'totalDmg', { value })
+    return value
   }
 
-  get totalDmg() {
-    return Object.values(this.events).reduce((s, e) => s += e.dmg, 0)
+  get dps() {
+    const value = Number((this.totalDmg / this.totalDuration).toFixed(1))
+    Object.defineProperty(this, 'dps', { value })
+    return value
   }
 
   get report() {

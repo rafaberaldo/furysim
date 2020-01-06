@@ -2,7 +2,8 @@ import Skill from '@/scripts/classes/Skill'
 
 export default class HeroicStrike extends Skill {
   constructor(player, useWhen) {
-    super('Heroic Strike', player.heroicCost, 0, false, player, useWhen)
+    const heroicCost = 15 - player.talents.impHS
+    super('Heroic Strike', heroicCost, 0, false, player, useWhen)
 
     this.isQueued = false
     this.queue = new HeroicStrikeQueue(this)

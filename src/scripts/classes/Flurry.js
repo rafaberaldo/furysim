@@ -7,8 +7,9 @@ export default class Flurry {
     this.chargesLeft = 0
     this.log = player.log.set(this.name, true)
 
+    this.haste = player.talents.flurry ? (player.talents.flurry + 1) * 5 : 0
+
     this.player = player
-    this.haste = player.flurryHaste
   }
 
   // Getters

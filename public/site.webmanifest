@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "FurySim",
+  "short_name": "FurySim",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -15,5 +15,6 @@
   ],
   "theme_color": "#595959",
   "background_color": "#1f1f1f",
+  "start_url": "/?utm_source=homescreen",
   "display": "standalone"
 }

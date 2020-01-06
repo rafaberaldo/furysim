@@ -17,12 +17,14 @@ import Whirlwind from         '@/scripts/classes/Skills/Whirlwind'
 import Windfury from          '@/scripts/classes/Procs/Windfury'
 import { Cooldown } from      '@/scripts/classes/Cooldown'
 
-import { m, parseTalents } from '@/scripts/helpers'
+import { m } from '@/scripts/helpers'
 
 export default class Player {
   constructor(cfg, log, logTimeline = false) {
     this.log = log
     this.logTimeline = logTimeline
+
+    this.talents = Player.parseTalents(cfg.player.talents)
 
     this._str = cfg.player.str
     this._ap = cfg.player.ap
@@ -32,8 +34,6 @@ export default class Player {
     this.crit = cfg.player.crit
     this.gcd = new Cooldown('GCD', 1.5)
     this.rage = new Rage(this, cfg.player.startRage)
-    const baseAp = this.getBaseAp(this.lvl, this._str)
-    this.flatAp = this._ap - baseAp
 
     this.target = new Target(cfg.target, this)
 
@@ -44,37 +44,30 @@ export default class Player {
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.player.bloodFury)
 
     this.mainhand = new Weapon('Mainhand', cfg.player.mainhand, this)
-    this.offhand = cfg.player.offhand && cfg.player.offhand.canUse && new Weapon('Offhand', cfg.player.offhand, this)
+    this.offhand = cfg.player.offhand && cfg.player.offhand.canUse &&
+      new Weapon('Offhand', cfg.player.offhand, this)
     this.isDw = !!this.offhand
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
     this.cloudkeeper = cfg.player.cloudkeeper.canUse &&
       new Buff('Cloudkeeper Legplates', 0, 30, 900, false, this, cfg.player.cloudkeeper.timeLeft)
 
+    // Talents
+    const battleShoutDuration = 120 * (1 + this.talents.boomingVoice * 0.1)
+    const twoHandSpecMul = 1 + this.talents.twoHandSpec * 0.01
+    this._dmgMul = this.isDw ? 1 : twoHandSpecMul
+    this.battleShoutApMul = 1 + this.talents.impBS * 0.05
+
     this.bloodrage = new Bloodrage(this, cfg.player.bloodrage)
     this.whirlwind = new Whirlwind(this, cfg.player.whirlwind)
     this.hamstring = new Hamstring(this, cfg.player.hamstring)
-
-    // Talents
-    const talents = parseTalents(cfg.player.talents)
-    this.heroicCost = 15 - talents.improvedHS
-    this.skillCritMul = 2 + talents.impale * 0.1
-    this.twoHandSpecMul = 1 + talents.twoHandSpec * 0.01
-    this.offhandDmgMul = 0.5 + talents.dualWieldSpec * 0.025
-    this.flurryHaste = talents.flurry ? (talents.flurry + 1) * 5 : 0
-    this.angerManagement = talents.angerManagement && new AngerManagement(this)
-    this.extraRageChance = talents.unbridledWrath * 0.08
-    this.slamCast = 1.5 - talents.improvedSlam * 0.1
-    this.executeCost = 15 - (talents.impExecute && talents.impExecute * 3 - 1) || 0
-    this.battleShoutDuration = 120 * (1 + talents.boomingVoice * 0.1)
-    this.battleShoutApMul = 1 + talents.improvedBS * 0.05
-
-    this.execute = new Execute(this, cfg.player.execute)
-    this.heroicStrike = new HeroicStrike(this, cfg.player.heroicStrike)
-    this.battleShout = new Buff('Battle Shout', 10, this.battleShoutDuration, 0, true, this)
-    this.flurry = talents.flurry && new Flurry(this)
-    this.bloodthirst = talents.bloodthirst && new Bloodthirst(this)
     this.slam = new Slam(this, cfg.player.slam)
-    this.deathWish = talents.deathWish &&
+    this.heroicStrike = new HeroicStrike(this, cfg.player.heroicStrike)
+    this.execute = new Execute(this, cfg.player.execute)
+    this.battleShout = new Buff('Battle Shout', 10, battleShoutDuration, 0, true, this)
+    this.angerManagement = this.talents.angerManagement && new AngerManagement(this)
+    this.flurry = this.talents.flurry && new Flurry(this)
+    this.bloodthirst = this.talents.bloodthirst && new Bloodthirst(this)
+    this.deathWish = this.talents.deathWish &&
       new Buff('Death Wish', 10, 30, 180, true, this, cfg.player.deathWish.timeLeft)
   }
 
@@ -91,7 +84,7 @@ export default class Player {
   }
 
   get dmgMul() {
-    let dmgMul = this.isDw ? 1 : this.twoHandSpecMul
+    let dmgMul = this._dmgMul
 
     if (this.deathWish && this.deathWish.isActive) dmgMul *= 1.2
 
@@ -111,8 +104,15 @@ export default class Player {
     return str
   }
 
+  get flatAp() {
+    const baseAp = Player.getBaseAp(this.lvl, this._str)
+    const value = this._ap - baseAp
+    Object.defineProperty(this, 'flatAp', { value })
+    return value
+  }
+
   get ap() {
-    const baseAp = this.getBaseAp(this.lvl, this.str)
+    const baseAp = Player.getBaseAp(this.lvl, this.str)
     let ap = baseAp + this.flatAp
 
     if (this.bloodFury && this.bloodFury.isActive) ap += baseAp * 0.25
@@ -135,14 +135,45 @@ export default class Player {
 
   // Methods
 
+  static parseTalents(url) {
+    const numbers = url.split('/').pop()
+    let [arms, fury] = numbers.split('-')
+
+    const getValue = (str, i) => {
+      return (str && str.length > i)
+        ? parseInt(str[i]) || 0
+        : 0
+    }
+
+    return {
+      impHS: getValue(arms, 0),
+      tacticalMastery: getValue(arms, 4),
+      angerManagement: getValue(arms, 7),
+      deepWounds: getValue(arms, 8),
+      twoHandSpec: getValue(arms, 9),
+      impale: getValue(arms, 10),
+
+      boomingVoice: getValue(fury, 0),
+      cruelty: getValue(fury, 1),
+      unbridledWrath: getValue(fury, 3),
+      impBS: getValue(fury, 7),
+      dualWieldSpec: getValue(fury, 8),
+      impExecute: getValue(fury, 9),
+      impSlam: getValue(fury, 11),
+      deathWish: getValue(fury, 12),
+      flurry: getValue(fury, 15),
+      bloodthirst: getValue(fury, 16)
+    }
+  }
+
+  static getBaseAp(lvl, str) {
+    return (lvl * 3 - 20) + str * 2
+  }
+
   tick(secs) {
     this.gcd.tick(secs)
     this.flurry && this.flurry.tick(secs)
     this.windfury && this.windfury.tick(secs)
-  }
-
-  getBaseAp(lvl, str) {
-    return (lvl * 3 - 20) + str * 2
   }
 
   increaseAtkSpeed(percent) {

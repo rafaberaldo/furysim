@@ -5,13 +5,15 @@ export default class Rage {
     this.current = startRage || 0
     this.conversionValue = 0.0091107836 * player.lvl**2 + 3.225598133 * player.lvl + 4.2652911
 
+    this.extraRageChance = player.talents.unbridledWrath * 0.08
+
     this.player = player
   }
 
   // Methods
 
   tryToProcUnbridledWrath() {
-    return (m.random() <= this.player.extraRageChance) ? 1 : 0
+    return (m.random() <= this.extraRageChance) ? 1 : 0
   }
 
   // https://blue.mmo-champion.com/topic/18325-the-new-rage-formula-by-kalgan/

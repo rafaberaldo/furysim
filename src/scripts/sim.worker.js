@@ -8,6 +8,7 @@ import { m, getRandom } from '@/scripts/helpers'
 function run(cfg) {
   const startTime = new Date().getTime()
   const log = new Log(cfg.duration, cfg.iterations)
+  let previousProgress
 
   for (let i = 0; i < cfg.iterations; i++) {
     const isLastLoop = i === cfg.iterations - 1
@@ -75,10 +76,13 @@ function run(cfg) {
     }
 
     const progress = Number((i / cfg.iterations * 100).toFixed(1))
-    postMessage({ progress })
-
-    if (isLastLoop && process.env.NODE_ENV !== 'production') console.log(log)
+    if (progress !== previousProgress) {
+      postMessage({ progress })
+      previousProgress = progress
+    }
   }
+
+  if (process.env.NODE_ENV !== 'production') console.log(log)
 
   const endTime = new Date().getTime()
   const finishedIn = ((endTime - startTime) / 1000)

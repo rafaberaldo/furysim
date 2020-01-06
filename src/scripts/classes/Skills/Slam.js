@@ -40,6 +40,6 @@ export default class Slam extends Skill {
     if (this.swingTimer.timeLeft > 0) this.swingTimer.forceUse()
 
     // NC: if Slam miss, swing is lost
-    if (this.isResultMiss(result)) this.swingTimer.forceUse()
+    if (Skill.isResultMiss(result)) this.swingTimer.forceUse()
   }
 }

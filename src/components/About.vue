@@ -1,21 +1,21 @@
 <template>
   <Modal ref="modal">
-    <h4>About</h4>
-    <strong>Are you tracking me or using cookies?</strong>
+    <h3>About</h3>
+    <h5>Are you tracking me or using cookies?</h5>
     <p>
       Although this site doesn't use cookies, your last sim configuration is saved
       into your local storage for convenience. Other than that it's pretty much
       a static page with no database or tracking.
     </p>
 
-    <strong>Is it open source?</strong>
+    <h5>Is it open source?</h5>
     <p>
       <a href="https://github.com/rafaelpimpa/furysim"
         target="_blank"
         rel="noopener">Yes</a> — GPL-3.0.
     </p>
 
-    <strong>Where did you get the formulas? How spell X works?</strong>
+    <h5>Where did you get the formulas? How spell X works?</h5>
     <p>
       <a href="https://github.com/rafaelpimpa/furysim/blob/master/MECHANICS.md"
         target="_blank"
@@ -23,14 +23,14 @@
       if you're interested. Sources are there too.
     </p>
 
-    <strong>Found a bug. Where do I report?</strong>
+    <h5>Found a bug. Where do I report?</h5>
     <p>
       <a href="https://github.com/rafaelpimpa/furysim/issues"
         target="_blank"
         rel="noopener">Here</a>. But post a valid source or insta-closed.
     </p>
 
-    <strong>What's the tech used?</strong>
+    <h5>What's the tech used?</h5>
     <p>
       The simulator itself runs in pure Javascript (Web Worker).
       Interface is the default stack from
@@ -43,7 +43,7 @@
         rel="noopener">Barebones</a> with a bit of changes.
     </p>
 
-    <strong>Why did you make this?</strong>
+    <h5>Why did you make this?</h5>
     <p>
       Always wanted to learn how to simulate something. Also wanted to know if Flurry
       Axe is worth buying. Spoiler: <span class="spoiler">Not much.</span>

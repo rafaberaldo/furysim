@@ -4,7 +4,8 @@ import { m } from '@/scripts/helpers'
 
 export default class SlamCast extends CooldownGCD {
   constructor(slam, player, useWhen) {
-    super('Slam Cast', player.slamCast, 0, player)
+    const slamCast = 1.5 - player.talents.impSlam * 0.1
+    super('Slam Cast', slamCast, 0, player)
 
     this.slam = slam
     this.useWhen = useWhen

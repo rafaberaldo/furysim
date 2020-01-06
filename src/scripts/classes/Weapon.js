@@ -5,20 +5,22 @@ import ExtraAttack from '@/scripts/classes/Cooldowns/ExtraAttack'
 import { m, clamp, getRandomInt } from '@/scripts/helpers'
 
 export default class Weapon {
+  static NORM_SPEED = {
+    DAGGER: 1.7,
+    ONE_HANDED: 2.4,
+    TWO_HANDED: 3.3
+  }
+
+  static RESULT = {
+    MISS: 'SWING_MISS',
+    DODGE: 'SWING_DODGE',
+    GLANCE: 'SWING_GLANCE',
+    CRIT: 'SWING_CRIT',
+    HIT: 'SWING_HIT'
+  }
+
   constructor(name, weapon, player) {
-    this.consts = {
-      NORM_DAGGER_SPEED: 1.7,
-      NORM_ONE_HAND_SPEED: 2.4,
-      NORM_TWO_HAND_SPEED: 3.3,
-
-      SWING_RESULT_MISS: 'SWING_MISS',
-      SWING_RESULT_DODGE: 'SWING_DODGE',
-      SWING_RESULT_GLANCE: 'SWING_GLANCE',
-      SWING_RESULT_CRIT: 'SWING_CRIT',
-      SWING_RESULT_HIT: 'SWING_HIT'
-    }
-    this.consts = Object.freeze(this.consts)
-
+    this._proc = weapon.proc
     this.log = player.log.set(name)
     this.name = name
     this.isOffhand = name === 'Offhand'
@@ -28,50 +30,62 @@ export default class Weapon {
     this.min = weapon.min
     this.max = weapon.max
     this.speed = weapon.speed
-    switch (weapon.proc.type) {
-      case 'extraAttack': {
-        this.proc = new ExtraAttack(
-          `${name} Proc`, weapon.proc.chance, weapon.proc.amount, true, player
-        )
-        break
-      }
+    this.enchant = weapon.enchant &&
+      new Proc(`Crusader ${this.name}`, 15, { ppm: 1, speed: this.speed }, player)
 
-      case 'atkSpeed': {
-        this.proc = new Proc(
-          `${name} Proc`, weapon.proc.duration, { chance: weapon.proc.chance }, player
-        )
-        this.proc.on('proc', (wasActive) => !wasActive && player.increaseAtkSpeed(weapon.proc.amount))
-        this.proc.on('fade', () => player.decreaseAtkSpeed(weapon.proc.amount))
-        break
-      }
-    }
-    this.enchant = weapon.enchant && new Proc(
-      `Crusader ${this.name}`, 15, { ppm: 1, speed: this.speed }, player
-    )
+    this.offhandDmgMul = 0.5 + player.talents.dualWieldSpec * 0.025
+
+    // NC: Initial offhand swing start at 50%
+    const hastedSpeed = this.speed / (1 + player.haste / 100)
+    const swingOffset = this.isOffhand ? hastedSpeed * 0.5 : 0
+    this.swingTimer = new AttackSpeed(this.name, hastedSpeed, swingOffset)
 
     this.player = player
     this.target = player.target
     this.windfury = player.windfury
-
-    // NC: Initial offhand swing start at 50%
-    const hastedSpeed = this.speed / (1 + this.player.haste / 100)
-    const swingOffset = this.isOffhand ? hastedSpeed * 0.5 : 0
-    this.swingTimer = new AttackSpeed(this.name, hastedSpeed, swingOffset)
   }
 
   // Getters
 
+  get proc() {
+    const getProc = () => {
+      switch (this._proc.type) {
+        case 'extraAttack':
+          return new ExtraAttack(
+            `${this.name} Proc`, this._proc.chance, this._proc.amount, true, this.player
+          )
+
+        case 'atkSpeed': {
+          const proc = new Proc(
+            `${this.name} Proc`, this._proc.duration, { chance: this._proc.chance }, this.player
+          )
+          proc.on('proc', (wasActive) => !wasActive && this.player.increaseAtkSpeed(this._proc.amount))
+          proc.on('fade', () => this.player.decreaseAtkSpeed(this._proc.amount))
+          return proc
+        }
+      }
+    }
+    const value = getProc()
+    Object.defineProperty(this, 'proc', { value })
+    return value
+  }
+
+  get avg() {
+    const value = m.round((this.min + this.max) / 2)
+    Object.defineProperty(this, 'avg', { value })
+    return value
+  }
+
   get dmg() {
     const weaponDmg = getRandomInt(this.min, this.max)
     let dmg = weaponDmg + (this.speed * this.player.ap / 14)
-    if (this.isOffhand) dmg *= this.player.offhandDmgMul
+    if (this.isOffhand) dmg *= this.offhandDmgMul
     return dmg
   }
 
   get avgDmg() {
-    const weaponDmg = m.round((this.min + this.max) / 2)
-    let dmg = weaponDmg + (this.speed * this.player.ap / 14)
-    if (this.isOffhand) dmg *= this.player.offhandDmgMul
+    let dmg = this.avg + (this.speed * this.player.ap / 14)
+    if (this.isOffhand) dmg *= this.offhandDmgMul
     return dmg
   }
 
@@ -83,20 +97,29 @@ export default class Weapon {
   }
 
   get baseAttackRating() {
-    return m.min(this.player.lvl * 5, this.skill)
+    const value = m.min(this.player.lvl * 5, this.skill)
+    Object.defineProperty(this, 'baseAttackRating', { value })
+    return value
   }
 
   get skillDiff() {
-    return this.target.defenseSkill - this.skill
+    const value = this.target.defenseSkill - this.skill
+    Object.defineProperty(this, 'skillDiff', { value })
+    return value
   }
 
   get normalizedSpeed() {
-    switch (this.type) {
-      case 'DAGGER': return this.consts.NORM_DAGGER_SPEED
-      case 'ONE_HANDED': return this.consts.NORM_ONE_HAND_SPEED
-      case 'TWO_HANDED': return this.consts.NORM_TWO_HAND_SPEED
-      default: return this.consts.NORM_ONE_HAND_SPEED
+    const getNorm = (type) => {
+      switch (type) {
+        case 'DAGGER': return Weapon.NORM_SPEED.DAGGER
+        case 'ONE_HANDED': return Weapon.NORM_SPEED.ONE_HANDED
+        case 'TWO_HANDED': return Weapon.NORM_SPEED.TWO_HANDED
+        default: return Weapon.NORM_SPEED.ONE_HANDED
+      }
     }
+    const value = getNorm(this.type)
+    Object.defineProperty(this, 'normalizedSpeed', { value })
+    return value
   }
 
   // Offhand attacks that occur while on-next-hit abilities such as
@@ -104,19 +127,31 @@ export default class Weapon {
   // https://us.forums.blizzard.com/en/wow/t/wow-classic-not-a-bug-list-updated-12-13-2019/175887
   get missChance() {
     if (this.player.heroicStrike.isQueued && this.isOffhand) return 0
-    return this.getMissChance(true)
+    return this._missChance
+  }
+
+  get _missChance() {
+    const value = this.getMissChance(true)
+    Object.defineProperty(this, '_missChance', { value })
+    return value
   }
 
   get skillMissChance() {
-    return this.getMissChance(false)
+    const value = this.getMissChance(false)
+    Object.defineProperty(this, 'skillMissChance', { value })
+    return value
   }
 
   get dodgeChance() {
-    return clamp(5 + this.skillDiff * 0.1)
+    const value = clamp(5 + this.skillDiff * 0.1)
+    Object.defineProperty(this, 'dodgeChance', { value })
+    return value
   }
 
   get glanceChance() {
-    return clamp(10 + (this.target.defenseSkill - this.baseAttackRating) * 2)
+    const value = clamp(10 + (this.target.defenseSkill - this.baseAttackRating) * 2)
+    Object.defineProperty(this, 'glanceChance', { value })
+    return value
   }
 
   // https://github.com/magey/classic-warrior/wiki/Crit-aura-suppression
@@ -126,11 +161,15 @@ export default class Weapon {
       ? baseDiffSkill * 0.2
       : baseDiffSkill * 0.4
 
-    return critSupp - 1.8
+    const value = critSupp - 1.8
+    Object.defineProperty(this, 'critSupp', { value })
+    return value
   }
 
   get critChance() {
-    return clamp(this.player.crit + this.critSupp)
+    const value = clamp(this.player.crit + this.critSupp)
+    Object.defineProperty(this, 'critChance', { value })
+    return value
   }
 
   get attackTable() {
@@ -144,7 +183,9 @@ export default class Weapon {
   get glancePenaltyMul() {
     const glancePenaltyLow = clamp(1.3 - 0.05 * this.skillDiff, 0.01, 0.91)
     const glancePenaltyHigh = clamp(1.2 - 0.03 * this.skillDiff, 0.2, 0.99)
-    return (glancePenaltyLow + glancePenaltyHigh) / 2
+    const value = (glancePenaltyLow + glancePenaltyHigh) / 2
+    Object.defineProperty(this, 'glancePenaltyMul', { value })
+    return value
   }
 
   get canUse() {
@@ -190,11 +231,11 @@ export default class Weapon {
   // https://github.com/magey/classic-warrior/wiki/Attack-table
   getSwingResult() {
     const roll = m.random() * 100
-    if (roll <= this.attackTable.miss) return this.consts.SWING_RESULT_MISS
-    if (roll <= this.attackTable.dodge) return this.consts.SWING_RESULT_DODGE
-    if (roll <= this.attackTable.glance) return this.consts.SWING_RESULT_GLANCE
-    if (roll <= this.attackTable.crit) return this.consts.SWING_RESULT_CRIT
-    return this.consts.SWING_RESULT_HIT
+    if (roll <= this.attackTable.miss) return Weapon.RESULT.MISS
+    if (roll <= this.attackTable.dodge) return Weapon.RESULT.DODGE
+    if (roll <= this.attackTable.glance) return Weapon.RESULT.GLANCE
+    if (roll <= this.attackTable.crit) return Weapon.RESULT.CRIT
+    return Weapon.RESULT.HIT
   }
 
   // A single hit can proc both weapon enchant and extra-attack
@@ -221,13 +262,13 @@ export default class Weapon {
     this.log.count++
     const result = this.getSwingResult()
 
-    if (result === this.consts.SWING_RESULT_MISS) {
+    if (result === Weapon.RESULT.MISS) {
       this.log.miss++
       this.player.addTimeline(this.name, result)
       return
     }
 
-    if (result === this.consts.SWING_RESULT_DODGE) {
+    if (result === Weapon.RESULT.DODGE) {
       // NC: Rage from dodge is 75% of average damage
       this.log.dodge++
       this.player.rage.gainFromSwing(this.avgDmg * 0.75)
@@ -237,19 +278,19 @@ export default class Weapon {
 
     let dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
 
-    if (result === this.consts.SWING_RESULT_GLANCE) {
+    if (result === Weapon.RESULT.GLANCE) {
       // NC: Rage gain from glance is based on damage
       dmg *= this.glancePenaltyMul
       this.log.glance++
     }
 
-    if (result === this.consts.SWING_RESULT_CRIT) {
+    if (result === Weapon.RESULT.CRIT) {
       dmg *= 2
       this.log.crit++
       this.player.flurry && this.player.flurry.apply()
     }
 
-    if (result === this.consts.SWING_RESULT_HIT) this.log.hit++
+    if (result === Weapon.RESULT.HIT) this.log.hit++
 
     dmg = m.round(dmg)
     this.log.dmg += dmg

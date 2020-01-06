@@ -7,9 +7,10 @@
 
 <script>
 export default {
-  computed: {
-    description: () => process.env.DESCRIPTION,
-    version: () => process.env.VERSION
+  data() {
+    return {
+      description: process.env.DESCRIPTION,
+    }
   }
 }
 </script>

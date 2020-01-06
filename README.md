@@ -13,6 +13,14 @@ Read here: [MECHANICS.md](https://github.com/rafaelpimpa/furysim/blob/master/MEC
 
 Thanks to Aurana's simulator for the event priority logic and a bunch of stuff.
 
+## Versioning
+
+While it's still in beta, version will follow v0.Y.Z, where:
+
+* Y: Major: important addition/changes on sim
+* Z: Minor/patch: interface changes or trivial addition/changes on sim
+
+
 ## Development
 
 ### Project setup
@@ -32,4 +40,4 @@ npm run build
 
 ## License
 
-(c) 2019 Rafael Beraldo. Code released under the GPL-3.0 license.
+(c) 2019-2020 Rafael Beraldo. Code released under the GPL-3.0 license.

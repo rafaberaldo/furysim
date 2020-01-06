@@ -70,9 +70,9 @@
       <section class="grid-item">
         <h4>Buffs</h4>
         <ul>
-          <li v-for="item in formGenerator.buffs" :key="item.value" class="u-flex">
+          <li v-for="item in formGenerator.buffs" :key="item.value" class="u-flex" :class="{ 'disabled': item.disabled }">
             <label>
-              <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
+              <input type="checkbox" v-model="formData.player.buffs" :value="item.value" :disabled="item.disabled">
               <span class="label-body">{{ item.title }}</span>
             </label>
           </li>
@@ -82,9 +82,9 @@
       <section class="grid-item">
         <h4>Consumables</h4>
         <ul>
-          <li v-for="item in formGenerator.consumables" :key="item.value" class="u-flex">
+          <li v-for="item in formGenerator.consumables" :key="item.value" class="u-flex" :class="{ 'disabled': item.disabled }">
             <label>
-              <input type="checkbox" v-model="formData.player.buffs" :value="item.value">
+              <input type="checkbox" v-model="formData.player.buffs" :value="item.value" :disabled="item.disabled">
               <span class="label-body">{{ item.title }}</span>
             </label>
           </li>
@@ -128,21 +128,27 @@
       <section class="grid-item">
         <div class="u-block">
           <h4>Trinkets / Other</h4>
-          <label>
-            <input type="checkbox" v-model="formData.player.hoj">
-            <span class="label-body">Hand of Justice</span>
-          </label>
-          <label>
-            <input type="checkbox" v-model="formData.player.cloudkeeper.canUse">
-            <span class="label-body">Cloudkeeper Legplates</span>
-          </label>
+          <ul>
+            <li>
+              <label>
+                <input type="checkbox" v-model="formData.player.hoj">
+                <span class="label-body">Hand of Justice</span>
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox" v-model="formData.player.cloudkeeper.canUse">
+                <span class="label-body">Cloudkeeper Legplates</span>
+              </label>
+            </li>
+          </ul>
         </div>
 
         <Weapon v-model="formData.player.mainhand" :mainhand="true"/>
         <Weapon v-model="formData.player.offhand" :mainhand="false"/>
       </section>
 
-      <section class="grid-item" style="grid-column: span 2">
+      <section class="grid-item span-2">
         <h4>Rotation</h4>
         <p>Skills follow this priority order (can't change for now)</p>
         <div v-if="hasDeathWish" class="u-flex">
@@ -301,6 +307,8 @@
                 <code>rage &gt;=
                   <input type="number" min="0" max="100" v-model.number="formData.player.slam.spamRage">
                 </code>
+              </span>
+            </label>
           </div>
         </div>
 
@@ -385,7 +393,7 @@
         </div>
 
         <h4>Simulation</h4>
-        <p><small><a role="button" @click="reset">Reset everything to default</a></small></p>
+        <p><small><a role="button" @click="reset">Reset settings to default</a></small></p>
         <div class="horizontal">
           <label>Duration of Fight (secs)</label>
           <input type="number" required min="10" max="3600" v-model.number="formData.duration">
@@ -400,7 +408,7 @@
           <span class="label-body u-weight-bold">Add latency to every action</span>
         </label>
         <div v-if="formData.latency.active" class="ident horizontal" :class="{ 'disabled': !formData.latency.active }">
-          <label>Min/Max</label>
+          <label>Min/Max (ms)</label>
           <input type="number" min="0" max="500" v-model.number="formData.latency.min">
           <input type="number" min="0" max="500" v-model.number="formData.latency.max">
         </div>
@@ -424,13 +432,10 @@
 </template>
 
 <script>
-import satisfies from 'semver/functions/satisfies'
 import Report from '@/components/Report'
 import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
-import { parseTalents } from '@/scripts/helpers'
-
-const RESET_STORAGE_RANGE = '<= 0.3.1'
+import Player from '@/scripts/classes/Player'
 
 export default {
   name: 'app',
@@ -451,7 +456,6 @@ export default {
       isCalcEP: false,
       isProd: process.env.NODE_ENV === 'production',
       formData: {
-        version: process.env.VERSION,
         isCustomTalent: false,
         duration: 75,
         iterations: process.env.NODE_ENV === 'production' ? 10000 : 500,
@@ -509,8 +513,8 @@ export default {
             last30: true
           },
           bloodFury: {
-            waitCrusader: true,
-            waitDeathWish: false
+            waitCrusader: false,
+            waitDeathWish: true
           },
           deathWish: {
             last30: true
@@ -574,22 +578,36 @@ export default {
           { title: 'Trueshot Aura', value: 'trueshot' },
           { title: '[H] Blood Fury (Orc)', value: 'bloodFury' },
           { title: '[H] Strength of Earth Totem', value: 'strTotem' },
-          { title: '[H] Windfury', value: 'wf' },
+          { title: '[H] Windfury', value: 'wf',
+            disabled: this.formData.player.buffs.includes('eleStoneMh')
+          },
           { title: '[H] Improved Windfury', value: 'improvedWf' },
           { title: '[A] Blessing of Might', value: 'bom' },
           { title: '[A] Blessing of Kings *', value: 'bok' },
         ],
         consumables: [
-          { title: 'Juju Power', value: 'jujuPower' },
-          { title: 'Elixir of Giants', value: 'giants' },
-          { title: 'Juju Might', value: 'jujuMight' },
-          { title: 'Winterfall Firewater', value: 'firewater' },
+          { title: 'Juju Power', value: 'jujuPower',
+            disabled: this.formData.player.buffs.includes('giants')
+          },
+          { title: 'Elixir of Giants', value: 'giants',
+            disabled: this.formData.player.buffs.includes('jujuPower')
+          },
+          { title: 'Juju Might', value: 'jujuMight',
+            disabled: this.formData.player.buffs.includes('firewater')
+          },
+          { title: 'Winterfall Firewater', value: 'firewater',
+            disabled: this.formData.player.buffs.includes('jujuMight')
+          },
           { title: 'R.O.I.D.S.', value: 'roids' },
           { title: 'Blessed Sunfruit', value: 'sunfruit' },
           { title: 'Mighty Rage Potion (MRP)', value: 'mrp' },
           { title: 'Elixir of the Mongoose', value: 'mongoose' },
-          { title: 'Elem. Sharp. Stone MH', value: 'eleStoneMh' },
-          { title: 'Elem. Sharp. Stone OH', value: 'eleStoneOh' },
+          { title: 'Elem. Sharp. Stone MH', value: 'eleStoneMh',
+            disabled: this.formData.player.buffs.includes('wf')
+          },
+          { title: 'Elem. Sharp. Stone OH', value: 'eleStoneOh',
+            disabled: !this.formData.player.offhand.canUse
+          },
         ],
         debuffs: [
           { title: 'Sunder Armor', value: 'sunder' },
@@ -600,11 +618,12 @@ export default {
       }
     },
     playerStats() {
-      const initBaseAp = this.getBaseAp(this.formData.player.str)
+      let str = this.formData.player.str
+      const lvl = this.formData.player.lvl
+      const initBaseAp = Player.getBaseAp(lvl, str)
       const gearAp = this.formData.player.ap - initBaseAp
 
       // BoK is calculated on sim to account procs
-      let str = this.formData.player.str
       this.formData.player.buffs.forEach((value) => {
         if (value === 'sf') str += 15
         if (value === 'mark') str += 12
@@ -625,7 +644,7 @@ export default {
         if (value === 'firewater') buffAp += 35
       })
 
-      const baseAp = this.getBaseAp(str)
+      const baseAp = Player.getBaseAp(lvl, str)
       const ap = baseAp + gearAp + buffAp
 
       let crit = this.formData.player.crit
@@ -643,15 +662,15 @@ export default {
       crit = Number(crit.toFixed(2))
 
       let haste = this.formData.player.haste
-      haste += this.formData.player.buffs.indexOf('wcb') > -1 ? 15 : 0
+      haste += this.formData.player.buffs.includes('wcb') ? 15 : 0
 
       return { str, ap, crit, haste }
     },
     hasMrp() {
-      return this.formData.player.buffs.indexOf('mrp') > -1
+      return this.formData.player.buffs.includes('mrp')
     },
     hasBloodFury() {
-      return this.formData.player.buffs.indexOf('bloodFury') > -1
+      return this.formData.player.buffs.includes('bloodFury')
     },
     hasDeathWish() {
       return !!this.talents.deathWish
@@ -660,7 +679,7 @@ export default {
       return !!this.talents.bloodthirst
     },
     slamCastTime() {
-      return 1.5 - this.talents.improvedSlam * 0.1
+      return 1.5 - this.talents.impSlam * 0.1
     },
     executeDuration() {
       return (this.formData.duration * (this.formData.player.execute.percent / 100))
@@ -681,11 +700,11 @@ export default {
       return (mitig * 100).toFixed(1)
     },
     talents() {
-      return parseTalents(this.formData.player.talents)
+      return Player.parseTalents(this.formData.player.talents)
     },
     talentsUrl() {
       const correctUrl = 'classic.wowhead.com/talent-calc/warrior/'
-      return this.formData.player.talents.indexOf(correctUrl) > -1
+      return this.formData.player.talents.includes(correctUrl)
         ? this.formData.player.talents
         : 'https://' + correctUrl
     }
@@ -694,9 +713,14 @@ export default {
     'formData.player.mainhand.type': function (value) {
       if (value === 'TWO_HANDED') this.formData.player.offhand.canUse = false
     },
-    'formData.player.offhand.canUse': function (value) {
-      if (value  && this.formData.player.mainhand.type === 'TWO_HANDED') {
+    'formData.player.offhand.canUse': function (canUse) {
+      if (canUse && this.formData.player.mainhand.type === 'TWO_HANDED') {
         this.formData.player.mainhand.type = 'ONE_HANDED'
+      }
+
+      if (!canUse) {
+        const index = this.formData.player.buffs.indexOf('eleStoneOh')
+        index > -1 && this.formData.player.buffs.splice(index, 1)
       }
     }
   },
@@ -725,11 +749,11 @@ export default {
           startRage: form.player.startRage,
           talents: form.player.talents,
           buffs: {
-            wf: form.player.buffs.indexOf('wf') > -1,
-            improvedWf: form.player.buffs.indexOf('improvedWf') > -1,
-            bok: form.player.buffs.indexOf('bok') > -1,
-            bloodFury: form.player.buffs.indexOf('bloodFury') > -1,
-            mrp: form.player.buffs.indexOf('mrp') > -1
+            wf: form.player.buffs.includes('wf'),
+            improvedWf: form.player.buffs.includes('improvedWf'),
+            bok: form.player.buffs.includes('bok'),
+            bloodFury: form.player.buffs.includes('bloodFury'),
+            mrp: form.player.buffs.includes('mrp')
           },
           hoj: form.player.hoj,
           mainhand: form.player.mainhand,
@@ -753,10 +777,14 @@ export default {
     },
     submit() {
       if (this.isLoading) return
+
+      localStorage.formData = JSON.stringify(this.formData)
       if (this.isCalcEP) {
         this.epWorkerChain()
         return
       }
+
+      this.isLoading = true
 
       this.worker.postMessage(JSON.stringify(this.getCfg()))
       this.worker.onmessage = ({ data }) => {
@@ -769,9 +797,6 @@ export default {
           this.$emit('report', this.result)
         }
       }
-
-      this.isLoading = true
-      localStorage.formData = JSON.stringify(this.formData)
     },
     epWorkerChain() {
       this.isLoading = true
@@ -779,7 +804,7 @@ export default {
       let count = 0
       const chain = {
         base:  { cfg: this.getCfg() },
-        ap:    { cfg: this.getCfg({ ap: 25 }) },
+        ap:    { cfg: this.getCfg({ ap: 50 }) },
         crit:  { cfg: this.getCfg({ crit: 1 }) },
         hit:   { cfg: this.getCfg({ hit: 1 }) },
         haste: { cfg: this.getCfg({ haste: 1 }) },
@@ -794,12 +819,12 @@ export default {
         worker.onmessage = ({ data }) => {
           item.progress = data.progress
           const sum = chainValues.reduce((s, w) => w.progress ? s += w.progress : 0, 0)
-          this.message = { progress: sum / chainValues.length }
+          this.message = { progress: Number((sum / chainValues.length).toFixed(1)) }
           if (data.finishedIn) {
             count++
             item.result = data
             item.result.report = JSON.parse(data.report)
-            item.dps = Number(item.result.dps)
+            item.dps = item.result.dps
             item.finishedIn = data.finishedIn
             if (count === chainValues.length) {
               this.result = chain.base.result
@@ -817,7 +842,7 @@ export default {
     calculateEp(chain) {
       const base = chain.base
       const ap = chain.ap
-      const dpsEp = 25 / (ap.dps - base.dps)
+      const dpsEp = 50 / (ap.dps - base.dps)
 
       const result = []
       Object.keys(chain).forEach(key => {
@@ -827,14 +852,11 @@ export default {
         const ep = Math.max(0, (item.dps - base.dps) * dpsEp)
         result.push({
           name: key === 'str' ? `8 ${key}` : `1% ${key}`,
-          value: Number(ep.toFixed(2))
+          value: Number(ep.toFixed(1))
         })
       })
 
       return result
-    },
-    getBaseAp(str) {
-      return (this.formData.player.lvl * 3 - 20) + str * 2
     },
     reset() {
       Object.assign(this.$data, this.$options.data.apply(this))
@@ -849,10 +871,7 @@ export default {
       if (!localStorage.formData) return
 
       const storageData = JSON.parse(localStorage.formData)
-      if (!storageData.version) return
-      if (satisfies(storageData.version, RESET_STORAGE_RANGE)) return
-
-      this.formData = storageData
+      this.formData = Object.assign(this.formData, storageData)
     }
   },
   mounted() {
@@ -863,6 +882,10 @@ export default {
 
 <style>
   @media (max-width: 768px) { .grid-item { overflow: auto; } }
+  @media (min-width: 769px) {
+    .span-2 { grid-column: span 2; }
+    .span-3 { grid-column: span 3; }
+  }
 
   .horizontal {
     display: flex;

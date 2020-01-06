@@ -3,15 +3,14 @@ import { Cooldown, CooldownGCD } from '@/scripts/classes/Cooldown'
 import { m, clamp } from '@/scripts/helpers'
 
 export default class Skill {
-  constructor(name, cost, cooldown, triggerGcd, player, useWhen) {
-    this.consts = {
-      SKILL_RESULT_MISS: 'SKILL_MISS',
-      SKILL_RESULT_DODGE: 'SKILL_DODGE',
-      SKILL_RESULT_CRIT: 'SKILL_CRIT',
-      SKILL_RESULT_HIT: 'SKILL_HIT'
-    }
-    this.consts = Object.freeze(this.consts)
+  static RESULT = {
+    MISS: 'SKILL_MISS',
+    DODGE: 'SKILL_DODGE',
+    CRIT: 'SKILL_CRIT',
+    HIT: 'SKILL_HIT'
+  }
 
+  constructor(name, cost, cooldown, triggerGcd, player, useWhen) {
     this.log = player.log.set(name)
     this.name = name
     this.cost = cost
@@ -24,6 +23,8 @@ export default class Skill {
     // NC: Miss refund is 80%
     this.missRefundMul = 1 - 0.8
 
+    this.skillCritMul = 2 + player.talents.impale * 0.1
+
     this.player = player
     this.target = player.target
   }
@@ -33,7 +34,8 @@ export default class Skill {
   get attackTable() {
     const miss = clamp(this.player.mainhand.skillMissChance)
     const dodge = clamp(miss + this.player.mainhand.dodgeChance)
-    return { miss, dodge }
+    const crit = clamp(this.player.mainhand.critChance)
+    return { miss, dodge, crit }
   }
 
   get dmg() {
@@ -57,6 +59,10 @@ export default class Skill {
 
   // Methods
 
+  static isResultMiss(result) {
+    return [Skill.RESULT.MISS, Skill.RESULT.DODGE].includes(result)
+  }
+
   tick(secs) {
     this.cooldown.tick(secs)
   }
@@ -64,17 +70,12 @@ export default class Skill {
   // Skills are two-rolls system
   getSkillResult() {
     const roll = m.random() * 100
-    if (roll <= this.attackTable.miss) return this.consts.SKILL_RESULT_MISS
-    if (roll <= this.attackTable.dodge) return this.consts.SKILL_RESULT_DODGE
+    if (roll <= this.attackTable.miss) return Skill.RESULT.MISS
+    if (roll <= this.attackTable.dodge) return Skill.RESULT.DODGE
 
     const roll2 = m.random() * 100
-    if (roll2 <= this.player.mainhand.critChance) return this.consts.SKILL_RESULT_CRIT
-    return this.consts.SKILL_RESULT_HIT
-  }
-
-  isResultMiss(result) {
-    [this.consts.SKILL_RESULT_MISS,
-    this.consts.SKILL_RESULT_DODGE].indexOf(result) > -1
+    if (roll2 <= this.attackTable.crit) return Skill.RESULT.CRIT
+    return Skill.RESULT.HIT
   }
 
   use(isExtra = false) {
@@ -87,14 +88,14 @@ export default class Skill {
 
     const result = this.getSkillResult()
 
-    if (result === this.consts.SKILL_RESULT_MISS) {
+    if (result === Skill.RESULT.MISS) {
       this.log.miss++
       this.player.rage.use(this.cost * this.missRefundMul)
       this.player.addTimeline(this.name, result)
       return result
     }
 
-    if (result === this.consts.SKILL_RESULT_DODGE) {
+    if (result === Skill.RESULT.DODGE) {
       this.log.dodge++
       this.player.rage.use(this.cost * this.missRefundMul)
       this.player.addTimeline(this.name, result)
@@ -103,13 +104,13 @@ export default class Skill {
 
     let dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
 
-    if (result === this.consts.SKILL_RESULT_CRIT) {
-      dmg *= this.player.skillCritMul
+    if (result === Skill.RESULT.CRIT) {
+      dmg *= this.skillCritMul
       this.log.crit++
       this.player.flurry && this.player.flurry.apply()
     }
 
-    if (result === this.consts.SKILL_RESULT_HIT) this.log.hit++
+    if (result === Skill.RESULT.HIT) this.log.hit++
 
     dmg = m.round(dmg)
     this.player.rage.use(this.cost)

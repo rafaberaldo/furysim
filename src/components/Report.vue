@@ -13,7 +13,7 @@
       <span
         class="progress"
         :style="{ width: `${item.value / 50 * 100 }%` }"/>
-      <span class="label">{{ item.name }} = {{ item.value }}</span>
+      <span class="label">{{ item.name }} = {{ item.value }} AP</span>
     </div>
 
     <hr v-if="ep" style="margin: 1rem 0">
@@ -44,7 +44,7 @@
       <div class="report-grid">
         <div v-for="item in ep" :key="item.name">
           <span class="label">{{ item.name }}</span>
-          <span class="u-family-title">{{ item.value }}</span>
+          <span class="u-family-title">{{ item.value }} AP</span>
           <div class="progress-bar small">
             <span class="progress" :style="{ width: `${item.value / 50 * 100 }%` }"/>
           </div>
@@ -62,7 +62,7 @@
           <div
             v-for="({ title, key, suffix }, i) in skillKeys"
             :key="key"
-            :style="{ gridColumn: i === 2 ? 'span 3' : null }">
+            :class="{ 'span-3': i === 2 }">
             <span class="label">{{ title }}</span>
             <span class="u-family-title">{{ getReportText(item.title, key, item, suffix) }}</span>
             <div v-if="suffix === '%'" class="progress-bar small">
@@ -163,7 +163,7 @@ export default {
     },
     timeline() {
       return this.data.timeline
-        .filter(e => !this.searchInput || e.toLowerCase().indexOf(this.searchInput.toLowerCase()) > -1)
+        .filter(e => !this.searchInput || e.toLowerCase().includes(this.searchInput.toLowerCase()))
         .reduce((string, line) => string += `${line}\r\n`, '')
     }
   },
@@ -225,7 +225,7 @@ export default {
   hr.transparent { border-color: transparent; }
 
   #timeline pre code {
-    height: 650px;
+    height: 80vh;
     margin: 0;
   }
   #timeline pre code .time { color: hsl(118, 38%, 52%); }
@@ -235,15 +235,15 @@ export default {
 
   .report-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(50px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     grid-gap: 15px;
     margin-bottom: 2.5rem;
   }
+  @media (max-width: 768px) { .report-grid { grid-template-columns: repeat(3, 1fr); } }
   .report-grid .label {
     display: block;
     font-weight: 800;
     white-space: nowrap;
-    overflow: hidden;
   }
   .report-grid .u-family-title {
     font-weight: 300;

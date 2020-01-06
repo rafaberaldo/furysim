@@ -37,8 +37,10 @@ export default {
   props: {
     darkTheme: Boolean
   },
-  computed: {
-    version: () => process.env.VERSION
+  data() {
+    return {
+      version: process.env.VERSION
+    }
   }
 }
 </script>
@@ -53,8 +55,8 @@ export default {
   }
   footer ul li {
     text-align: center;
-    min-width: 74px;
     margin-bottom: 0.5rem;
+    padding: 0 0.5rem;
   }
   footer ul li:not(:last-child) {
     margin-right: 0.5rem;
@@ -63,6 +65,7 @@ export default {
     text-align: left;
     flex-grow: 1;
   }
+  @media (max-width: 768px) { footer ul li:first-child { width: 100% } }
   footer .small {
     font-size: 0.75rem;
     color: var(--text-color-softer);

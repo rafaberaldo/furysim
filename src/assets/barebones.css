@@ -106,19 +106,17 @@ html.light-theme {
 	margin: 0 auto;
 	padding: 1.5rem;
 	display: grid;
-	grid-gap: 30px;
-  gap: 30px;
+  grid-gap: 30px;
 
 	/* by default use min 200px wide columns auto-fit into width */
-	grid-template-columns: minmax(200px, 1fr);
+	grid-template-columns: minmax(260px, 1fr);
 }
 
 /* grids to 3 columns above mobile sizes */
-@media (min-width: 768px) {
-	/* .grid-container {
+@media (min-width: 769px) {
+	.grid-container {
 		grid-template-columns: repeat(3, 1fr);
-		padding: 10px 0;
-	} */
+	}
 
 	/* basic grids */
 	.grid-container.fifths {
@@ -170,17 +168,17 @@ h1, .h1 { font-family: var(--font-family-title); font-size: 2.5rem; line-height:
 h2, .h2 { font-family: var(--font-family-title); font-size: 2.25rem; line-height: 1.25; letter-spacing: -.1rem; }
 h3, .h3 { font-family: var(--font-family-title); font-size: 1.9rem; line-height: 1.3;  letter-spacing: -.1rem; }
 h4, .h4 { font-family: var(--font-family-title); font-size: 1.5rem; line-height: 1.35; letter-spacing: -.08rem; }
-h5, .h5 { font-family: var(--font-family-title); font-size: 1.15rem; line-height: 1.5;  letter-spacing: -.05rem; }
-h6, .h6 { font-family: var(--font-family-title); font-size: 0.9rem; line-height: 1.6;  letter-spacing: 0; }
+h5, .h5 { font-family: var(--font-family-title); font-size: 1.25rem; line-height: 1.5;  letter-spacing: -.05rem; }
+h6, .h6 { font-family: var(--font-family-title); font-size: 1rem; line-height: 1.6;  letter-spacing: 0; }
 
 /* Larger than phablet */
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   h1, .h1 { font-size: 3.15rem; }
   h2, .h2 { font-size: 2.6rem; }
   h3, .h3 { font-size: 2.25rem; }
   h4, .h4 { font-size: 1.9rem; }
-  h5, .h5 { font-size: 1.5rem; }
-  h6, .h6 { font-size: 0.9rem; }
+  h5, .h5 { font-size: 1.4rem; }
+  h6, .h6 { font-size: 1rem; }
 }
 
 p {
@@ -345,13 +343,14 @@ select optgroup {
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
 .content ul {
-  list-style: circle inside; }
+  list-style: disc inside; }
 .content ol {
   list-style: decimal inside; }
 .content ol,
 .content ul {
   padding-left: 0;
-  margin-top: 0; }
+  margin-top: 0;
+  margin-left: 0.5rem; }
 .content ul ul,
 .content ul ol,
 .content ol ol,
@@ -360,8 +359,6 @@ select optgroup {
 	margin: 0.5rem 0 0.5rem 2.5rem;
 	color: var(--text-color-softer);
 }
-.content li {
-  margin-bottom: 0.5rem; }
 
 
 /* Code
@@ -477,13 +474,13 @@ there.
 
 
 /* Larger than mobile (default point when grid becomes active) */
-@media (min-width: 768px) {}
-
-/* Larger than phablet */
-@media (min-width: 900px) {}
+@media (min-width: 769px) {}
 
 /* Larger than tablet */
-@media (min-width: 1200px) {}
+@media (min-width: 1024px) {}
+
+/* Larger than desktop */
+@media (min-width: 1216px) {}
 
 
 

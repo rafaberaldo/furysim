@@ -2,7 +2,8 @@ import Skill from '@/scripts/classes/Skill'
 
 export default class Execute extends Skill {
   constructor(player, useWhen) {
-    super('Execute', player.executeCost, 0, true, player, useWhen)
+    const executeCost = 15 - (player.talents.impExecute && player.talents.impExecute * 3 - 1) || 0
+    super('Execute', executeCost, 0, true, player, useWhen)
 
     // NC: Execute refund 84% of extra rage only
     this.missRefundMul = 1
@@ -12,7 +13,7 @@ export default class Execute extends Skill {
   // Getters
 
   get dmg() {
-    return 600 + (this.player.rage.current - this.player.executeCost) * 15
+    return 600 + (this.player.rage.current - this.cost) * 15
   }
 
   get canUse() {
@@ -33,7 +34,7 @@ export default class Execute extends Skill {
   use() {
     const result = super.use()
 
-    this.isResultMiss(result)
+    Skill.isResultMiss(result)
       ? this.player.rage.use(this.player.rage.current * this.extraMissRefundMul)
       : this.player.rage.current = 0
 

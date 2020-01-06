@@ -59,7 +59,7 @@ export default {
   }
   .modal .content {
     margin: 0 auto;
-    max-height: calc(100vh - 80px);
+    max-height: 85vh;
     width: 480px;
     overflow: auto;
     position: relative;
@@ -67,9 +67,12 @@ export default {
     background: var(--background-color);
     border-radius: 5px;
   }
+  .modal .content h5 {
+    margin: 1.5rem 0 0.25rem 0;
+  }
   @media (max-width: 768px) {
     .modal .content {
-      width: calc(100vw - 40px);
+      width: 90vw;
       padding: 1.5rem;
     }
   }
