@@ -829,7 +829,7 @@ export default {
             if (count === chainValues.length) {
               this.result = chain.base.result
               this.result.timeline = JSON.parse(this.result.timeline)
-              this.result.finishedIn = chainValues.reduce((s, w) => s += w.finishedIn, 0).toFixed(3)
+              this.result.finishedIn = chainValues.reduce((a, b) => Math.max(a, b.finishedIn), 0)
               this.result.epValues = this.calculateEp(chain)
               this.$emit('report', this.result)
               this.isLoading = false
