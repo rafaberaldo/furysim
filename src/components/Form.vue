@@ -52,7 +52,7 @@
             style="flex-grow: 1"
             v-model="formData.player.talents">
           <select v-else v-model="formData.player.talents">
-            <option value="https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051">
+            <option :value="dwTalent">
               Default Dual Wield
             </option>
             <option value="https://classic.wowhead.com/talent-calc/warrior/20305011332-05052005025010051">
@@ -62,7 +62,11 @@
               Default Slam
             </option>
             <option disabled>────────</option>
-            <option value="" @click="formData.isCustomTalent = true">Custom</option>
+            <option
+              :value="dwTalent"
+              @click="formData.isCustomTalent = true">
+              Custom
+            </option>
           </select>
         </div>
       </section>
@@ -451,19 +455,22 @@ export default {
   data() {
     const defaultMh = weaponsData['1H Axes'].find(w => w.title === 'Deathbringer')
     const defaultOh = weaponsData['1H Axes'].find(w => w.title === 'Frostbite')
+    const dwTalent = 'https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051'
+    const isProd = process.env.NODE_ENV === 'production'
 
     return {
+      isProd,
+      dwTalent,
       worker: new Worker('@/scripts/sim.worker', { type: 'module' }),
       result: {},
       message: {},
       epValues: [],
       isLoading: false,
       isCalcEP: false,
-      isProd: process.env.NODE_ENV === 'production',
       formData: {
         isCustomTalent: false,
         duration: 75,
-        iterations: process.env.NODE_ENV === 'production' ? 10000 : 500,
+        iterations: isProd ? 10000 : 500,
         latency: {
           active: true,
           min: 60,
@@ -478,7 +485,7 @@ export default {
           crit: 20.45,
           hoj: true,
           startRage: 0,
-          talents: 'https://classic.wowhead.com/talent-calc/warrior/30305001302-05050005525010051',
+          talents: dwTalent,
           buffs: [
             'ony', 'dm', 'sf', 'wcb', 'mark', 'bloodFury', 'strTotem', 'wf', 'jujuPower',
             'roids', 'jujuMight', 'sunfruit', 'mrp', 'mongoose', 'eleStoneOh'
@@ -727,6 +734,15 @@ export default {
         const index = this.formData.player.buffs.indexOf('eleStoneOh')
         index > -1 && this.formData.player.buffs.splice(index, 1)
       }
+    },
+    'formData.player.talents': function (value) {
+      if (value) return
+
+      this.formData.isCustomTalent = false
+      this.formData.player.talents = this.dwTalent
+    },
+    isCalcEP(isCalcEP) {
+      this.formData.iterations = isCalcEP ? 25000 : this.formData.iterations
     }
   },
   methods: {

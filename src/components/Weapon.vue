@@ -65,7 +65,7 @@
       </div>
       <div v-if="value.proc.type" class="ident">
         <div class="horizontal">
-          <label>Proc Chance (%)</label>
+          <label>Chance (%)</label>
           <input
             v-model.number="value.proc.percent"
             type="number"
@@ -76,7 +76,7 @@
             :disabled="!value.canUse">
         </div>
         <div class="horizontal">
-          <label>Proc Amount</label>
+          <label>Amount</label>
           <input
             v-model.number="value.proc.amount"
             type="number"
@@ -86,7 +86,7 @@
             :disabled="!value.canUse">
         </div>
         <div v-if="value.proc.type === 'atkSpeed'" class="horizontal">
-          <label>Proc Duration</label>
+          <label>Duration</label>
           <input
             v-model.number="value.proc.duration"
             type="number"
