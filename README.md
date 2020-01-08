@@ -1,14 +1,18 @@
 # FurySim
 
-> FurySim is a Fury Warrior DPS Simulator for WoW Classic made in Javascript/Vuejs.
+> FurySim is a Fury Warrior DPS Simulator for World of Warcraft Classic made in Javascript/Vuejs.
+
+## How to use
+
+Use the website: https://furysim.github.io
 
 ## Mechanics and sources
 
-Read here: [MECHANICS.md](https://github.com/rafaelpimpa/furysim/blob/master/MECHANICS.md)
+Read here: [MECHANICS.md](MECHANICS.md).
 
 ## Related projects
 
-* [ClassicSim](https://github.com/timhul/ClassicSim): An event-driven simulation tool written in C++ for World of Warcraft Classic.
+* [ClassicSim](https://github.com/timhul/ClassicSim/): An event-driven simulation tool written in C++ for World of Warcraft Classic.
 * [Aurana's Big Duck](https://wow-aurana.github.io/bigdick/): Classic WoW Fury DPS simulator.
 
 Thanks to Aurana's simulator for the event priority logic and a bunch of stuff.
