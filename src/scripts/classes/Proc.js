@@ -3,11 +3,13 @@ import EventEmitter from 'events'
 import { m, ppmToChance } from '@/scripts/helpers'
 
 export default class Proc extends EventEmitter {
-  constructor(name, duration, ppmOrChance, player) {
+  constructor(name, duration, ppmOrChance, player, info = null) {
     super()
     this._buffDurationLeft = 0
     this._buffDuration = duration
     this.name = name
+    this.type = info && info.type
+    this.amount = info && info.amount
     this.chance = ppmOrChance.ppm
       ? ppmToChance(ppmOrChance.ppm, ppmOrChance.speed)
       : ppmOrChance.chance

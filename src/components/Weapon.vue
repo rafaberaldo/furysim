@@ -59,8 +59,9 @@
         <label>Proc</label>
         <select v-model="value.proc.type" :disabled="!value.canUse">
           <option :value="undefined">None</option>
-          <option value="extraAttack">Extra Attack</option>
           <option value="atkSpeed">Atk. Speed</option>
+          <option value="extraAttack">Extra Attack</option>
+          <option value="str">Strength</option>
         </select>
       </div>
       <div v-if="value.proc.type" class="ident">
@@ -81,11 +82,11 @@
             v-model.number="value.proc.amount"
             type="number"
             min="1"
-            max="50"
+            max="500"
             required
             :disabled="!value.canUse">
         </div>
-        <div v-if="value.proc.type === 'atkSpeed'" class="horizontal">
+        <div v-if="value.proc.type !== 'extraAttack'" class="horizontal">
           <label>Duration</label>
           <input
             v-model.number="value.proc.duration"
@@ -138,6 +139,7 @@
 
 <script>
 import weaponsData from '@/data/weapons'
+import { ppmToChance } from '@/scripts/helpers'
 
 export default {
   name: 'Weapon',
@@ -171,11 +173,15 @@ export default {
       this.value.type = value.type
       this.value.proc = {
          type: value.proc && value.proc.type,
-         percent: value.proc && value.proc.percent,
+         percent: value.proc && value.proc.percent ||
+          value.proc && this.getPercent(value.proc.ppm, value.speed),
          amount: value.proc && value.proc.amount,
          duration: value.proc && value.proc.duration
       }
     }
+  },
+  methods: {
+    getPercent: (ppm, speed) => Number((ppmToChance(ppm, speed) * 100).toFixed(2))
   }
 }
 </script>

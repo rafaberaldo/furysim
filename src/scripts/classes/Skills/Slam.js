@@ -36,6 +36,6 @@ export default class Slam extends Skill {
     this.isCasting = false
 
     // Slam restart swing
-    this.player.autos.forEach(a => a.swingTimer.forceRestart())
+    this.player.weapons.forEach(w => w.swingTimer.forceRestart())
   }
 }

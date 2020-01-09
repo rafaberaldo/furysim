@@ -21,6 +21,7 @@
 * Deep Wounds is not implemented.
 * Battle Shout triggers a GCD at the start of fight.
 * Windfury have a 100 ms internal cooldown to simulate correct behavior.
+* Non confirmed weapon procs are set to 1 PPM.
 * About fight timeline:
   * Events at same time does not *always* shows in correct order.
   * ``BUFF_FADED`` is not shown at the exact time, it logs after next event happens.

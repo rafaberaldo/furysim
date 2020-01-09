@@ -49,20 +49,38 @@ export default class Weapon {
 
   get proc() {
     const getProc = () => {
-      switch (this._proc.type) {
-        case 'extraAttack':
-          return new ExtraAttack(
-            `${this.name} Proc`, this._proc.chance, this._proc.amount, true, this.player
-          )
+      if (this._proc.type === 'extraAttack') {
+        return new ExtraAttack(
+          `${this.name} Proc`,
+          this._proc.chance,
+          this._proc.amount,
+          true,
+          this.player,
+          this._proc
+        )
+      }
 
-        case 'atkSpeed': {
-          const proc = new Proc(
-            `${this.name} Proc`, this._proc.duration, { chance: this._proc.chance }, this.player
-          )
-          proc.on('proc', (wasActive) => !wasActive && this.player.increaseAtkSpeed(this._proc.amount))
-          proc.on('fade', () => this.player.decreaseAtkSpeed(this._proc.amount))
-          return proc
-        }
+      if (this._proc.type === 'atkSpeed') {
+        const proc = new Proc(
+          `${this.name} Proc`,
+          this._proc.duration,
+          { chance: this._proc.chance },
+          this.player,
+          this._proc
+        )
+        proc.on('proc', (wasActive) => !wasActive && this.player.increaseAtkSpeed(this._proc.amount))
+        proc.on('fade', () => this.player.decreaseAtkSpeed(this._proc.amount))
+        return proc
+      }
+
+      if (this._proc.type === 'str') {
+        return new Proc(
+          `${this.name} Proc`,
+          this._proc.duration,
+          { chance: this._proc.chance },
+          this.player,
+          this._proc
+        )
       }
     }
     const value = getProc()
@@ -244,9 +262,10 @@ export default class Weapon {
   // NC: Priority is WF > MH / OH > Trinket
   tryProcs() {
     this.enchant && this.enchant.tryToProc()
+    this.proc && this.proc.type !== 'extraAttack' && this.proc.tryToProc()
 
     if (this.isMainhand && this.windfury && this.windfury.tryToProc()) return true
-    if (this.proc && this.proc.tryToProc()) return true
+    if (this.proc && this.proc.type === 'extraAttack' && this.proc.tryToProc()) return true
     if (this.player.hoj && this.player.hoj.tryToProc()) return true
 
     return

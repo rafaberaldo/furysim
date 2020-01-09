@@ -46,7 +46,7 @@ export default class Player {
     this.mainhand = new Weapon('Mainhand', cfg.player.mainhand, this)
     this.offhand = cfg.player.offhand && cfg.player.offhand.canUse &&
       new Weapon('Offhand', cfg.player.offhand, this)
-    this.autos = [this.mainhand, this.offhand].filter(e => !!e)
+    this.weapons = [this.mainhand, this.offhand].filter(e => !!e)
     this.isDw = !!this.offhand
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
     this.cloudkeeper = cfg.player.cloudkeeper.canUse &&
@@ -96,8 +96,12 @@ export default class Player {
     let str = this._str
 
     // Crusader / Holy Strength
-    if (this.mainhand.enchant && this.mainhand.enchant.isActive) str += 100
-    if (this.offhand && this.offhand.enchant && this.offhand.enchant.isActive) str += 100
+    str += this.weapons.reduce((s, w) => s += w.enchant && w.enchant.isActive ? 100 : 0, 0)
+
+    // Str procs
+    str += this.weapons.reduce((s, w) => {
+      return s += w.proc && w.proc.isActive && w.proc.type === 'str' ? w.proc.amount : 0
+    }, 0)
 
     if (this.mrp && this.mrp.isActive) str += 60
     if (this.bok) str *= 1.1
@@ -125,8 +129,7 @@ export default class Player {
   }
 
   get hasCrusaderProc() {
-    return this.mainhand.enchant && this.mainhand.enchant.isActive ||
-      this.offhand && this.offhand.enchant && this.offhand.enchant.isActive
+    return this.weapons.some(w => w.enchant && w.enchant.isActive)
   }
 
   // UseWhen helper
@@ -178,11 +181,11 @@ export default class Player {
   }
 
   increaseAtkSpeed(percent) {
-    this.autos.forEach(a => a.swingTimer.increaseAtkSpeed(percent))
+    this.weapons.forEach(w => w.swingTimer.increaseAtkSpeed(percent))
   }
 
   decreaseAtkSpeed(percent) {
-    this.autos.forEach(a => a.swingTimer.decreaseAtkSpeed(percent))
+    this.weapons.forEach(w => w.swingTimer.decreaseAtkSpeed(percent))
   }
 
   // UseWhen helper
