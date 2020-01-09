@@ -281,8 +281,29 @@
 
         <div class="u-flex">
           <label>
+            <input type="checkbox" v-model="formData.player.whirlwind.canUse">
+            <span class="label-body u-weight-bold">Whirlwind</span>
+          </label>
+        </div>
+        <div v-if="formData.player.whirlwind.canUse" class="ident">
+          <div class="horizontal">
+            If
+            <code>rage &gt;=
+              <input type="number" min="0" max="100" v-model.number="formData.player.whirlwind.rage">
+            </code>
+          </div>
+          <div class="horizontal">
+            If Bloodthirst
+            <code>cooldown left &gt;=
+              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.whirlwind.btCooldown">
+            </code>
+          </div>
+        </div>
+
+        <div class="u-flex">
+          <label>
             <input type="checkbox" v-model="formData.player.slam.canUse">
-            <span class="label-body u-weight-bold">AutoSlam</span>
+            <span class="label-body u-weight-bold">Slam</span>
           </label>
         </div>
         <div v-if="formData.player.slam.canUse" class="ident">
@@ -299,40 +320,16 @@
             </code>
           </div>
           <div class="horizontal">
-            If swing <code>time left &lt;= {{ slamCastTime }}</code> and
-            <code>&gt;=
-              <input type="number" min="0" max="4" step="0.1" v-model.number="formData.player.slam.swing">
-            </code>
-          </div>
-          <div style="u-flex">
-            <label>
-              <input type="checkbox" v-model="formData.player.slam.canSpam">
-              <span class="label-body">Spam Slam if
-                <code>rage &gt;=
-                  <input type="number" min="0" max="100" v-model.number="formData.player.slam.spamRage">
-                </code>
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <div class="u-flex">
-          <label>
-            <input type="checkbox" v-model="formData.player.whirlwind.canUse">
-            <span class="label-body u-weight-bold">Whirlwind</span>
-          </label>
-        </div>
-        <div v-if="formData.player.whirlwind.canUse" class="ident">
-          <div class="horizontal">
-            If
-            <code>rage &gt;=
-              <input type="number" min="0" max="100" v-model.number="formData.player.whirlwind.rage">
-            </code>
-          </div>
-          <div class="horizontal">
-            If Bloodthirst and AutoSlam
+            If Whirlwind
             <code>cooldown left &gt;=
-              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.whirlwind.btSlamCooldown">
+              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.slam.wwCooldown">
+            </code>
+          </div>
+          <div class="horizontal">
+            If swing
+            <code>elapsed time &lt;=
+              <input type="number" min="0" max="1000" v-model.number="formData.player.slam.delayMs">
+              ms
             </code>
           </div>
         </div>
@@ -366,9 +363,9 @@
             </code>
           </div>
           <div class="horizontal">
-            If Bloodthirst, WW and AutoSlam
+            If Bloodthirst and WW
             <code>cooldown left &gt;=
-              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.hamstring.btWwSlamCooldown">
+              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.hamstring.btWwCooldown">
             </code>
           </div>
         </div>
@@ -538,20 +535,19 @@ export default {
           whirlwind: {
             canUse: true,
             rage: 25,
-            btSlamCooldown: 1
+            btCooldown: 1
           },
           hamstring: {
             canUse: false,
             rage: 80,
-            btWwSlamCooldown: 1
+            btWwCooldown: 1
           },
           slam: {
             canUse: false,
             rage: 15,
-            canSpam: false,
-            spamRage: 90,
             btCooldown: 1,
-            swing: 0.5
+            wwCooldown: 1,
+            delayMs: 250
           },
           execute: {
             percent: 12,
@@ -755,6 +751,7 @@ export default {
       form.player.offhand.proc.chance = form.player.offhand.proc.percent / 100
       form.player.deathWish.timeLeft = form.player.deathWish.last30 ? Math.max(0, form.duration - 30) : 0
       form.player.cloudkeeper.timeLeft = form.player.cloudkeeper.last30 ? Math.max(0, form.duration - 30) : 0
+      form.player.slam.delay = (form.player.slam.delayMs + form.latency.max) / 1000
 
       return {
         iterations: form.iterations,

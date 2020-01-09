@@ -14,12 +14,12 @@
 * Rage gain, Damage dealt and Attack power are rounded.
 * Attack speed is not rounded.
 * Flurry buff duration is not tracked (would never run off).
+* Bloodrage periodic buff is applied for 11 seconds because first second doesn't tick.
 * Only Fury tree and up to 2HSpec/Impale from Arms are tracked.
 * Sim assumes you're never taking any damage (so no Enrage, Parry haste etc).
 * [Batching][batching] is not implemented.
 * Deep Wounds is not implemented.
 * Battle Shout triggers a GCD at the start of fight.
-* Slam implementation is the Autoslam ("Slam macro") version.
 * Windfury have a 100 ms internal cooldown to simulate correct behavior.
 * About fight timeline:
   * Events at same time does not *always* shows in correct order.
@@ -59,7 +59,6 @@
 * Winfury don't consume charges on misses.
 * Priority for extra-attacks is WF > MH / OH > Trinket.
 * Armor can't go negative.
-* When Autoslam miss/dodge, swing is lost.
 
 [magey]: https://github.com/magey/classic-warrior/wiki
 [wiki]: https://vanilla-wow.fandom.com/wiki/Vanilla_WoW_Wiki

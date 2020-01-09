@@ -46,6 +46,7 @@ export default class Player {
     this.mainhand = new Weapon('Mainhand', cfg.player.mainhand, this)
     this.offhand = cfg.player.offhand && cfg.player.offhand.canUse &&
       new Weapon('Offhand', cfg.player.offhand, this)
+    this.autos = [this.mainhand, this.offhand].filter(e => !!e)
     this.isDw = !!this.offhand
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
     this.cloudkeeper = cfg.player.cloudkeeper.canUse &&
@@ -177,13 +178,11 @@ export default class Player {
   }
 
   increaseAtkSpeed(percent) {
-    this.mainhand.swingTimer.increaseAtkSpeed(percent)
-    this.isDw && this.offhand.swingTimer.increaseAtkSpeed(percent)
+    this.autos.forEach(a => a.swingTimer.increaseAtkSpeed(percent))
   }
 
   decreaseAtkSpeed(percent) {
-    this.mainhand.swingTimer.decreaseAtkSpeed(percent)
-    this.isDw && this.offhand.swingTimer.decreaseAtkSpeed(percent)
+    this.autos.forEach(a => a.swingTimer.decreaseAtkSpeed(percent))
   }
 
   // UseWhen helper
@@ -197,13 +196,6 @@ export default class Player {
   checkWwCd(secs) {
     return this.whirlwind && this.whirlwind.canUse
       ? this.whirlwind.cooldown.timeLeft >= secs
-      : true
-  }
-
-  // UseWhen helper
-  checkSlamCd(secs) {
-    return this.slam.cast && this.slam.cast.canUse
-      ? this.slam.cast.timeLeft >= secs
       : true
   }
 

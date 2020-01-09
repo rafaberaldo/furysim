@@ -33,8 +33,8 @@ function run(cfg) {
 
       player.execute,
       player.bloodthirst,
-      player.slam.cast,
       player.whirlwind,
+      player.slam.cast,
       player.heroicStrike.queue,
       player.hamstring,
 

@@ -8,7 +8,6 @@ export default class Slam extends Skill {
     this.isPlayerInput = false
     this.isCasting = false
     this.cast = new SlamCast(this, player, useWhen)
-    this.swingTimer = player.mainhand.swingTimer
   }
 
   // Getters
@@ -33,13 +32,10 @@ export default class Slam extends Skill {
 
   use() {
     this.player.heroicStrike.isQueued = false
-    const result = super.use()
+    super.use()
     this.isCasting = false
 
-    // If Slam finish before swing timer, swing is lost
-    if (this.swingTimer.timeLeft > 0) this.swingTimer.forceUse()
-
-    // NC: if Slam miss, swing is lost
-    if (Skill.isResultMiss(result)) this.swingTimer.forceUse()
+    // Slam restart swing
+    this.player.autos.forEach(a => a.swingTimer.forceRestart())
   }
 }

@@ -269,8 +269,8 @@ export default class Weapon {
     }
 
     if (result === Weapon.RESULT.DODGE) {
-      // NC: Rage from dodge is 75% of average damage
       this.log.dodge++
+      // NC: Rage from dodge is 75% of average damage
       this.player.rage.gainFromSwing(this.avgDmg * 0.75)
       this.player.addTimeline(this.name, result)
       return

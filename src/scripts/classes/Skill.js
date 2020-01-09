@@ -88,15 +88,11 @@ export default class Skill {
 
     const result = this.getSkillResult()
 
-    if (result === Skill.RESULT.MISS) {
-      this.log.miss++
-      this.player.rage.use(this.cost * this.missRefundMul)
-      this.player.addTimeline(this.name, result)
-      return result
-    }
+    if (result === Skill.RESULT.MISS) this.log.miss++
 
-    if (result === Skill.RESULT.DODGE) {
-      this.log.dodge++
+    if (result === Skill.RESULT.DODGE) this.log.dodge++
+
+    if (Skill.isResultMiss(result)) {
       this.player.rage.use(this.cost * this.missRefundMul)
       this.player.addTimeline(this.name, result)
       return result

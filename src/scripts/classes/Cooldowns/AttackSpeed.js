@@ -5,6 +5,12 @@ export default class AttackSpeed extends Cooldown {
     super(name, duration, timeLeft)
   }
 
+  // Getters
+
+  get timeElapsed() {
+    return this.duration - this.timeLeft
+  }
+
   // Methods
 
   // "30" for 30%
@@ -21,5 +27,9 @@ export default class AttackSpeed extends Cooldown {
 
   restart() {
     super.use()
+  }
+
+  forceRestart() {
+    super.forceUse()
   }
 }
