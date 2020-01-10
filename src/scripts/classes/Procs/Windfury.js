@@ -28,11 +28,15 @@ export default class Windfury extends Proc {
     this.cooldown.tick(secs)
   }
 
+  reset() {
+    super.reset()
+    this.chargesLeft = 0
+  }
+
   apply() {
     this.chargesLeft = this.charges
     super.apply()
     this.cooldown.use()
-    this.player.mainhand.swingTimer.reset()
     this.player.mainhand.swing(true)
   }
 

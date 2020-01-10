@@ -20,9 +20,10 @@ import { Cooldown } from      '@/scripts/classes/Cooldown'
 import { m } from '@/scripts/helpers'
 
 export default class Player {
-  constructor(cfg, log, logTimeline = false) {
+  constructor(cfg, log) {
     this.log = log
-    this.logTimeline = logTimeline
+    this.logTimeline = false
+    this.time = 0
 
     this.talents = Player.parseTalents(cfg.player.talents)
 
@@ -72,17 +73,7 @@ export default class Player {
       new Buff('Death Wish', 10, 30, 180, true, this, cfg.player.deathWish.timeLeft)
   }
 
-  // Setters
-
-  set time(value) {
-    this._time = value.toFixed(3)
-  }
-
   // Getters
-
-  get time() {
-    return this._time
-  }
 
   get dmgMul() {
     let dmgMul = this._dmgMul
@@ -137,6 +128,33 @@ export default class Player {
     return this.deathWish ? this.deathWish.isActive : true
   }
 
+  get toReset() {
+    const value = [
+      this.angerManagement,
+      this.battleShout,
+      this.bloodFury,
+      this.bloodrage,
+      this.bloodrage.periodic,
+      this.bloodthirst,
+      this.cloudkeeper,
+      this.deathWish,
+      this.execute,
+      this.flurry,
+      this.gcd,
+      this.hamstring,
+      this.mainhand,
+      this.mrp,
+      this.offhand,
+      this.rage,
+      this.slam,
+      this.slam.cast,
+      this.whirlwind,
+      this.windfury
+    ].filter(e => !!e)
+    Object.defineProperty(this, 'toReset', { value })
+    return value
+  }
+
   // Methods
 
   static parseTalents(url) {
@@ -180,6 +198,12 @@ export default class Player {
     this.windfury && this.windfury.tick(secs)
   }
 
+  reset() {
+    this.time = 0
+    this.logTimeline = false
+    this.toReset.forEach(e => e.reset())
+  }
+
   increaseAtkSpeed(percent) {
     this.weapons.forEach(w => w.swingTimer.increaseAtkSpeed(percent))
   }
@@ -205,9 +229,10 @@ export default class Player {
   addTimeline(name, type, value = null) {
     if (!this.logTimeline) return
 
+    const time = this.time.toFixed(3)
     this.log.timeline.push(!value
-      ? `<span class="time">${this.time}</span>  ${name} <span class="event">${type}</span> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
-      : `<span class="time">${this.time}</span>  ${name} <span class="event">${type}</span> for <b class="value">${value}</b> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
+      ? `<span class="time">${time}</span>  ${name} <span class="event">${type}</span> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
+      : `<span class="time">${time}</span>  ${name} <span class="event">${type}</span> for <b class="value">${value}</b> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
     )
   }
 }

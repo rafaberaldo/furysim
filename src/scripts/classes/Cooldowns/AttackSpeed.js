@@ -25,11 +25,7 @@ export default class AttackSpeed extends Cooldown {
     this._timeLeft *= 1 + percent / 100
   }
 
-  restart() {
-    super.use()
-  }
-
-  forceRestart() {
-    super.forceUse()
+  restart(force) {
+    super.use(force)
   }
 }

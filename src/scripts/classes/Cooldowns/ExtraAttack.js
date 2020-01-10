@@ -27,7 +27,6 @@ export default class ExtraAttack extends Cooldown {
     this.log.count++
     this.player.addTimeline(this.name, 'PROC')
     for (let i = 0; i < this.amount; i++) {
-      this.player.mainhand.swingTimer.reset()
       this.player.mainhand.swing(true)
     }
   }

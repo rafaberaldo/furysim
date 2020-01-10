@@ -225,6 +225,12 @@ export default class Weapon {
     this.proc && this.proc.tick && this.proc.tick(secs)
   }
 
+  reset() {
+    this.swingTimer.reset()
+    this.enchant.reset()
+    this.proc && this.proc.reset()
+  }
+
   getMissChance(isSwing = true) {
     // 1% hit from gear lost if delta > 10
     // https://www.wowhead.com/news=292085/hit-cap-in-classic-wow-clarifications
@@ -272,7 +278,11 @@ export default class Weapon {
   }
 
   swing(isExtra = false) {
-    this.swingTimer.restart()
+    if (!this.canUse) {
+      throw new Error(`Trying to use ${this.name} when can't use.`)
+    }
+
+    this.swingTimer.restart(isExtra)
 
     this.player.flurry && this.player.flurry.useCharge()
 

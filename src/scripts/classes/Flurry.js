@@ -41,4 +41,8 @@ export default class Flurry {
     this.player.decreaseAtkSpeed(this.haste)
     this.player.addTimeline(this.name, 'BUFF_FADED')
   }
+
+  reset() {
+    this.chargesLeft = 0
+  }
 }

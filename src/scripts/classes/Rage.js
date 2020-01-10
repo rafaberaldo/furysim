@@ -2,6 +2,7 @@ import { m, clamp } from '@/scripts/helpers'
 
 export default class Rage {
   constructor(player, startRage) {
+    this._startRage = startRage || 0
     this.current = startRage || 0
     this.conversionValue = 0.0091107836 * player.lvl**2 + 3.225598133 * player.lvl + 4.2652911
 
@@ -41,5 +42,9 @@ export default class Rage {
 
   lessThan(value) {
     return this.current <= value
+  }
+
+  reset() {
+    this.current = this._startRage
   }
 }

@@ -6,41 +6,35 @@ import Player from '@/scripts/classes/Player'
 import { m, getRandom } from '@/scripts/helpers'
 
 function run(cfg) {
+  let previousProgress
   const startTime = new Date().getTime()
   const log = new Log(cfg.duration, cfg.iterations)
-  let previousProgress
+  const player = new Player(cfg, log)
+  const events = [
+    player.slam,
+    player.mainhand,
+    player.offhand,
+
+    player.deathWish,
+    player.bloodrage,
+    player.mrp,
+    player.battleShout,
+    player.bloodFury,
+    player.cloudkeeper,
+
+    player.execute,
+    player.bloodthirst,
+    player.whirlwind,
+    player.slam.cast,
+    player.heroicStrike.queue,
+    player.hamstring,
+
+    player.bloodrage.periodic,
+    player.angerManagement
+  ].filter(e => !!e)
 
   for (let i = 0; i < cfg.iterations; i++) {
-    const isLastLoop = i === cfg.iterations - 1
-    const player = new Player(cfg, log, isLastLoop)
-
-    if (isLastLoop && process.env.NODE_ENV !== 'production') {
-      console.log(cfg)
-      console.log(player)
-    }
-
-    const events = [
-      player.slam,
-      player.mainhand,
-      player.offhand,
-
-      player.deathWish,
-      player.bloodrage,
-      player.mrp,
-      player.battleShout,
-      player.bloodFury,
-      player.cloudkeeper,
-
-      player.execute,
-      player.bloodthirst,
-      player.whirlwind,
-      player.slam.cast,
-      player.heroicStrike.queue,
-      player.hamstring,
-
-      player.bloodrage.periodic,
-      player.angerManagement
-    ].filter(e => !!e)
+    player.logTimeline = i === cfg.iterations - 1
 
     let time = 0
     while (time < cfg.duration) {
@@ -75,6 +69,8 @@ function run(cfg) {
       if (nextEvent.use) nextEvent.use()
     }
 
+    player.reset()
+
     const progress = Number((i / cfg.iterations * 100).toFixed(1))
     if (progress !== previousProgress) {
       postMessage({ progress })
@@ -82,7 +78,11 @@ function run(cfg) {
     }
   }
 
-  if (process.env.NODE_ENV !== 'production') console.log(log)
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(cfg)
+    console.log(player)
+    console.log(log)
+  }
 
   const endTime = new Date().getTime()
   let finishedIn = (endTime - startTime) / 1000

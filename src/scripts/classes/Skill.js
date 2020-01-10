@@ -67,6 +67,10 @@ export default class Skill {
     this.cooldown.tick(secs)
   }
 
+  reset() {
+    this.cooldown.reset()
+  }
+
   // Skills are two-rolls system
   getSkillResult() {
     const roll = m.random() * 100

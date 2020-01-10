@@ -2,6 +2,8 @@ import { m } from '@/scripts/helpers'
 
 export class Cooldown {
   constructor(name, duration, timeLeft = 0) {
+    this._defaultTimeLeft = timeLeft
+    this._defaultDuration = duration
     this._timeLeft = timeLeft
     this._duration = duration
     this.name = name
@@ -31,8 +33,8 @@ export class Cooldown {
     this._timeLeft = m.max(0, this._timeLeft - secs)
   }
 
-  use() {
-    if (this.onCooldown) {
+  use(force = false) {
+    if (this.onCooldown && !force) {
       throw new Error (`Trying use ${this.name} before it is ready`)
     }
 
@@ -40,11 +42,8 @@ export class Cooldown {
   }
 
   reset() {
-    this._timeLeft = 0
-  }
-
-  forceUse() {
-    this._timeLeft = this._duration
+    this._timeLeft = this._defaultTimeLeft
+    this._duration = this._defaultDuration
   }
 }
 

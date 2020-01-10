@@ -50,4 +50,8 @@ export default class Proc extends EventEmitter {
     this.apply()
     return true
   }
+
+  reset() {
+    this._buffDurationLeft = 0
+  }
 }
