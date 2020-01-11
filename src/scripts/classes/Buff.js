@@ -8,7 +8,7 @@ export default class Buff {
     this._buffDurationLeft = 0
     this.name = name
     this.cost = cost
-
+    this.isPlayerInput = true
     this.cooldown = triggerGcd
       ? new CooldownGCD(name, cooldown, timeLeft, player)
       : new Cooldown(name, cooldown, timeLeft)
