@@ -50,7 +50,8 @@
             required
             pattern="https?://classic\.wowhead\.com/talent-calc/warrior/.+"
             style="flex-grow: 1"
-            v-model="formData.player.talents">
+            v-model="formData.player.talents"
+            @blur="resetTalent">
           <select v-else v-model="formData.player.talents">
             <option :value="dwTalent">
               Default Dual Wield
@@ -62,11 +63,7 @@
               Default Slam
             </option>
             <option disabled>────────</option>
-            <option
-              :value="dwTalent"
-              @click="formData.isCustomTalent = true">
-              Custom
-            </option>
+            <option value="custom">Custom</option>
           </select>
         </div>
       </section>
@@ -328,7 +325,11 @@
           <div class="horizontal">
             If swing
             <code>elapsed time &lt;=
-              <input type="number" min="0" max="1000" v-model.number="formData.player.slam.delayMs">
+              <input
+                type="number"
+                :min="formData.latency.active ? formData.latency.max : 0"
+                max="1000"
+                v-model.number="formData.player.slam.delayMs">
               ms
             </code>
           </div>
@@ -404,7 +405,7 @@
           <input
             type="number"
             required
-            :min="isCalcEP && isProd ? 25000 : 1"
+            :min="isCalcEP && isProd ? 50000 : 1"
             max="100000"
             v-model.number="formData.iterations">
         </div>
@@ -421,13 +422,13 @@
 
         <label class="u-block">
           <input type="checkbox" v-model="isCalcEP">
-          <span class="label-body u-weight-bold">Calculate stat weights</span>
+          <span class="label-body u-weight-bold">Calculate stat weights (beta)</span>
         </label>
 
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
           <span class="progress" :style="{ width: `${message.progress}%` }"/>
           <span class="u-pos-relative">
-            {{ isLoading && message.progress ? `${Math.round(message.progress)}%` : 'Simulate!' }}
+            {{ isLoading && message.progress ? `${message.progress}%` : 'Simulate!' }}
           </span>
         </button>
 
@@ -732,13 +733,15 @@ export default {
       }
     },
     'formData.player.talents': function (value) {
-      if (value) return
+      if (value !== 'custom') return
 
-      this.formData.isCustomTalent = false
+      this.formData.isCustomTalent = true
       this.formData.player.talents = this.dwTalent
     },
     isCalcEP(isCalcEP) {
-      this.formData.iterations = isCalcEP ? 25000 : this.formData.iterations
+      this.formData.iterations = isCalcEP && this.formData.iterations < 50000
+        ? 50000
+        : this.formData.iterations
     }
   },
   methods: {
@@ -751,7 +754,7 @@ export default {
       form.player.offhand.proc.chance = form.player.offhand.proc.percent / 100
       form.player.deathWish.timeLeft = form.player.deathWish.last30 ? Math.max(0, form.duration - 30) : 0
       form.player.cloudkeeper.timeLeft = form.player.cloudkeeper.last30 ? Math.max(0, form.duration - 30) : 0
-      form.player.slam.delay = (form.player.slam.delayMs + form.latency.max) / 1000
+      form.player.slam.delay = form.player.slam.delayMs / 1000
 
       return {
         iterations: form.iterations,
@@ -837,7 +840,7 @@ export default {
         worker.onmessage = ({ data }) => {
           item.progress = data.progress
           const sum = chainValues.reduce((s, w) => w.progress ? s += w.progress : 0, 0)
-          this.message = { progress: Number((sum / chainValues.length).toFixed(1)) }
+          this.message = { progress: Math.round(sum / chainValues.length) }
           if (data.finishedIn) {
             count++
             item.result = data
@@ -884,6 +887,12 @@ export default {
       })
       delete localStorage.formData
       this.$emit('report', this.result)
+    },
+    resetTalent() {
+      if (this.formData.player.talents) return
+
+      this.formData.isCustomTalent = false
+      this.formData.player.talents = this.dwTalent
     },
     loadData() {
       if (!localStorage.formData) return

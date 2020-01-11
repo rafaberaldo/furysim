@@ -96,6 +96,10 @@
 
     <section id="timeline" class="report-section">
       <h2>Fight Timeline</h2>
+      <label>
+        <input type="checkbox" v-model="showPeriodicRage">
+        <span class="label-body">Show periodic rage gain</span>
+      </label>
       <label class="u-full-width">
         <input
           class="u-full-width"
@@ -103,11 +107,12 @@
           placeholder="Filter timeline"
           @input="search">
       </label>
+      <button v-if="isDev" @click="$emit('sim')">Run</button>
       <pre><code v-html="timeline"/></pre>
     </section>
 
     <div class="u-align-center">
-      <a class="u-pull-right" role="button" @click="scrollUp()">&uarr; Back to top</a>
+      <a role="button" @click="scrollUp()">&uarr; Back to top</a>
     </div>
   </div>
 </template>
@@ -122,7 +127,9 @@ export default {
   },
   data() {
     return {
-      searchInput: ''
+      searchInput: '',
+      isDev: process.env.NODE_ENV === 'development',
+      showPeriodicRage: false
     }
   },
   computed: {
@@ -162,8 +169,10 @@ export default {
       ]
     },
     timeline() {
+      const search = this.searchInput.toLowerCase()
       return this.data.timeline
-        .filter(e => !this.searchInput || e.toLowerCase().includes(this.searchInput.toLowerCase()))
+        .filter(e => this.showPeriodicRage || !e.includes('RAGE_GAIN_P'))
+        .filter(e => !this.searchInput || e.toLowerCase().includes(search))
         .reduce((string, line) => string += `${line}\r\n`, '')
     }
   },
@@ -180,7 +189,8 @@ export default {
     },
     getReportText(title, key, item, suffix) {
       if (key === 'dmgPerHit') return item[key]
-      const hs = this.data.report.heroicStrike
+
+      const hs = this.data.report['Heroic Strike']
       if (title === 'Mainhand' && key === 'countPerFight' && hs) {
         return `${item[key].toFixed(1)}${suffix} (+${hs.countPerFight})`
       }

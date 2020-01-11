@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <Header/>
-    <Form @report="r => result = r"/>
-    <Report v-if="result.finishedIn" :data="result"/>
+    <Form ref="form" @report="r => result = r"/>
+    <Report v-if="result.finishedIn" :data="result" @sim="$refs.form.submit"/>
     <About ref="about"/>
     <Changelog ref="changelog"/>
     <Footer
