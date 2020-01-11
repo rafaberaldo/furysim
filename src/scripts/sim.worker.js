@@ -12,6 +12,8 @@ function run(cfg) {
   const player = new Player(cfg, log)
   const events = [
     player.slam,
+    player.heroicStrike.queue,
+
     player.mainhand,
     player.offhand,
 
@@ -26,7 +28,6 @@ function run(cfg) {
     player.bloodthirst,
     player.whirlwind,
     player.slam.cast,
-    player.heroicStrike.queue,
     player.hamstring,
 
     player.bloodrage.periodic,
