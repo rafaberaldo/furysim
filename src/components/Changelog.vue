@@ -1,6 +1,22 @@
 <template>
   <Modal ref="modal">
     <h3>Changelog</h3>
+    <h5>v0.5.0</h5>
+    <ul>
+      <li>Add standard Slam rotation!</li>
+      <li>Add strength procs</li>
+      <li>Heroic Strike priority over swing — means that it can open a fight with HS if has rage</li>
+      <li>More weapon presets</li>
+      <li>Performance improvements</li>
+      <li>UI stuff:</li>
+      <ul>
+        <li>Fix custom talent on Chrome</li>
+        <li>Fix total time of stat weight calc</li>
+        <li>Stat weight set to 50k iterations</li>
+        <li>Add option to show periodic rage gain</li>
+      </ul>
+    </ul>
+
     <h5>v0.4.0</h5>
     <ul>
       <li>Fix not accounting Berserker Stance</li>
