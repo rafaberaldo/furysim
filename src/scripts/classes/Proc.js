@@ -41,7 +41,7 @@ export default class Proc extends EventEmitter {
     this.emit('proc', this.isActive)
     this._buffDurationLeft = this._buffDuration
     this.log.count++
-    this.player.addTimeline(this.name, 'BUFF_APPLIED', this._buffDuration)
+    this.player.addTimeline(this.name, 'BUFF_APPLIED', `${this._buffDuration}s`)
   }
 
   tryToProc() {

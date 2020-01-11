@@ -278,10 +278,6 @@ export default class Weapon {
   }
 
   swing(isExtra = false) {
-    if (!this.canUse) {
-      throw new Error(`Trying to use ${this.name} when can't use.`)
-    }
-
     this.swingTimer.restart(isExtra)
 
     this.player.flurry && this.player.flurry.useCharge()

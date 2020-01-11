@@ -5,8 +5,7 @@ import { m } from '@/scripts/helpers'
 
 export default class Windfury extends Proc {
   constructor(player) {
-    super('Windfury AP', 1.5, { chance: 0.2 }, player)
-    this.name = 'Windfury AP'
+    super('Windfury', 1.5, { chance: 0.2 }, player)
     this.charges = 2
     this.chargesLeft = 0
 
@@ -41,7 +40,7 @@ export default class Windfury extends Proc {
   }
 
   useCharge() {
-    if (!this.chargesLeft) return
+    if (!this.chargesLeft || !super.isActive) return
 
     this.chargesLeft = m.max(0, --this.chargesLeft)
 

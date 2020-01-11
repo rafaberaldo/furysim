@@ -83,11 +83,13 @@ export default class Skill {
   }
 
   use(isExtra = false) {
-    if (!this.canUse) {
-      throw new Error(`Trying to use ${this.name} when can't use.`)
+    if (process.env.NODE_ENV === 'development') {
+      if (!this.canUse) {
+        throw new Error(`Trying to use ${this.name} when can't use.`)
+      }
     }
 
-    if (this.name !== 'Slam') this.cooldown.use()
+    this.cooldown.use()
     this.log.count++
 
     const result = this.getSkillResult()

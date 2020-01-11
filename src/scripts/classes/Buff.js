@@ -49,7 +49,7 @@ export default class Buff {
     this.cooldown.use()
     this._buffDurationLeft = this._buffDuration
     this.player.rage.use(this.cost)
-    this.player.addTimeline(this.name, 'BUFF_APPLIED', this._buffDuration)
+    this.player.addTimeline(this.name, 'BUFF_APPLIED', `${this._buffDuration}s`)
   }
 
   reset() {

@@ -12,6 +12,6 @@ export default class AngerManagement extends Cooldown {
   use() {
     super.use()
     this.player.rage.gain(1)
-    // this.player.addTimeline(this.name, 'RAGE_GAIN')
+    this.player.addTimeline(this.name, 'RAGE_GAIN_P')
   }
 }

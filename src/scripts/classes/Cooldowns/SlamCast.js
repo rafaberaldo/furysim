@@ -19,7 +19,7 @@ export default class SlamCast extends CooldownGCD {
     if (!this.player.rage.has(this.useWhen.rage || this.slam.cost)) return false
     if (!this.player.checkBtCd(this.useWhen.btCooldown || 0)) return false
     if (!this.player.checkWwCd(this.useWhen.wwCooldown || 0)) return false
-    if (this.swingTimer.timeElapsed > this.useWhen.delay || 0) return false
+    if (this.swingTimer.timeElapsed > (this.useWhen.delay || 0)) return false
 
     return true
   }

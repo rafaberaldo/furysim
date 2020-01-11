@@ -229,10 +229,15 @@ export default class Player {
   addTimeline(name, type, value = null) {
     if (!this.logTimeline) return
 
-    const time = this.time.toFixed(3)
+    const timeHtml = `<span class="time">${this.time.toFixed(3)}</span>`
+    const typeHtml = `<span class="event">${type}</span>`
+    const infoHtml = `<span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
+    const valueHtml = Number.isInteger(value)
+      ? `<span class="value">${value}</span>`
+      : value
     this.log.timeline.push(!value
-      ? `<span class="time">${time}</span>  ${name} <span class="event">${type}</span> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
-      : `<span class="time">${time}</span>  ${name} <span class="event">${type}</span> for <b class="value">${value}</b> <span class="extra-info">(${this.rage.current} rage, ${this.ap} ap)</span>`
+      ? `${timeHtml}  ${name} ${typeHtml} ${infoHtml}`
+      : `${timeHtml}  ${name} ${typeHtml} for ${valueHtml} ${infoHtml}`
     )
   }
 }

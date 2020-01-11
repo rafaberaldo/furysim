@@ -39,19 +39,23 @@ function run(cfg) {
 
     let time = 0
     while (time < cfg.duration) {
+      const latency = time > 0 && cfg.latency.active ?
+        m.max(0, getRandom(cfg.latency.min, cfg.latency.max) / 1000) : 0
       // Get the next event with lower cooldown that can be usable,
       // respecting priority order
       const nextEvent = events.reduce((prio, next) => {
         if (!next.canUse) return prio
-        if (prio.timeLeft <= next.timeLeft && prio.canUse) return prio
+
+        const prioTL = prio.timeLeft + (prio.isPlayerInput ? latency : 0)
+        const nextTL = next.timeLeft + (next.isPlayerInput ? latency : 0)
+        if (prioTL <= nextTL && prio.canUse) return prio
+
         return next
       })
 
       if (nextEvent.timeLeft < 0) throw new Error('No time machines yet.')
 
-      const latency = nextEvent.isPlayerInput && cfg.latency.active
-        ? m.max(0, getRandom(cfg.latency.min, cfg.latency.max) / 1000) : 0
-      const secs = nextEvent.timeLeft + latency
+      const secs = nextEvent.timeLeft + (nextEvent.isPlayerInput ? latency : 0)
       time += secs
       player.time = time
 
@@ -72,7 +76,7 @@ function run(cfg) {
 
     player.reset()
 
-    const progress = Number((i / cfg.iterations * 100).toFixed(1))
+    const progress = m.round(i / cfg.iterations * 100)
     if (progress !== previousProgress) {
       postMessage({ progress })
       previousProgress = progress
