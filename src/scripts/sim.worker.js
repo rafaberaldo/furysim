@@ -37,9 +37,8 @@ function run(cfg) {
   for (let i = 0; i < cfg.iterations; i++) {
     player.logTimeline = i === cfg.iterations - 1
 
-    let time = 0
-    while (time < cfg.duration) {
-      const latency = time > 0 && cfg.latency.active ?
+    while (player.time < cfg.duration) {
+      const latency = (player.time > 0) && cfg.latency.active ?
         m.max(0, getRandom(cfg.latency.min, cfg.latency.max) / 1000) : 0
       // Get the next event with lower cooldown that can be usable,
       // respecting priority order
@@ -56,18 +55,19 @@ function run(cfg) {
       if (nextEvent.timeLeft < 0) throw new Error('No time machines yet.')
 
       const secs = nextEvent.timeLeft + (nextEvent.isPlayerInput ? latency : 0)
-      time += secs
-      player.time = time
+      player.time += secs
 
-      // Tick cooldowns for next event
-      events.forEach((e) => e.tick(secs))
-      player.tick(secs)
+      // Tick cooldowns for next event (advance time)
+      if (secs > 0) {
+        events.forEach((e) => e.tick(secs))
+        player.tick(secs)
+      }
 
       // Some requirements for skills changes after advacing time
       if (!nextEvent.canUse) continue
       if (nextEvent.timeLeft > 0) continue
 
-      if (time > cfg.duration) break
+      if (player.time > cfg.duration) break
 
       // Handle events
       if (nextEvent.swing) nextEvent.swing()

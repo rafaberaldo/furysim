@@ -142,6 +142,7 @@ export default class Player {
       this.flurry,
       this.gcd,
       this.hamstring,
+      this.heroicStrike,
       this.mainhand,
       this.mrp,
       this.offhand,

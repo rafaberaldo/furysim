@@ -33,6 +33,11 @@ export default class HeroicStrike extends Skill {
     this.isQueued = true
     this.player.addTimeline(this.cooldown.name, 'SKILL_QUEUED')
   }
+
+  reset() {
+    super.reset()
+    this.isQueued = false
+  }
 }
 
 class HeroicStrikeQueue {
