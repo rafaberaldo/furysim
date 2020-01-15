@@ -105,9 +105,9 @@
         </div>
 
         <ul>
-          <li v-for="item in formGenerator.debuffs" :key="item.value" class="u-flex">
+          <li v-for="item in formGenerator.debuffs" :key="item.value" class="u-flex" :class="{ 'disabled': item.disabled }">
             <label>
-              <input type="checkbox" v-model="formData.target.debuffs" :value="item.value">
+              <input type="checkbox" v-model="formData.target.debuffs" :value="item.value" :disabled="item.disabled">
               <span class="label-body">{{ item.title }}</span>
             </label>
           </li>
@@ -668,7 +668,10 @@ export default {
           },
         ],
         debuffs: [
-          { title: 'Sunder Armor', value: 'sunder' },
+          { title: 'Sunder Armor', value: 'sunder',
+            disabled: this.formData.target.debuffs.includes('impEa') },
+          { title: 'Imp. Expose Armor', value: 'impEa',
+            disabled: this.formData.target.debuffs.includes('sunder') },
           { title: 'Faerie Fire', value: 'ff' },
           { title: 'Curse of Recklessness', value: 'cor' },
           { title: 'Annihilator', value: 'anni' },
@@ -747,6 +750,7 @@ export default {
       let armor = this.formData.target.armor
       this.formData.target.debuffs.forEach((value) => {
         if (value === 'sunder') armor -= 2250
+        if (value === 'impEa') armor -= 2550
         if (value === 'ff') armor -= 505
         if (value === 'cor') armor -= 640
         if (value === 'anni') armor -= 600
