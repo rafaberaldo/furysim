@@ -754,7 +754,7 @@ export default {
       form.player.offhand.proc.chance = form.player.offhand.proc.percent / 100
       form.player.deathWish.timeLeft = form.player.deathWish.last30 ? Math.max(0, form.duration - 30) : 0
       form.player.cloudkeeper.timeLeft = form.player.cloudkeeper.last30 ? Math.max(0, form.duration - 30) : 0
-      form.player.slam.delay = form.player.slam.delayMs / 1000
+      form.player.slam.delay = (form.player.slam.delayMs + (form.latency ? form.latency.max : 0)) / 1000
 
       return {
         iterations: form.iterations,
