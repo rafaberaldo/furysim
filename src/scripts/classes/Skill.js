@@ -83,10 +83,8 @@ export default class Skill {
   }
 
   use(isExtra = false) {
-    if (process.env.NODE_ENV === 'development') {
-      if (!this.canUse) {
-        throw new Error(`Trying to use ${this.name} when can't use.`)
-      }
+    if (process.env.NODE_ENV === 'development' && !this.canUse) {
+      throw new Error(`Trying to use ${this.name} when can't use.`)
     }
 
     this.cooldown.use()

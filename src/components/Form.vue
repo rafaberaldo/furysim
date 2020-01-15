@@ -34,7 +34,7 @@
 
         <div class="horizontal">
           <label>Crit (%)</label>
-          <input type="number" required min="0" max="100" step="0.05" v-model.number="formData.player.crit">
+          <input type="number" required min="0" max="100" step="0.01" v-model.number="formData.player.crit">
         </div>
 
         <div class="horizontal">
@@ -292,7 +292,7 @@
           <div class="horizontal">
             If Bloodthirst
             <code>cooldown left &gt;=
-              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.whirlwind.btCooldown">
+              <input type="number" min="0" max="6" step="0.1" v-model.number="formData.player.whirlwind.btCooldown">
             </code>
           </div>
         </div>
@@ -313,13 +313,13 @@
           <div class="horizontal">
             If Bloodthirst
             <code>cooldown left &gt;=
-              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.slam.btCooldown">
+              <input type="number" min="0" max="6" step="0.1" v-model.number="formData.player.slam.btCooldown">
             </code>
           </div>
           <div class="horizontal">
             If Whirlwind
             <code>cooldown left &gt;=
-              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.slam.wwCooldown">
+              <input type="number" min="0" max="6" step="0.1" v-model.number="formData.player.slam.wwCooldown">
             </code>
           </div>
           <div class="horizontal">
@@ -366,7 +366,7 @@
           <div class="horizontal">
             If Bloodthirst and WW
             <code>cooldown left &gt;=
-              <input type="number" min="0" max="6" step="0.5" v-model.number="formData.player.hamstring.btWwCooldown">
+              <input type="number" min="0" max="6" step="0.1" v-model.number="formData.player.hamstring.btWwCooldown">
             </code>
           </div>
         </div>
@@ -737,11 +737,6 @@ export default {
 
       this.formData.isCustomTalent = true
       this.formData.player.talents = this.dwTalent
-    },
-    isCalcEP(isCalcEP) {
-      this.formData.iterations = isCalcEP && this.formData.iterations < 50000
-        ? 50000
-        : this.formData.iterations
     }
   },
   methods: {
