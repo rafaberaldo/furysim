@@ -1,4 +1,5 @@
 import Buff from '@/scripts/classes/Buff'
+import Player from '@/scripts/classes/Player'
 
 export default class BloodFury extends Buff {
   constructor(player, useWhen) {
@@ -16,5 +17,14 @@ export default class BloodFury extends Buff {
     if (this.player.slam && this.player.slam.isCasting) return false
 
     return true
+  }
+
+  // Methods
+
+  use() {
+    const baseAp = Player.getBaseAp(this.player.lvl, this.player.str)
+    this.apSnapshot = baseAp * 0.25
+
+    super.use()
   }
 }

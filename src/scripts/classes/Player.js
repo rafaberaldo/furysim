@@ -111,7 +111,7 @@ export default class Player {
     const baseAp = Player.getBaseAp(this.lvl, this.str)
     let ap = baseAp + this.flatAp
 
-    if (this.bloodFury && this.bloodFury.isActive) ap += baseAp * 0.25
+    if (this.bloodFury && this.bloodFury.isActive) ap += this.bloodFury.apSnapshot
     if (this.battleShout.isActive) ap += 193 * this.battleShoutApMul
     if (this.windfury && this.windfury.isActive) ap += 315 * this.windfuryApMul
     if (this.cloudkeeper && this.cloudkeeper.isActive) ap += 100
