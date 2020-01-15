@@ -12,8 +12,13 @@ export default class BloodFury extends Buff {
 
   get canUse() {
     if (!super.canUse) return false
-    if (this.useWhen.waitCrusader && !this.player.hasCrusaderProc) return false
     if (this.useWhen.waitDeathWish && !this.player.isDeathWishActive) return false
+    if (this.useWhen.waitCrusader && !this.player.hasCrusaderProc) return false
+    if (
+      this.useWhen.waitCrusaderOrDeathWish &&
+      !this.player.isDeathWishActive &&
+      !this.player.hasEveryCrusaderProc
+    ) return false
     if (this.player.slam && this.player.slam.isCasting) return false
 
     return true

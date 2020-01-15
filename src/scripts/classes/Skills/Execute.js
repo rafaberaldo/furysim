@@ -16,9 +16,13 @@ export default class Execute extends Skill {
     return 600 + (this.player.rage.current - this.cost) * 15
   }
 
+  get onPhase() {
+    return this.player.time >= this.useWhen.start
+  }
+
   get canUse() {
     if (!super.canUse) return false
-    if (this.player.time < this.useWhen.start) return false
+    if (!this.onPhase) return false
     if (
       this.useWhen.bloodthirst.priority &&
       !this.player.bloodthirst.onCooldown &&

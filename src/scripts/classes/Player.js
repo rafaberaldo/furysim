@@ -123,6 +123,10 @@ export default class Player {
     return this.weapons.some(w => w.enchant && w.enchant.isActive)
   }
 
+  get hasEveryCrusaderProc() {
+    return this.weapons.every(w => w.enchant && w.enchant.isActive)
+  }
+
   // UseWhen helper
   get isDeathWishActive() {
     return this.deathWish ? this.deathWish.isActive : true

@@ -197,6 +197,12 @@
           </div>
           <div class="u-flex">
             <label>
+              <input type="checkbox" v-model="formData.player.mrp.waitExecute">
+              <span class="label-body">Wait for Execute Phase</span>
+            </label>
+          </div>
+          <div class="u-flex">
+            <label>
               <input type="checkbox" v-model="formData.player.mrp.waitDeathWish">
               <span class="label-body">Wait for Death Wish</span>
             </label>
@@ -225,7 +231,15 @@
           <div class="u-flex">
             <label>
               <input type="checkbox" v-model="formData.player.bloodFury.waitCrusader">
-              <span class="label-body">Wait for Crusader Proc</span>
+              <span class="label-body">Wait for 1 Crusader Proc</span>
+            </label>
+          </div>
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.bloodFury.waitCrusaderOrDeathWish">
+              <span class="label-body">
+                Wait for {{ formData.player.offhand.canUse ? 2 : 1 }} Crusader Proc or Death Wish
+              </span>
             </label>
           </div>
         </div>
@@ -523,8 +537,9 @@ export default {
             last30: true
           },
           bloodFury: {
+            waitDeathWish: true,
             waitCrusader: false,
-            waitDeathWish: true
+            waitCrusaderOrDeathWish: false
           },
           deathWish: {
             last30: true
@@ -563,7 +578,8 @@ export default {
           mrp: {
             rage: 50,
             waitCrusader: false,
-            waitDeathWish: true
+            waitDeathWish: true,
+            waitExecute: false
           }
         },
         target: {

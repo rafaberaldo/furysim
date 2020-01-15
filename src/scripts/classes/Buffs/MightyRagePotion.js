@@ -13,6 +13,7 @@ export default class MightyRagePotion extends Buff {
 
   get canUse() {
     if (!super.canUse) return false
+    if (this.useWhen.waitExecute && !this.player.execute.onPhase) return false
     if (this.useWhen.waitCrusader && !this.player.hasCrusaderProc) return false
     if (this.useWhen.waitDeathWish && !this.player.isDeathWishActive) return false
     if (!this.player.rage.lessThan(this.useWhen.rage || 100)) return false
