@@ -21,8 +21,9 @@ function run(cfg) {
     player.bloodrage,
     player.mrp,
     player.battleShout,
-    player.bloodFury,
     player.cloudkeeper,
+    player.diamondFlask,
+    player.bloodFury,
 
     player.execute,
     player.bloodthirst,

@@ -2,7 +2,8 @@ import Skill from '@/scripts/classes/Skill'
 
 export default class Hamstring extends Skill {
   constructor(player, useWhen) {
-    super('Hamstring', 10, 0, true, player, useWhen)
+    const cost = 10 - (useWhen.pvpGloves ? 3 : 0)
+    super('Hamstring', cost, 0, true, player, useWhen)
   }
 
   // Getters

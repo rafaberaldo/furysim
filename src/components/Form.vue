@@ -128,7 +128,7 @@
     <div class="grid-container quarters">
       <section class="grid-item">
         <div class="u-block">
-          <h4>Trinkets / Other</h4>
+          <h4>Gear</h4>
           <ul>
             <li>
               <label>
@@ -138,8 +138,20 @@
             </li>
             <li>
               <label>
+                <input type="checkbox" v-model="formData.player.diamondFlask.canUse">
+                <span class="label-body">Diamond Flask</span>
+              </label>
+            </li>
+            <li>
+              <label>
                 <input type="checkbox" v-model="formData.player.cloudkeeper.canUse">
                 <span class="label-body">Cloudkeeper Legplates</span>
+              </label>
+            </li>
+            <li>
+              <label>
+                <input type="checkbox" v-model="formData.player.hamstring.pvpGloves">
+                <span class="label-body">PvP Gloves</span>
               </label>
             </li>
           </ul>
@@ -216,6 +228,36 @@
         </div>
 
         <div class="u-flex">
+          <label v-if="formData.player.cloudkeeper.canUse">
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">Cloudkeeper Legplates</span>
+          </label>
+        </div>
+        <div v-if="formData.player.cloudkeeper.canUse" class="ident">
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.cloudkeeper.last30">
+              <span class="label-body">In the last 30 secs of fight</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="u-flex">
+          <label v-if="formData.player.diamondFlask.canUse">
+            <input class="disabled" type="checkbox" checked disabled>
+            <span class="label-body u-weight-bold">Diamond Flask</span>
+          </label>
+        </div>
+        <div v-if="formData.player.diamondFlask.canUse" class="ident">
+          <div class="u-flex">
+            <label>
+              <input type="checkbox" v-model="formData.player.diamondFlask.last60">
+              <span class="label-body">In the last 60 secs of fight</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="u-flex">
           <label v-if="hasBloodFury">
             <input class="disabled" type="checkbox" checked disabled>
             <span class="label-body u-weight-bold">Blood Fury</span>
@@ -240,21 +282,6 @@
               <span class="label-body">
                 Wait for {{ formData.player.offhand.canUse ? 2 : 1 }} Crusader Proc or Death Wish
               </span>
-            </label>
-          </div>
-        </div>
-
-        <div class="u-flex">
-          <label v-if="formData.player.cloudkeeper.canUse">
-            <input class="disabled" type="checkbox" checked disabled>
-            <span class="label-body u-weight-bold">Cloudkeeper Legplates</span>
-          </label>
-        </div>
-        <div v-if="formData.player.cloudkeeper.canUse" class="ident">
-          <div class="u-flex">
-            <label>
-              <input type="checkbox" v-model="formData.player.cloudkeeper.last30">
-              <span class="label-body">In the last 30 secs of fight</span>
             </label>
           </div>
         </div>
@@ -536,6 +563,10 @@ export default {
             canUse: false,
             last30: true
           },
+          diamondFlask: {
+            canUse: false,
+            last60: true
+          },
           bloodFury: {
             waitDeathWish: true,
             waitCrusader: false,
@@ -556,7 +587,8 @@ export default {
           hamstring: {
             canUse: false,
             rage: 80,
-            btWwCooldown: 1
+            btWwCooldown: 1,
+            pvpGloves: false
           },
           slam: {
             canUse: false,
@@ -765,6 +797,7 @@ export default {
       form.player.offhand.proc.chance = form.player.offhand.proc.percent / 100
       form.player.deathWish.timeLeft = form.player.deathWish.last30 ? Math.max(0, form.duration - 30) : 0
       form.player.cloudkeeper.timeLeft = form.player.cloudkeeper.last30 ? Math.max(0, form.duration - 30) : 0
+      form.player.diamondFlask.timeLeft = form.player.diamondFlask.last60 ? Math.max(0, form.duration - 60) : 0
       form.player.slam.delay = (form.player.slam.delayMs + (form.latency ? form.latency.max : 0)) / 1000
 
       return {
@@ -791,6 +824,7 @@ export default {
           mainhand: form.player.mainhand,
           offhand: form.player.offhand,
           cloudkeeper: form.player.cloudkeeper,
+          diamondFlask: form.player.diamondFlask,
           bloodFury: form.player.bloodFury,
           heroicStrike: form.player.heroicStrike,
           whirlwind: form.player.whirlwind,

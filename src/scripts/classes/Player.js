@@ -50,6 +50,8 @@ export default class Player {
     this.weapons = [this.mainhand, this.offhand].filter(e => !!e)
     this.isDw = !!this.offhand
     this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
+    this.diamondFlask = cfg.player.diamondFlask.canUse &&
+      new Buff('Diamond Flask', 0, 60, 360, false, this, cfg.player.diamondFlask.timeLeft)
     this.cloudkeeper = cfg.player.cloudkeeper.canUse &&
       new Buff('Cloudkeeper Legplates', 0, 30, 900, false, this, cfg.player.cloudkeeper.timeLeft)
 
@@ -86,14 +88,14 @@ export default class Player {
   get str() {
     let str = this._str
 
-    // Crusader / Holy Strength
-    str += this.weapons.reduce((s, w) => s += w.enchant && w.enchant.isActive ? 100 : 0, 0)
-
-    // Str procs
+    // Weapon enchant/procs
     str += this.weapons.reduce((s, w) => {
-      return s += w.proc && w.proc.isActive && w.proc.type === 'str' ? w.proc.amount : 0
+      s += w.enchant && w.enchant.isActive ? 100 : 0
+      s += w.proc && w.proc.isActive && w.proc.type === 'str' ? w.proc.amount : 0
+      return s
     }, 0)
 
+    if (this.diamondFlask && this.diamondFlask.isActive) str += 75
     if (this.mrp && this.mrp.isActive) str += 60
     if (this.bok) str *= 1.1
 
@@ -142,6 +144,7 @@ export default class Player {
       this.bloodthirst,
       this.cloudkeeper,
       this.deathWish,
+      this.diamondFlask,
       this.execute,
       this.flurry,
       this.gcd,
