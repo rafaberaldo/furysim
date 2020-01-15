@@ -626,6 +626,7 @@ export default {
     formGenerator() {
       return {
         buffs: [
+          { title: 'Essence of the Red (Vael)', value: 'red' },
           { title: 'Rallying Cry (Onyxia Head)', value: 'ony' },
           { title: 'Fengus\' Ferocity (DM AP)', value: 'dm' },
           { title: 'Songflower Serenade', value: 'sf' },
@@ -814,6 +815,7 @@ export default {
           startRage: form.player.startRage,
           talents: form.player.talents,
           buffs: {
+            red: form.player.buffs.includes('red'),
             wf: form.player.buffs.includes('wf'),
             improvedWf: form.player.buffs.includes('improvedWf'),
             bok: form.player.buffs.includes('bok'),

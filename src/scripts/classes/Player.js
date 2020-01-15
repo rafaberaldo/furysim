@@ -1,23 +1,23 @@
-import AngerManagement from   '@/scripts/classes/Cooldowns/AngerManagement'
-import BloodFury from         '@/scripts/classes/Buffs/BloodFury'
-import Bloodrage from         '@/scripts/classes/Cooldowns/Bloodrage'
-import Bloodthirst from       '@/scripts/classes/Skills/Bloodthirst'
 import Buff from              '@/scripts/classes/Buff'
-import Execute from           '@/scripts/classes/Skills/Execute'
+import BloodFury from         '@/scripts/classes/Buffs/BloodFury'
+import MightyRagePotion from  '@/scripts/classes/Buffs/MightyRagePotion'
+import { Cooldown } from      '@/scripts/classes/Cooldown'
+import AngerManagement from   '@/scripts/classes/Cooldowns/AngerManagement'
+import Bloodrage from         '@/scripts/classes/Cooldowns/Bloodrage'
+import EssenceOfTheRed from   '@/scripts/classes/Cooldowns/EssenceOfTheRed'
 import ExtraAttack from       '@/scripts/classes/Cooldowns/ExtraAttack'
 import Flurry from            '@/scripts/classes/Flurry'
+import Windfury from          '@/scripts/classes/Procs/Windfury'
+import Rage from              '@/scripts/classes/Rage'
+import Bloodthirst from       '@/scripts/classes/Skills/Bloodthirst'
+import Execute from           '@/scripts/classes/Skills/Execute'
 import Hamstring from         '@/scripts/classes/Skills/Hamstring'
 import HeroicStrike from      '@/scripts/classes/Skills/HeroicStrike'
-import MightyRagePotion from  '@/scripts/classes/Buffs/MightyRagePotion'
-import Rage from              '@/scripts/classes/Rage'
 import Slam from              '@/scripts/classes/Skills/Slam'
+import Whirlwind from         '@/scripts/classes/Skills/Whirlwind'
 import Target from            '@/scripts/classes/Target'
 import Weapon from            '@/scripts/classes/Weapon'
-import Whirlwind from         '@/scripts/classes/Skills/Whirlwind'
-import Windfury from          '@/scripts/classes/Procs/Windfury'
-import { Cooldown } from      '@/scripts/classes/Cooldown'
-
-import { m } from '@/scripts/helpers'
+import { m } from             '@/scripts/helpers'
 
 export default class Player {
   constructor(cfg, log) {
@@ -43,6 +43,7 @@ export default class Player {
     this.bok = cfg.player.buffs.bok
     this.mrp = cfg.player.buffs.mrp && new MightyRagePotion(this, cfg.player.mrp)
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.player.bloodFury)
+    this.red = cfg.player.buffs.red && new EssenceOfTheRed(this, cfg.player.bloodFury)
 
     this.mainhand = new Weapon('Mainhand', cfg.player.mainhand, this)
     this.offhand = cfg.player.offhand && cfg.player.offhand.canUse &&

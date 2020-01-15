@@ -32,7 +32,8 @@ function run(cfg) {
     player.hamstring,
 
     player.bloodrage.periodic,
-    player.angerManagement
+    player.angerManagement,
+    player.red
   ].filter(e => !!e)
 
   for (let i = 0; i < cfg.iterations; i++) {
