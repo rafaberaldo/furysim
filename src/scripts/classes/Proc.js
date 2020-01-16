@@ -1,6 +1,6 @@
-import EventEmitter from 'events'
-
 import { m, ppmToChance } from '@/scripts/helpers'
+
+import EventEmitter from 'events'
 
 export default class Proc extends EventEmitter {
   constructor(name, duration, ppmOrChance, player, info = null) {
@@ -13,7 +13,7 @@ export default class Proc extends EventEmitter {
     this.chance = ppmOrChance.ppm
       ? ppmToChance(ppmOrChance.ppm, ppmOrChance.speed)
       : ppmOrChance.chance
-    this.log = player.log.set(name, true)
+    this.log = player.log.setProc(name)
 
     this.player = player
   }

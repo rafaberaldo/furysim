@@ -24,7 +24,7 @@
         :style="{ width: `${data.report.Flurry.uptime}%` }"/>
       <span class="label">Flurry Uptime ({{ data.report.Flurry.uptime }}%)</span>
     </div>
-    <div v-for="item in skills" :key="item.title" class="progress-bar">
+    <div v-for="item in data.report.swings" :key="item.title" class="progress-bar">
       <span
         class="progress"
         :style="{ width: `${item.portion}%` }"/>
@@ -56,15 +56,15 @@
 
     <section class="report-section">
       <h2>Skills / Swings</h2>
-      <template v-for="item in skills">
+      <template v-for="item in data.report.swings">
         <h4 :key="`${item.title}-header`">{{ item.title }}</h4>
         <div :key="item.title" class="report-grid">
           <div
-            v-for="({ title, key, suffix }, i) in skillKeys"
+            v-for="({ title, key, suffix }, i) in swingKeys"
             :key="key"
-            :class="{ 'span-3': i === 2 }">
+            :class="{ 'span-2': i === 3 }">
             <span class="label">{{ title }}</span>
-            <span class="u-family-title">{{ getReportText(item.title, key, item, suffix) }}</span>
+            <span class="u-family-title">{{ item[key] + suffix }}</span>
             <div v-if="suffix === '%'" class="progress-bar small">
               <span class="progress" :style="{ width: `${item[key]}%` }"/>
             </div>
@@ -77,12 +77,12 @@
 
     <section class="report-section">
       <h2>Procs / Auras</h2>
-      <template v-for="item in procs">
+      <template v-for="item in data.report.procs">
         <h4 :key="`${item.title}-header`">{{ item.title }}</h4>
         <div :key="item.title" class="report-grid procs">
-          <div v-for="{ title, key, suffix } in procsKeys" :key="key">
+          <div v-for="{ title, key, suffix } in procKeys" :key="key">
             <span class="label">{{ title }}</span>
-            <span class="u-family-title">{{ item[key].toFixed(1) + suffix }}</span>
+            <span class="u-family-title">{{ item[key] + suffix }}</span>
 
             <div v-if="suffix === '%'" class="progress-bar small">
               <span class="progress" :style="{ width: `${item[key]}%` }"/>
@@ -139,21 +139,12 @@ export default {
       return [...this.data.epValues]
         .sort((a, b) => b.value > a.value ? 1 : -1)
     },
-    skills() {
-      return Object.values(this.data.report)
-        .filter(s => !s.procOrAura)
-        .sort((a, b) => b.portion > a.portion ? 1 : -1)
-    },
-    procs() {
-      return Object.values(this.data.report)
-        .filter(s => s.procOrAura)
-        .sort((a, b) => b.uptime > a.uptime ? 1 : -1)
-    },
-    skillKeys() {
+    swingKeys() {
       return [
-        { key: 'portion', title: 'Dmg Portion', suffix: '%' },
-        { key: 'dmgPerHit', title: 'Dmg / Hit', suffix: '' },
-        { key: 'countPerFight', title: 'Count / Fight', suffix: '' },
+        { key: 'portion', title: 'Dmg %', suffix: '%' },
+        { key: 'dmg', title: 'Dmg', suffix: 'k' },
+        { key: 'avgHit', title: 'Avg Hit', suffix: '' },
+        { key: 'count', title: 'Count', suffix: '' },
         { key: 'misses', title: 'Misses', suffix: '%' },
         { key: 'dodges', title: 'Dodges', suffix: '%' },
         { key: 'glances', title: 'Glances', suffix: '%' },
@@ -161,10 +152,10 @@ export default {
         { key: 'hits', title: 'Hits', suffix: '%' },
       ]
     },
-    procsKeys() {
+    procKeys() {
       return [
         { key: 'uptime', title: 'Uptime', suffix: '%' },
-        { key: 'countPerFight', title: 'Count / Fight', suffix: '' },
+        { key: 'count', title: 'Count', suffix: '' },
         { key: 'ppm', title: 'Effective PPM', suffix: '' },
       ]
     },
@@ -186,16 +177,6 @@ export default {
     },
     scrollUp() {
       window.scroll({ top: 0, behavior: 'smooth' })
-    },
-    getReportText(title, key, item, suffix) {
-      if (key === 'dmgPerHit') return item[key]
-
-      const hs = this.data.report['Heroic Strike']
-      if (title === 'Mainhand' && key === 'countPerFight' && hs) {
-        return `${item[key].toFixed(1)}${suffix} (+${hs.countPerFight})`
-      }
-
-      return `${item[key].toFixed(1)}${suffix}`
     }
   }
 }

@@ -7,13 +7,15 @@ export default class Log {
     this.totalDuration = duration * iterations
     this.timeline = []
 
-    this.events = {}
+    this.swings = {}
+    this.procs = {}
+    this.rage = {}
   }
 
   // Getters
 
   get totalDmg() {
-    const value = Object.values(this.events).reduce((s, e) => s += e.dmg, 0)
+    const value = Object.values(this.swings).reduce((s, e) => s += e.dmg, 0)
     Object.defineProperty(this, 'totalDmg', { value })
     return value
   }
@@ -26,40 +28,52 @@ export default class Log {
 
   get report() {
     const toPercent = (count, total) => Number((count / total * 100).toFixed(1))
-    const report = {}
-    Object.keys(this.events).forEach(key => {
-      const obj = this.events[key]
+    const sortPortion = (a, b) => b.portion > a.portion ? 1 : -1
+    let swings = {}
+    let procs = {}
+
+    Object.keys(this.swings).forEach(key => {
+      const obj = this.swings[key]
       if (!obj.count) return
-      report[key] = !obj.isProc ? {
+
+      swings[key] = {
         title: key,
-        procOrAura: false,
         portion: toPercent(obj.dmg, this.totalDmg),
-        dmgPerHit: m.round(obj.dmg / obj.count),
+        dmg: Number((obj.dmg / this.iterations / 1000).toFixed(1)),
+        avgHit: m.round(obj.dmg / obj.count),
+        count: Number((obj.count / this.iterations).toFixed(1)),
         misses: toPercent(obj.miss, obj.count),
         dodges: toPercent(obj.dodge, obj.count),
         glances: toPercent(obj.glance, obj.count),
         crits: toPercent(obj.crit, obj.count),
         hits: toPercent(obj.hit, obj.count),
-        countPerFight: Number((obj.count / this.iterations).toFixed(1)),
-      } : {
+        _chained: Number((obj.chain / this.iterations).toFixed(1))
+      }
+    })
+
+    Object.keys(this.procs).forEach(key => {
+      const obj = this.procs[key]
+      if (!obj.count) return
+
+      procs[key] = {
         title: key,
-        procOrAura: true,
-        countPerFight: Number((obj.count / this.iterations).toFixed(1)),
+        count: Number((obj.count / this.iterations).toFixed(1)),
         uptime: toPercent(obj.uptime, this.totalDuration),
         ppm: Number((obj.count / (this.totalDuration / 60)).toFixed(1))
       }
-      if (key === 'Mainhand') report[key].chainedPerFight = Number((obj.chain / this.iterations).toFixed(2))
     })
-    return report
+
+    swings = Object.values(swings).sort(sortPortion)
+    procs = Object.values(procs).sort(sortPortion)
+    return { swings, procs }
   }
 
   // Methods
 
-  set(name, isProc = false) {
-    if (this.events[name]) return this.events[name]
+  setSwingOrSkill(name) {
+    if (this.swings[name]) return this.swings[name]
 
-    return this.events[name] = {
-      isProc,
+    return this.swings[name] = {
       chain: 0,
       count: 0,
       dmg: 0,
@@ -67,7 +81,15 @@ export default class Log {
       dodge: 0,
       glance: 0,
       crit: 0,
-      hit: 0,
+      hit: 0
+    }
+  }
+
+  setProc(name) {
+    if (this.procs[name]) return this.procs[name]
+
+    return this.procs[name] = {
+      count: 0,
       uptime: 0
     }
   }

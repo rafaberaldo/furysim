@@ -5,7 +5,7 @@ export default class Flurry {
     this.name = 'Flurry'
     this.charges = 3
     this.chargesLeft = 0
-    this.log = player.log.set(this.name, true)
+    this.log = player.log.setProc(this.name)
 
     this.haste = player.talents.flurry ? (player.talents.flurry + 1) * 5 : 0
 

@@ -1,6 +1,5 @@
 import { Cooldown, CooldownGCD } from '@/scripts/classes/Cooldown'
-
-import { m, clamp } from '@/scripts/helpers'
+import { clamp, m } from '@/scripts/helpers'
 
 export default class Skill {
   static RESULT = {
@@ -11,7 +10,7 @@ export default class Skill {
   }
 
   constructor(name, cost, cooldown, triggerGcd, player, useWhen) {
-    this.log = player.log.set(name)
+    this.log = player.log.setSwingOrSkill(name)
     this.name = name
     this.cost = cost
     this.useWhen = useWhen

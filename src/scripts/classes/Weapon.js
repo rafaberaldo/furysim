@@ -1,8 +1,8 @@
-import Proc from '@/scripts/classes/Proc'
+import { clamp, getRandomInt, m } from '@/scripts/helpers'
+
 import AttackSpeed from '@/scripts/classes/Cooldowns/AttackSpeed'
 import ExtraAttack from '@/scripts/classes/Cooldowns/ExtraAttack'
-
-import { m, clamp, getRandomInt } from '@/scripts/helpers'
+import Proc from '@/scripts/classes/Proc'
 
 export default class Weapon {
   static NORM_SPEED = {
@@ -21,7 +21,7 @@ export default class Weapon {
 
   constructor(name, weapon, player) {
     this._proc = weapon.proc
-    this.log = player.log.set(name)
+    this.log = player.log.setSwingOrSkill(name)
     this.name = name
     this.isOffhand = name === 'Offhand'
     this.isMainhand = name === 'Mainhand'

@@ -1,5 +1,4 @@
 import { Cooldown } from '@/scripts/classes/Cooldown'
-
 import { m } from '@/scripts/helpers'
 
 export default class ExtraAttack extends Cooldown {
@@ -7,7 +6,7 @@ export default class ExtraAttack extends Cooldown {
     super(name, procMultiple ? 0 : 0.1, 0)
     this.chance = chance
     this.amount = amount
-    this.log = player.log.set(this.name, true)
+    this.log = player.log.setProc(this.name)
 
     this.player = player
   }
