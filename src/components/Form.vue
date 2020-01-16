@@ -368,7 +368,7 @@
             <code>elapsed time &lt;=
               <input
                 type="number"
-                :min="formData.latency.active ? formData.latency.max : 0"
+                min="0"
                 max="1000"
                 v-model.number="formData.player.slam.delayMs">
               ms
@@ -485,6 +485,8 @@ import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
 import Player from '@/scripts/classes/Player'
 
+import merge from 'lodash.merge'
+
 export default {
   name: 'app',
   components: {
@@ -522,7 +524,6 @@ export default {
           hit: 6,
           haste: 0,
           crit: 20.45,
-          hoj: true,
           startRage: 0,
           talents: dwTalent,
           buffs: [
@@ -559,6 +560,7 @@ export default {
               duration: defaultOh.proc &&  defaultOh.proc.duration
             }
           },
+          hoj: true,
           cloudkeeper: {
             canUse: false,
             last30: true
@@ -595,7 +597,7 @@ export default {
             rage: 15,
             btCooldown: 1,
             wwCooldown: 1,
-            delayMs: 250
+            delayMs: 500
           },
           execute: {
             percent: 12,
@@ -803,7 +805,7 @@ export default {
       form.player.deathWish.timeLeft = form.player.deathWish.last30 ? Math.max(0, form.duration - 30) : 0
       form.player.cloudkeeper.timeLeft = form.player.cloudkeeper.last30 ? Math.max(0, form.duration - 30) : 0
       form.player.diamondFlask.timeLeft = form.player.diamondFlask.last60 ? Math.max(0, form.duration - 60) : 0
-      form.player.slam.delay = (form.player.slam.delayMs + (form.latency ? form.latency.max : 0)) / 1000
+      form.player.slam.delay = (form.player.slam.delayMs + (form.latency.active ? form.latency.max : 0)) / 1000
 
       return {
         iterations: form.iterations,
@@ -949,7 +951,7 @@ export default {
       if (!localStorage.formData) return
 
       const storageData = JSON.parse(localStorage.formData)
-      this.formData = Object.assign(this.formData, storageData)
+      this.formData = merge(this.formData, storageData)
     }
   },
   mounted() {
