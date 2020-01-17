@@ -1,18 +1,18 @@
 {
   "name": "furysim",
   "version": "0.5.0",
-  "homepage": "https://furysim.github.io",
+  "description": "Fury Warrior DPS simulator for Classic WoW",
   "author": {
     "name": "Rafael Beraldo",
     "email": "rafael.pimpa@gmail.com",
     "url": "https://twitter.com/rafaelpimpa"
   },
-  "description": "Fury Warrior DPS simulator for Classic WoW",
+  "homepage": "https://furysim.github.io",
+  "license": "GPL-3.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rafaelpimpa/furysim.git"
   },
-  "license": "GPL-3.0",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -25,12 +25,15 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-plugin-eslint": "^4.1.0",
+    "@vue/cli-plugin-typescript": "^4.1.2",
     "@vue/cli-service": "^4.1.0",
+    "@vue/eslint-config-typescript": "^4.0.0",
     "babel-eslint": "^10.0.3",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.2",
+    "typescript": "~3.5.3",
     "vue-template-compiler": "^2.6.10",
     "worker-plugin": "^3.2.0"
   },
@@ -41,11 +44,12 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "@vue/typescript"
     ],
     "rules": {},
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@typescript-eslint/parser"
     }
   },
   "browserslist": [

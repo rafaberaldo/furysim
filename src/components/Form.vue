@@ -469,7 +469,7 @@
         <button class="button-primary u-full-width" :class="{ 'noevents': isLoading }">
           <span class="progress" :style="{ width: `${message.progress}%` }"/>
           <span class="u-pos-relative">
-            {{ isLoading && message.progress ? `${message.progress}%` : 'Simulate!' }}
+            {{ submitText }}
           </span>
         </button>
 
@@ -483,7 +483,7 @@
 import Report from '@/components/Report'
 import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
-import Player from '@/scripts/classes/Player'
+import Player from '@/sim/classes/Player'
 
 import merge from 'lodash.merge'
 
@@ -500,9 +500,9 @@ export default {
     const isProd = process.env.NODE_ENV === 'production'
 
     return {
+      worker: {},
       isProd,
       dwTalent,
-      worker: new Worker('@/scripts/sim.worker', { type: 'module' }),
       result: {},
       message: {},
       epValues: [],
@@ -771,6 +771,11 @@ export default {
       return this.formData.player.talents.includes(correctUrl)
         ? this.formData.player.talents
         : 'https://' + correctUrl
+    },
+    submitText() {
+      if (this.isLoading && this.message.progress < 100) return `${this.message.progress}%`
+      if (this.isLoading) return `0%`
+      return 'Simulate!'
     }
   },
   watch: {
@@ -859,7 +864,7 @@ export default {
       }
 
       this.isLoading = true
-
+      this.worker = new Worker('@/sim/sim.worker', { type: 'module' })
       this.worker.postMessage(JSON.stringify(this.getCfg()))
       this.worker.onmessage = ({ data }) => {
         this.message = data
@@ -868,6 +873,7 @@ export default {
           this.result.report = JSON.parse(data.report)
           this.result.timeline = JSON.parse(data.timeline)
           this.isLoading = false
+          this.worker.terminate()
           this.$emit('report', this.result)
         }
       }
@@ -887,7 +893,7 @@ export default {
       const chainValues = Object.values(chain)
 
       chainValues.forEach(item => {
-        const worker = new Worker('@/scripts/sim.worker', { type: 'module' })
+        const worker = new Worker('@/sim/sim.worker', { type: 'module' })
 
         worker.postMessage(JSON.stringify(item.cfg))
         worker.onmessage = ({ data }) => {

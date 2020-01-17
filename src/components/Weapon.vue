@@ -139,7 +139,7 @@
 
 <script>
 import weaponsData from '@/data/weapons'
-import { ppmToChance } from '@/scripts/helpers'
+import { ppmToChance } from '@/sim/helpers'
 
 export default {
   name: 'Weapon',
