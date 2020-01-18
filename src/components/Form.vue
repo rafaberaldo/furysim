@@ -437,6 +437,10 @@
 
         <h4>Simulation</h4>
         <p><small><a role="button" @click="reset">Reset settings to default</a></small></p>
+        <p>
+          <small><a role="button" @click="exportStt">Export settings</a></small> |
+          <small><a role="button" @click="importStt">Import settings</a></small>
+        </p>
         <div class="horizontal">
           <label>Duration of Fight (secs)</label>
           <input type="number" required min="10" max="3600" v-model.number="formData.duration">
@@ -476,20 +480,43 @@
         <Report v-if="result.finishedIn" :data="result" :ep="epValues" simple/>
       </section>
     </div>
+
+    <Modal ref="modal">
+      <h4>You know, just like WeakAuras</h4>
+      <textarea
+        style="width: 100%; min-height: 40vh"
+        v-model="importExport"
+        :readonly="!isImporting"
+        @focus="e => e.target.select()"/>
+      <button
+        v-if="isImporting"
+        class="u-full-width"
+        @click.prevent="importMerge">
+        Import
+      </button>
+    </Modal>
   </form>
 </template>
 
 <script>
+import Modal from '@/components/Modal'
 import Report from '@/components/Report'
 import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
 import Player from '@/sim/classes/Player'
 
-import merge from 'lodash.merge'
+import mergeWith from 'lodash/mergeWith'
+
+// Deep merge but replacing arrays
+const customizer = (objValue, srcValue, key, obj, src) => {
+  if (!Array.isArray(objValue)) return
+  return obj[key] = src[key]
+}
 
 export default {
   name: 'app',
   components: {
+    Modal,
     Report,
     Weapon
   },
@@ -501,6 +528,8 @@ export default {
 
     return {
       worker: {},
+      importExport: '',
+      isImporting: false,
       isProd,
       dwTalent,
       result: {},
@@ -864,6 +893,7 @@ export default {
       }
 
       this.isLoading = true
+      if (this.worker instanceof Worker) this.worker.terminate()
       this.worker = new Worker('@/sim/sim.worker', { type: 'module' })
       this.worker.postMessage(JSON.stringify(this.getCfg()))
       this.worker.onmessage = ({ data }) => {
@@ -873,7 +903,6 @@ export default {
           this.result.report = JSON.parse(data.report)
           this.result.timeline = JSON.parse(data.timeline)
           this.isLoading = false
-          this.worker.terminate()
           this.$emit('report', this.result)
         }
       }
@@ -957,7 +986,28 @@ export default {
       if (!localStorage.formData) return
 
       const storageData = JSON.parse(localStorage.formData)
-      this.formData = merge(this.formData, storageData)
+      this.formData = mergeWith(this.formData, storageData, customizer)
+    },
+    exportStt() {
+      this.importExport = btoa(JSON.stringify(this.formData))
+      this.isImporting = false
+      this.$refs.modal.show()
+    },
+    importStt() {
+      this.importExport = ''
+      this.isImporting = true
+      this.$refs.modal.show()
+    },
+    importMerge() {
+      if (!this.isImporting) return
+
+      try {
+        const data = JSON.parse(atob(this.importExport))
+        this.formData = mergeWith(this.formData, data, customizer)
+        this.$refs.modal.hide()
+      } catch (err) {
+        this.importExport = `NotLikeThis`
+      }
     }
   },
   mounted() {
