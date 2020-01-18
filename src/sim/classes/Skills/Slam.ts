@@ -6,11 +6,11 @@ export default class Slam extends Skill {
   private _isCasting: boolean
   cast: SlamCast
 
-  constructor(_player: Player, _cfg: any) {
-    super('Slam', 15, 0, false, _player, _cfg)
+  constructor(player: Player, cfg: any) {
+    super('Slam', 15, 0, false, player, cfg)
 
     this._isCasting = false
-    this.cast = new SlamCast(this, _player, _cfg)
+    this.cast = new SlamCast(this, player, cfg)
   }
 
   // Getters
@@ -24,11 +24,11 @@ export default class Slam extends Skill {
   }
 
   get dmg() {
-    return this._player.mainhand.dmg + 87
+    return this.player.mainhand.dmg + 87
   }
 
   get canUse() {
-    if (!this._player.rage.has(this.cost)) return false
+    if (!this.player.rage.has(this.cost)) return false
     if (!this._isCasting) return false
 
     return true
@@ -45,12 +45,12 @@ export default class Slam extends Skill {
   }
 
   use() {
-    this._player.heroicStrike.cancelQueue()
+    this.player.heroicStrike.cancelQueue()
     super.use()
     this._isCasting = false
 
     // Slam restart swing
-    this._player.weapons.forEach(w => w.swingTimer.restart(true))
+    this.player.weapons.forEach(w => w.swingTimer.restart(true))
   }
 
   reset() {

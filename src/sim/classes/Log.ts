@@ -1,29 +1,69 @@
 import { m } from '@/sim/helpers'
 
+export interface DmgLog {
+  [name: string]: {
+    name: string,
+    count: number,
+    dmg: number,
+    miss: number,
+    dodge: number,
+    glance: number,
+    crit: number,
+    hit: number
+  }
+}
+
+export interface DmgReport {
+  title: string,
+  portion: number,
+  dmg: number,
+  avgHit: number,
+  count: number,
+  misses: number,
+  dodges: number,
+  glances: number,
+  crits: number,
+  hits: number
+}
+
+export interface ProcLog {
+  [name: string]: {
+    name: string,
+    count: number,
+    uptime: number
+  }
+}
+
+export interface ProcReport {
+  title: string,
+  count: number,
+  uptime: number,
+  ppm: number
+}
+
 export default class Log {
-  duration: number
-  iterations: number
-  totalDuration: number
   timeline: Array<string>
-  swings: any
-  procs: any
+  dmg: DmgLog
+  procs: ProcLog
   rage: any
 
-  constructor(duration: number, iterations: number) {
-    this.duration = duration
-    this.iterations = iterations
-    this.totalDuration = duration * iterations
+  constructor(private duration: number, private iterations: number) {
     this.timeline = []
-
-    this.swings = {}
+    this.dmg = {}
     this.procs = {}
     this.rage = {}
   }
 
   // Getters
 
+  get totalDuration() {
+    const value = this.duration * this.iterations
+    Object.defineProperty(this, 'totalDuration', { value })
+    return value
+  }
+
   get totalDmg(): number {
-    const value = Object.values(<object>this.swings).reduce((s, e) => s += e.dmg, 0)
+    const value = Object.values(<object>this.dmg).reduce((s, e) => s += e.dmg, 0)
     Object.defineProperty(this, 'totalDmg', { value })
     return value
   }
@@ -37,15 +77,14 @@ export default class Log {
   get report() {
     const toPercent = (count: number, total: number) => Number((count / total * 100).toFixed(1))
     const byDmg = (a: any, b: any) => b.portion > a.portion ? 1 : -1
-    let swings: any = {}
-    let procs: any = {}
+    const byUptime = (a: any, b: any) => b.uptime > a.uptime ? 1 : -1
+    let dmg: Array<DmgReport> = []
+    let procs: Array<ProcReport> = []
 
-    Object.keys(this.swings).forEach(key => {
-      const obj = this.swings[key]
+    Object.values(this.dmg).forEach(obj => {
       if (!obj.count) return
-
-      swings[key] = {
-        title: key,
+      dmg.push({
+        title: obj.name,
         portion: toPercent(obj.dmg, this.totalDmg),
         dmg: Number((obj.dmg / this.iterations / 1000).toFixed(1)),
         avgHit: m.round(obj.dmg / obj.count),
@@ -54,35 +93,30 @@ export default class Log {
         dodges: toPercent(obj.dodge, obj.count),
         glances: toPercent(obj.glance, obj.count),
         crits: toPercent(obj.crit, obj.count),
-        hits: toPercent(obj.hit, obj.count),
-        _chained: Number((obj.chain / this.iterations).toFixed(1))
-      }
+        hits: toPercent(obj.hit, obj.count)
+      })
     })
 
-    Object.keys(this.procs).forEach(key => {
-      const obj = this.procs[key]
+    Object.values(this.procs).forEach(obj => {
       if (!obj.count) return
-
-      procs[key] = {
-        title: key,
+      procs.push({
+        title: obj.name,
         count: Number((obj.count / this.iterations).toFixed(1)),
         uptime: toPercent(obj.uptime, this.totalDuration),
         ppm: Number((obj.count / (this.totalDuration / 60)).toFixed(1))
-      }
+      })
     })
 
-    swings = Object.values(swings).sort(byDmg)
-    procs = Object.values(procs).sort(byDmg)
-    return { swings, procs }
+    dmg = Object.values(dmg).sort(byDmg)
+    procs = Object.values(procs).sort(byUptime)
+    return { dmg, procs }
   }
 
   // Methods
 
-  setSwingOrSkill(name: string) {
-    if (this.swings[name]) return this.swings[name]
-
-    return this.swings[name] = {
-      chain: 0,
+  newDmgLog(name: string) {
+    return this.dmg[name] = {
+      name,
       count: 0,
       dmg: 0,
       miss: 0,
@@ -93,10 +127,9 @@ export default class Log {
     }
   }
 
-  setProc(name: string) {
-    if (this.procs[name]) return this.procs[name]
-
+  newProcLog(name: string) {
     return this.procs[name] = {
+      name,
       count: 0,
       uptime: 0
     }

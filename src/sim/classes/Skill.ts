@@ -11,47 +11,47 @@ export enum Result {
 }
 
 export default class Skill {
-  private _log: any
-  private _result: Result | null
-  private _target: Target
-  private _skillCritMul: number
-  private _cooldown: Cooldown | CooldownGCD
-  protected _missRefundMul: number
+  private log: any
+  private result: Result | undefined
+  private target: Target
+  private skillCritMul: number
+  private cooldown: Cooldown | CooldownGCD
+  protected missRefundMul: number
 
   constructor(
     public name: string,
     public cost: number,
     cooldown: number,
     triggerGcd: boolean,
-    protected _player: Player,
-    protected _cfg: any = null
+    protected player: Player,
+    protected cfg: any = undefined
   ) {
-    this._log = _player.log.setSwingOrSkill(name)
-    this._cooldown = triggerGcd
-      ? new CooldownGCD(name, cooldown, 0, _player)
+    this.log = player.log.newDmgLog(name)
+    this.cooldown = triggerGcd
+      ? new CooldownGCD(name, cooldown, 0, player)
       : new Cooldown(name, cooldown)
 
     // NC: Miss refund is 80%
-    this._missRefundMul = 1 - 0.8
-    this._skillCritMul = 2 + _player.talents.impale * 0.1
+    this.missRefundMul = 1 - 0.8
+    this.skillCritMul = 2 + player.talents.impale * 0.1
 
-    this._result = null
-    this._target = _player.target
+    this.result = undefined
+    this.target = player.target
   }
 
   // Getters
 
-  private get _attackTable() {
-    const miss = clamp(this._player.mainhand.skillMissChance)
-    const dodge = clamp(miss + this._player.mainhand.dodgeChance)
-    const crit = clamp(this._player.mainhand.critChance)
+  private get attackTable() {
+    const miss = clamp(this.player.mainhand.skillMissChance)
+    const dodge = clamp(miss + this.player.mainhand.dodgeChance)
+    const crit = clamp(this.player.mainhand.critChance)
     return { miss, dodge, crit }
   }
 
   protected get isResultMiss() {
-    if (!this._result) return false
+    if (!this.result) return false
 
-    return [Result.MISS, Result.DODGE].includes(this._result)
+    return [Result.MISS, Result.DODGE].includes(this.result)
   }
 
   get isPlayerInput() {
@@ -63,26 +63,26 @@ export default class Skill {
   }
 
   get canUse() {
-    if (!this._player.rage.has(this.cost)) return false
-    if (this._player.slam && this._player.slam.isCasting) return false
+    if (!this.player.rage.has(this.cost)) return false
+    if (this.player.slam && this.player.slam.isCasting) return false
 
     return true
   }
 
   get timeLeft() {
-    return this._cooldown.timeLeft
+    return this.cooldown.timeLeft
   }
 
   get onCooldown() {
-    return this._cooldown.onCooldown
+    return this.cooldown.onCooldown
   }
 
   // Methods
 
   // Skills are two-rolls system
-  private _getResult() {
+  private getResult() {
     const roll = m.random() * 100
-    const attackTable = Object.assign({}, this._attackTable)
+    const attackTable = Object.assign({}, this.attackTable)
     if (roll <= attackTable.miss) return Result.MISS
     if (roll <= attackTable.dodge) return Result.DODGE
 
@@ -96,11 +96,11 @@ export default class Skill {
   }
 
   tick(secs: number) {
-    this._cooldown.tick(secs)
+    this.cooldown.tick(secs)
   }
 
   reset() {
-    this._cooldown.reset()
+    this.cooldown.reset()
   }
 
   use() {
@@ -108,35 +108,35 @@ export default class Skill {
       throw new Error(`Trying to use ${this.name} when can't use.`)
     }
 
-    this._cooldown.use()
-    this._log.count++
+    this.cooldown.use()
+    this.log.count++
 
-    this._result = this._getResult()
+    this.result = this.getResult()
 
-    if (this._result === Result.MISS) this._log.miss++
-    if (this._result === Result.DODGE) this._log.dodge++
+    if (this.result === Result.MISS) this.log.miss++
+    if (this.result === Result.DODGE) this.log.dodge++
     if (this.isResultMiss) {
-      this._player.rage.use(this.cost * this._missRefundMul)
-      this._player.addTimeline(this.name, this._result)
+      this.player.rage.use(this.cost * this.missRefundMul)
+      this.player.addTimeline(this.name, this.result)
       return
     }
 
-    let dmg = this.dmg * this._player.dmgMul * this._target.armorMitigationMul
+    let dmg = this.dmg * this.player.dmgMul * this.target.armorMitigationMul
 
-    if (this._result === Result.CRIT) {
-      dmg *= this._skillCritMul
-      this._log.crit++
-      this._player.flurry && this._player.flurry.apply()
+    if (this.result === Result.CRIT) {
+      dmg *= this.skillCritMul
+      this.log.crit++
+      this.player.flurry && this.player.flurry.apply()
     }
 
-    if (this._result === Result.HIT) this._log.hit++
+    if (this.result === Result.HIT) this.log.hit++
 
     dmg = m.round(dmg)
-    this._player.rage.use(this.cost)
-    this._log.dmg += dmg
+    this.player.rage.use(this.cost)
+    this.log.dmg += dmg
 
-    this._player.addTimeline(this.name, this._result, dmg)
+    this.player.addTimeline(this.name, this.result, dmg)
 
-    this._player.mainhand.tryProcs()
+    this.player.mainhand.tryProcs()
   }
 }

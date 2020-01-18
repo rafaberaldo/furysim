@@ -36,18 +36,18 @@ export default class Player {
   gcd: Cooldown
   rage: Rage
   target: Target
-  windfury: Windfury | null
+  windfury: Windfury | undefined
   bok: boolean
-  mrp: MightyRagePotion | null
-  bloodFury: BloodFury | null
-  red: EssenceOfTheRed | null
+  mrp: MightyRagePotion | undefined
+  bloodFury: BloodFury | undefined
+  red: EssenceOfTheRed | undefined
   mainhand: Weapon
-  offhand: Weapon | null
+  offhand: Weapon | undefined
   weapons: Array<Weapon>
   isDw: boolean
-  hoj: ExtraAttack | null
-  diamondFlask: Buff | null
-  cloudkeeper: Buff | null
+  hoj: ExtraAttack | undefined
+  diamondFlask: Buff | undefined
+  cloudkeeper: Buff | undefined
   battleShoutApMul: number
   bloodrage: Bloodrage
   whirlwind: Whirlwind
@@ -56,10 +56,10 @@ export default class Player {
   heroicStrike: HeroicStrike
   execute: Execute
   battleShout: Buff
-  angerManagement: AngerManagement | null
-  flurry: Flurry | null
-  bloodthirst: Bloodthirst | null
-  deathWish: Buff | null
+  angerManagement: AngerManagement | undefined
+  flurry: Flurry | undefined
+  bloodthirst: Bloodthirst | undefined
+  deathWish: Buff | undefined
 
   constructor(cfg: any) {
     this.log = new Log(cfg.duration, cfg.iterations)
@@ -278,7 +278,7 @@ export default class Player {
       : true
   }
 
-  addTimeline(name: string, type: string, value: number | string | null = null) {
+  addTimeline(name: string, type: string, value: number | string | undefined = undefined) {
     if (!this.logTimeline) return
 
     const timeHtml = `<span class="time">${this.time.toFixed(3)}</span>`

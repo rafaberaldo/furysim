@@ -5,43 +5,44 @@ import { ProcType } from '@/sim/classes/Weapon'
 import { m, ppmToChance } from '@/sim/helpers'
 
 export default class Proc extends EventEmitter {
-  protected _buffDurationLeft: number
-  protected _buffDuration: number
-  name: string
+  private log: any
+  private chance: number
+  protected buffDurationLeft: number
+  protected buffDuration: number
   type: ProcType
   amount: number
-  chance: number
-  log: any
-  player: Player
 
-  constructor(name: string, duration: number, ppmOrChance: any, player: Player, info: any = null) {
+  constructor(
+    public name: string,
+    duration: number,
+    ppmOrChance: any,
+    protected player: Player,
+    cfg: any = undefined
+  ) {
     super()
-    this._buffDurationLeft = 0
-    this._buffDuration = duration
-    this.name = name
-    this.type = info && info.type
-    this.amount = info && info.amount
+    this.log = player.log.newProcLog(name)
+    this.buffDurationLeft = 0
+    this.buffDuration = duration
     this.chance = ppmOrChance.ppm
       ? ppmToChance(ppmOrChance.ppm, ppmOrChance.speed)
       : ppmOrChance.chance
-    this.log = player.log.setProc(name)
-
-    this.player = player
+    this.amount = cfg && cfg.amount
+    this.type = cfg && cfg.type
   }
 
   // Getters
 
   get isActive() {
-    return !!this._buffDurationLeft
+    return !!this.buffDurationLeft
   }
 
   // Methods
 
   tick(secs: number) {
-    if (!this._buffDurationLeft) return
+    if (!this.buffDurationLeft) return
 
-    this._buffDurationLeft = m.max(0, this._buffDurationLeft - secs)
-    this.log.uptime += m.min(secs, this._buffDurationLeft)
+    this.buffDurationLeft = m.max(0, this.buffDurationLeft - secs)
+    this.log.uptime += m.min(secs, this.buffDurationLeft)
 
     if (this.isActive) return
     this.emit('fade')
@@ -50,9 +51,9 @@ export default class Proc extends EventEmitter {
 
   apply() {
     this.emit('proc', this.isActive)
-    this._buffDurationLeft = this._buffDuration
+    this.buffDurationLeft = this.buffDuration
     this.log.count++
-    this.player.addTimeline(this.name, 'BUFF_APPLIED', `${this._buffDuration}s`)
+    this.player.addTimeline(this.name, 'BUFF_APPLIED', `${this.buffDuration}s`)
   }
 
   tryToProc() {
@@ -63,6 +64,6 @@ export default class Proc extends EventEmitter {
   }
 
   reset() {
-    this._buffDurationLeft = 0
+    this.buffDurationLeft = 0
   }
 }

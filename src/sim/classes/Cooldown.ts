@@ -2,12 +2,16 @@ import Player from '@/sim/classes/Player'
 import { m } from '@/sim/helpers'
 
 export class Cooldown {
-  protected _defaultTimeLeft: number
-  protected _defaultDuration: number
+  protected defaultTimeLeft: number
+  protected defaultDuration: number
 
-  constructor(public name: string, protected _duration: number, protected _timeLeft: number = 0) {
-    this._defaultTimeLeft = _timeLeft
-    this._defaultDuration = _duration
+  constructor(
+    public name: string,
+    protected _duration: number,
+    protected _timeLeft: number = 0
+  ) {
+    this.defaultTimeLeft = _timeLeft
+    this.defaultDuration = _duration
   }
 
   // Getters
@@ -51,13 +55,18 @@ export class Cooldown {
   }
 
   reset() {
-    this._timeLeft = this._defaultTimeLeft
-    this._duration = this._defaultDuration
+    this._timeLeft = this.defaultTimeLeft
+    this._duration = this.defaultDuration
   }
 }
 
 export class CooldownGCD extends Cooldown {
-  constructor(name: string, duration: number, timeLeft: number, protected _player: Player) {
+  constructor(
+    name: string,
+    duration: number,
+    timeLeft: number,
+    protected player: Player
+  ) {
     super(name, duration, timeLeft)
   }
 
@@ -68,13 +77,13 @@ export class CooldownGCD extends Cooldown {
   }
 
   get timeLeft() {
-    return m.max(this._player.gcd.timeLeft, this._timeLeft)
+    return m.max(this.player.gcd.timeLeft, this._timeLeft)
   }
 
   // Methods
 
   use() {
     super.use()
-    this._player.gcd.use()
+    this.player.gcd.use()
   }
 }

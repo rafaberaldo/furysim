@@ -18,13 +18,13 @@
 
     <hr v-if="ep" style="margin: 1rem 0">
 
-    <div v-if="data.report.Flurry" class="progress-bar">
+    <div v-if="flurry" class="progress-bar">
       <span
         class="progress"
-        :style="{ width: `${data.report.Flurry.uptime}%` }"/>
-      <span class="label">Flurry Uptime ({{ data.report.Flurry.uptime }}%)</span>
+        :style="{ width: `${flurry.uptime}%` }"/>
+      <span class="label">Flurry Uptime ({{ flurry.uptime }}%)</span>
     </div>
-    <div v-for="item in data.report.swings" :key="item.title" class="progress-bar">
+    <div v-for="item in data.report.dmg" :key="item.title" class="progress-bar">
       <span
         class="progress"
         :style="{ width: `${item.portion}%` }"/>
@@ -55,8 +55,8 @@
     <hr v-if="ep" class="transparent">
 
     <section class="report-section">
-      <h2>Skills / Swings</h2>
-      <template v-for="item in data.report.swings">
+      <h2>Damage</h2>
+      <template v-for="item in data.report.dmg">
         <h4 :key="`${item.title}-header`">{{ item.title }}</h4>
         <div :key="item.title" class="report-grid">
           <div
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce'
+import debounce from 'lodash/debounce'
 
 export default {
   props: {
@@ -138,6 +138,9 @@ export default {
 
       return [...this.data.epValues]
         .sort((a, b) => b.value > a.value ? 1 : -1)
+    },
+    flurry() {
+      return this.data.report.procs.find(p => p.title === 'Flurry')
     },
     swingKeys() {
       return [

@@ -1,25 +1,25 @@
 import Player from '@/sim/classes/Player'
 
 export default class Target {
-  private _armor: number
-  private _lvl: number
+  private armor: number
+  private lvl: number
 
-  constructor(cfg: any, private _player: Player) {
-    this._armor = cfg.armor
-    this._lvl = cfg._lvl
+  constructor(cfg: any, private player: Player) {
+    this.armor = cfg.armor
+    this.lvl = cfg.lvl
   }
 
   // Getters
 
   get defenseSkill() {
-    const value = this._lvl * 5
+    const value = this.lvl * 5
     Object.defineProperty(this, 'defenseSkill', { value })
     return value
   }
 
   // https://vanilla-wow.fandom.com/wiki/Armor
   get armorMitigationMul() {
-    const value = 1 - (this._armor / (this._armor + 400 + 85 * this._player.lvl))
+    const value = 1 - (this.armor / (this.armor + 400 + 85 * this.player.lvl))
     Object.defineProperty(this, 'armorMitigationMul', { value })
     return value
   }

@@ -3,39 +3,34 @@ import Player from '@/sim/classes/Player'
 import { m } from '@/sim/helpers'
 
 export default class Buff {
-  private _buffDuration: number
-  private _buffDurationLeft: number
+  private buffDurationLeft: number
+  private cooldown: Cooldown | CooldownGCD
   name: string
-  cost: number
-  isPlayerInput: boolean
-  cooldown: Cooldown | CooldownGCD
-  player: Player
 
   constructor(
     name: string,
-    cost: number,
-    buffDuration: number,
+    public cost: number,
+    private buffDuration: number,
     cooldown: number,
     triggerGcd: boolean,
-    player: Player,
+    protected player: Player,
     timeLeft: number = 0
   ) {
-    this._buffDuration = buffDuration
-    this._buffDurationLeft = 0
-    this.name = name
-    this.cost = cost
-    this.isPlayerInput = true
+    this.buffDurationLeft = 0
     this.cooldown = triggerGcd
       ? new CooldownGCD(name, cooldown, timeLeft, player)
       : new Cooldown(name, cooldown, timeLeft)
-
-    this.player = player
+    this.name = name
   }
 
   // Getters
 
+  get isPlayerInput() {
+    return true
+  }
+
   get isActive() {
-    return this._buffDurationLeft > 0
+    return this.buffDurationLeft > 0
   }
 
   get canUse() {
@@ -57,9 +52,9 @@ export default class Buff {
 
   tick(secs: number) {
     this.cooldown.tick(secs)
-    if (!this._buffDurationLeft) return
+    if (!this.buffDurationLeft) return
 
-    this._buffDurationLeft = m.max(0, this._buffDurationLeft - secs)
+    this.buffDurationLeft = m.max(0, this.buffDurationLeft - secs)
 
     if (this.isActive) return
     this.player.addTimeline(this.name, 'BUFF_FADED')
@@ -67,13 +62,13 @@ export default class Buff {
 
   use() {
     this.cooldown.use()
-    this._buffDurationLeft = this._buffDuration
+    this.buffDurationLeft = this.buffDuration
     this.player.rage.use(this.cost)
-    this.player.addTimeline(this.name, 'BUFF_APPLIED', `${this._buffDuration}s`)
+    this.player.addTimeline(this.name, 'BUFF_APPLIED', `${this.buffDuration}s`)
   }
 
   reset() {
     this.cooldown.reset()
-    this._buffDurationLeft = 0
+    this.buffDurationLeft = 0
   }
 }

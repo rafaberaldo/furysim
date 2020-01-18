@@ -2,28 +2,24 @@ import Player from '@/sim/classes/Player'
 import { m } from '@/sim/helpers'
 
 export default class Flurry {
-  private _charges: number
-  private _chargesLeft: number
-  log: any
+  private charges: number
+  private chargesLeft: number
+  private log: any
+  private haste: number
   name: string
-  haste: number
-  player: Player
 
-  constructor(player: Player) {
-    this._charges = 3
-    this._chargesLeft = 0
+  constructor(private player: Player) {
     this.name = 'Flurry'
-    this.log = player.log.setProc(this.name)
-
+    this.charges = 3
+    this.chargesLeft = 0
+    this.log = player.log.newProcLog(this.name)
     this.haste = player.talents.flurry ? (player.talents.flurry + 1) * 5 : 0
-
-    this.player = player
   }
 
   // Getters
 
   get isActive() {
-    return this._chargesLeft > 0
+    return this.chargesLeft > 0
   }
 
   // Methods
@@ -35,7 +31,7 @@ export default class Flurry {
   apply() {
     if (!this.isActive) this.player.increaseAtkSpeed(this.haste)
 
-    this._chargesLeft = this._charges
+    this.chargesLeft = this.charges
     this.log.count++
     this.player.addTimeline(this.name, 'BUFF_APPLIED')
   }
@@ -43,7 +39,7 @@ export default class Flurry {
   useCharge() {
     if (!this.isActive) return
 
-    this._chargesLeft = m.max(0, --this._chargesLeft)
+    this.chargesLeft = m.max(0, --this.chargesLeft)
 
     if (this.isActive) return
     this.player.decreaseAtkSpeed(this.haste)
@@ -51,6 +47,6 @@ export default class Flurry {
   }
 
   reset() {
-    this._chargesLeft = 0
+    this.chargesLeft = 0
   }
 }

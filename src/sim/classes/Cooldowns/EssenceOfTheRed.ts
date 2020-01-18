@@ -2,12 +2,8 @@ import { Cooldown } from '@/sim/classes/Cooldown'
 import Player from '@/sim/classes/Player'
 
 export default class EssenceOfTheRed extends Cooldown {
-  player: Player
-
-  constructor(player: Player) {
+  constructor(private player: Player) {
     super('Essence of the Red', 1, 1)
-
-    this.player = player
   }
 
   // Methods

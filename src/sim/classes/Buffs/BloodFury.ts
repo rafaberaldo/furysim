@@ -2,16 +2,18 @@ import Buff from '@/sim/classes/Buff'
 import Player from '@/sim/classes/Player'
 
 export default class BloodFury extends Buff {
-  cfg: any
-  apSnapshot: number
+  private _apSnapshot: number
 
-  constructor(player: Player, cfg: any) {
+  constructor(player: Player, private cfg: any) {
     super('Blood Fury', 0, 15, 60, true, player)
-    this.cfg = cfg
-    this.apSnapshot = 0
+    this._apSnapshot = 0
   }
 
   // Getters
+
+  get apSnapshot() {
+    return this._apSnapshot
+  }
 
   get canUse() {
     if (!super.canUse) return false
@@ -31,7 +33,7 @@ export default class BloodFury extends Buff {
 
   use() {
     const baseAp = Player.getBaseAp(this.player.lvl, this.player.str)
-    this.apSnapshot = baseAp * 0.25
+    this._apSnapshot = baseAp * 0.25
 
     super.use()
   }

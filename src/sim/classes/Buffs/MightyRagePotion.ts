@@ -3,12 +3,8 @@ import Player from '@/sim/classes/Player'
 import { getRandomInt } from '@/sim/helpers'
 
 export default class MightyRagePotion extends Buff {
-  cfg: any
-
-  constructor(player: Player, cfg: any) {
+  constructor(player: Player, private cfg: any) {
     super('Mighty Rage Potion', 0, 20, 120, false, player)
-
-    this.cfg = cfg
   }
 
   // Getters
