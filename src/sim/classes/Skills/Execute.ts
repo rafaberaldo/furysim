@@ -6,7 +6,7 @@ export default class Execute extends Skill {
 
   constructor(player: Player, cfg: any) {
     const executeCost = 15 - (player.talents.impExecute && player.talents.impExecute * 3 - 1) || 0
-    super('Execute', executeCost, 0, true, player, cfg)
+    super(player, 'Execute', executeCost, 0, true, cfg)
 
     // NC: Execute refund 84% of extra rage only
     this.missRefundMul = 1

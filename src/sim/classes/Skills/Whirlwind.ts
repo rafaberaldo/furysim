@@ -3,7 +3,7 @@ import Skill from '@/sim/classes/Skill'
 
 export default class Whirlwind extends Skill {
   constructor(player: Player, cfg: any) {
-    super('Whirlwind', 25, 10, true, player, cfg)
+    super(player, 'Whirlwind', 25, 10, true, cfg)
 
     // WW and Cleve do not refund
     // https://github.com/magey/classic-warrior/issues/27

@@ -7,7 +7,7 @@ export default class HeroicStrike extends Skill {
 
   constructor(player: Player, cfg: any) {
     const heroicCost = 15 - player.talents.impHS
-    super('Heroic Strike', heroicCost, 0, false, player, cfg)
+    super(player, 'Heroic Strike', heroicCost, 0, false, cfg)
 
     this._isQueued = false
     this.queue = new HeroicStrikeQueue(this)

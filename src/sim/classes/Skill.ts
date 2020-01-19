@@ -20,16 +20,16 @@ export default class Skill {
   protected missRefundMul: number
 
   constructor(
+    protected player: Player,
     public name: string,
     public cost: number,
     cooldown: number,
     triggerGcd: boolean,
-    protected player: Player,
     protected cfg: any = undefined
   ) {
     this.log = player.log.newDmgLog(name)
     this.cooldown = triggerGcd
-      ? new CooldownGCD(name, cooldown, 0, player)
+      ? new CooldownGCD(player, name, cooldown, 0)
       : new Cooldown(name, cooldown)
 
     // NC: Miss refund is 80%

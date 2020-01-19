@@ -7,7 +7,7 @@ export default class Slam extends Skill {
   cast: SlamCast
 
   constructor(player: Player, cfg: any) {
-    super('Slam', 15, 0, false, player, cfg)
+    super(player, 'Slam', 15, 0, false, cfg)
 
     this._isCasting = false
     this.cast = new SlamCast(this, player, cfg)

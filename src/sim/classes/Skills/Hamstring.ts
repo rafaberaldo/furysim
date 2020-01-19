@@ -4,7 +4,7 @@ import Skill from '@/sim/classes/Skill'
 export default class Hamstring extends Skill {
   constructor(player: Player, cfg: any) {
     const cost = 10 - (cfg.pvpGloves ? 3 : 0)
-    super('Hamstring', cost, 0, true, player, cfg)
+    super(player, 'Hamstring', cost, 0, true, cfg)
   }
 
   // Getters

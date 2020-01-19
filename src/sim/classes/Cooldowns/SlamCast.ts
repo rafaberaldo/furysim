@@ -7,7 +7,7 @@ export default class SlamCast extends CooldownGCD {
   swingTimer: AttackSpeed
 
   constructor(private slam: Slam, player: Player, private cfg: any) {
-    super('Slam', (1.5 - player.talents.impSlam * 0.1), 0, player)
+    super(player, 'Slam', (1.5 - player.talents.impSlam * 0.1), 0)
 
     this.swingTimer = player.mainhand.swingTimer
   }

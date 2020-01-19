@@ -8,17 +8,17 @@ export default class Buff {
   name: string
 
   constructor(
+    protected player: Player,
     name: string,
     public cost: number,
     private buffDuration: number,
     cooldown: number,
     triggerGcd: boolean,
-    protected player: Player,
     timeLeft: number = 0
   ) {
     this.buffDurationLeft = 0
     this.cooldown = triggerGcd
-      ? new CooldownGCD(name, cooldown, timeLeft, player)
+      ? new CooldownGCD(player, name, cooldown, timeLeft)
       : new Cooldown(name, cooldown, timeLeft)
     this.name = name
   }

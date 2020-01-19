@@ -62,10 +62,10 @@ export class Cooldown {
 
 export class CooldownGCD extends Cooldown {
   constructor(
+    protected player: Player,
     name: string,
     duration: number,
-    timeLeft: number,
-    protected player: Player
+    timeLeft: number
   ) {
     super(name, duration, timeLeft)
   }

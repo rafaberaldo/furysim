@@ -23,7 +23,6 @@ export enum ProcType {
 
 export default class Weapon {
   private _proc: any
-  private _enchant: any
   private type: string
   private skill: number
   private min: number
@@ -35,10 +34,10 @@ export default class Weapon {
   private target: Target
   private wf: Windfury | undefined
   swingTimer: AttackSpeed
+  enchant: Proc | undefined
 
-  constructor(public name: string, cfg: any, private player: Player) {
+  constructor(private player: Player, public name: string, cfg: any) {
     this._proc = cfg.proc
-    this._enchant = cfg.enchant
     this.type = cfg.type
     this.skill = cfg.skill
     this.min = cfg.min
@@ -46,6 +45,8 @@ export default class Weapon {
     this.speed = cfg.speed
     this.log = player.log.newDmgLog(name)
     this.dmgMul = this.isMainhand ? 1 : (0.5 + player.talents.dualWieldSpec * 0.025)
+    this.enchant = cfg.enchant &&
+      new Proc(this.player, `${this.name} Crusader`, 15, { ppm: 1, speed: this.speed })
 
     // NC: Initial offhand swing start at 50%
     const hastedSpeed = this.speed / (1 + player.haste / 100)
@@ -156,32 +157,24 @@ export default class Weapon {
     return false
   }
 
-  get enchant() {
-    if (!this._enchant) return undefined
-
-    const value = new Proc(`Crusader ${this.name}`, 15, { ppm: 1, speed: this.speed }, this.player)
-    Object.defineProperty(this, 'enchant', { value })
-    return value
-  }
-
   get proc() {
     const getProc = () => {
       if (this._proc.type === 'extraAttack') {
         return new ExtraAttack(
+          this.player,
           `${this.name} Proc`,
           this._proc.chance,
           this._proc.amount,
-          true,
-          this.player
+          true
         )
       }
 
       if (this._proc.type === 'atkSpeed') {
         const proc = new Proc(
+          this.player,
           `${this.name} Proc`,
           this._proc.duration,
           { chance: this._proc.chance },
-          this.player,
           this._proc
         )
         proc.on('proc', (wasActive: boolean) => !wasActive && this.player.increaseAtkSpeed(this._proc.amount))
@@ -191,10 +184,10 @@ export default class Weapon {
 
       if (this._proc.type === 'str') {
         return new Proc(
+          this.player,
           `${this.name} Proc`,
           this._proc.duration,
           { chance: this._proc.chance },
-          this.player,
           this._proc
         )
       }

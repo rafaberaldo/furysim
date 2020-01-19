@@ -77,7 +77,7 @@ export default class Player {
     this.gcd = new Cooldown('GCD', 1.5)
     this.rage = new Rage(this, cfg.player.startRage)
 
-    this.target = new Target(cfg.target, this)
+    this.target = new Target(this, cfg.target)
 
     this.windfury = cfg.player.buffs.wf && new Windfury(this, cfg.player.buffs.improvedWf)
     this.bok = cfg.player.buffs.bok
@@ -85,16 +85,16 @@ export default class Player {
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.player.bloodFury)
     this.red = cfg.player.buffs.red && new EssenceOfTheRed(this)
 
-    this.mainhand = new Weapon('Mainhand', cfg.player.mainhand, this)
+    this.mainhand = new Weapon(this, 'Mainhand', cfg.player.mainhand)
     this.offhand = cfg.player.offhand && cfg.player.offhand.canUse &&
-      new Weapon('Offhand', cfg.player.offhand, this)
+      new Weapon(this, 'Offhand', cfg.player.offhand)
     this.weapons = [this.mainhand, this.offhand].filter(e => !!e)
     this.isDw = !!this.offhand
-    this.hoj = cfg.player.hoj && new ExtraAttack('Hand of Justice', 0.02, 1, true, this)
+    this.hoj = cfg.player.hoj && new ExtraAttack(this, 'Hand of Justice', 0.02, 1, true)
     this.diamondFlask = cfg.player.diamondFlask.canUse &&
-      new Buff('Diamond Flask', 0, 60, 360, false, this, cfg.player.diamondFlask.timeLeft)
+      new Buff(this, 'Diamond Flask', 0, 60, 360, false, cfg.player.diamondFlask.timeLeft)
     this.cloudkeeper = cfg.player.cloudkeeper.canUse &&
-      new Buff('Cloudkeeper Legplates', 0, 30, 900, false, this, cfg.player.cloudkeeper.timeLeft)
+      new Buff(this, 'Cloudkeeper Legplates', 0, 30, 900, false, cfg.player.cloudkeeper.timeLeft)
 
     // Talents
     const battleShoutDuration = 120 * (1 + this.talents.boomingVoice * 0.1)
@@ -108,12 +108,12 @@ export default class Player {
     this.slam = new Slam(this, cfg.player.slam)
     this.heroicStrike = new HeroicStrike(this, cfg.player.heroicStrike)
     this.execute = new Execute(this, cfg.player.execute)
-    this.battleShout = new Buff('Battle Shout', 10, battleShoutDuration, 0, true, this)
+    this.battleShout = new Buff(this, 'Battle Shout', 10, battleShoutDuration, 0, true)
     this.angerManagement = this.talents.angerManagement && new AngerManagement(this)
     this.flurry = this.talents.flurry && new Flurry(this)
     this.bloodthirst = this.talents.bloodthirst && new Bloodthirst(this)
     this.deathWish = this.talents.deathWish &&
-      new Buff('Death Wish', 10, 30, 180, true, this, cfg.player.deathWish.timeLeft)
+      new Buff(this, 'Death Wish', 10, 30, 180, true, cfg.player.deathWish.timeLeft)
   }
 
   // Getters

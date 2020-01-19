@@ -4,7 +4,7 @@ export default class Target {
   private armor: number
   private lvl: number
 
-  constructor(cfg: any, private player: Player) {
+  constructor(private player: Player, cfg: any) {
     this.armor = cfg.armor
     this.lvl = cfg.lvl
   }

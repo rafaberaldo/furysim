@@ -5,7 +5,7 @@ export default class BloodFury extends Buff {
   private _apSnapshot: number
 
   constructor(player: Player, private cfg: any) {
-    super('Blood Fury', 0, 15, 60, true, player)
+    super(player, 'Blood Fury', 0, 15, 60, true)
     this._apSnapshot = 0
   }
 

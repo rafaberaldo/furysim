@@ -14,10 +14,10 @@ export default class Proc extends EventEmitter {
   amount: number
 
   constructor(
+    protected player: Player,
     public name: string,
     duration: number,
     ppmOrChance: any,
-    protected player: Player,
     cfg: any = undefined
   ) {
     super()

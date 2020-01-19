@@ -3,7 +3,7 @@ import Skill from '@/sim/classes/Skill'
 
 export default class Bloodthirst extends Skill {
   constructor(player: Player) {
-    super('Bloodthirst', 30, 6, true, player)
+    super(player, 'Bloodthirst', 30, 6, true)
   }
 
   // Getters

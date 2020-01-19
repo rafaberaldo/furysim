@@ -641,8 +641,8 @@ export default {
           mrp: {
             rage: 50,
             waitCrusader: false,
-            waitDeathWish: true,
-            waitExecute: false
+            waitDeathWish: false,
+            waitExecute: true
           }
         },
         target: {

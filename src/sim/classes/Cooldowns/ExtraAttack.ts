@@ -4,11 +4,11 @@ import { m } from '@/sim/helpers'
 
 export default class ExtraAttack extends Cooldown {
   constructor(
+    private player: Player,
     public name: string,
     private chance: number,
     private amount: number,
-    canProcMultiple: boolean,
-    private player: Player
+    canProcMultiple: boolean
   ) {
     super(name, canProcMultiple ? 0 : 0.1, 0)
   }

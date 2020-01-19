@@ -4,7 +4,7 @@ import { getRandomInt } from '@/sim/helpers'
 
 export default class MightyRagePotion extends Buff {
   constructor(player: Player, private cfg: any) {
-    super('Mighty Rage Potion', 0, 20, 120, false, player)
+    super(player, 'Mighty Rage Potion', 0, 20, 120, false)
   }
 
   // Getters

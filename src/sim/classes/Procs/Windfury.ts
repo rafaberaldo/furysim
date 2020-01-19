@@ -9,7 +9,7 @@ export default class Windfury extends Proc {
   private cooldown: Cooldown
 
   constructor(player: Player, private impWf: boolean) {
-    super('Windfury', 1.5, { chance: 0.2 }, player)
+    super(player, 'Windfury', 1.5, { chance: 0.2 })
     this.charges = 2
     this.chargesLeft = 0
     this.cooldown = new Cooldown(this.name, 0.1, 0)
