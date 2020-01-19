@@ -73,33 +73,33 @@
             <th class="span-3">{{ item.name }}</th>
             <td class="span-3" align="right" data-label="Dmg">
               <div style="margin-bottom: 2px">
-                {{ tableText(item.dmg, true, 'k') }}
-                ({{ tableText(item.portion, true, '%') }})
+                {{ tableText(item.dmg, 'k') }}
+                ({{ tableText(item.portion, '%') }})
               </div>
               <div class="progress-bar small">
                 <span class="progress" :style="{ width: `${item.portion}%` }"/>
               </div>
             </td>
             <td align="right" data-label="Count">
-              {{ tableText(item.count, true) }}
+              {{ tableText(item.count) }}
             </td>
             <td align="right" data-label="Avg Hit">
-              {{ tableText(item.avgHit, false) }}
+              {{ tableText(item.avgHit) }}
             </td>
             <td align="right" data-label="Miss">
-              {{ tableText(item.misses, true, '%') }}
+              {{ tableText(item.misses, '%') }}
             </td>
             <td align="right" data-label="Dodge">
-              {{ tableText(item.dodges, true, '%') }}
+              {{ tableText(item.dodges, '%') }}
             </td>
             <td align="right" data-label="Glance">
-              {{ tableText(item.glances, true, '%') }}
+              {{ tableText(item.glances, '%') }}
             </td>
             <td align="right" data-label="Crit">
-              {{ tableText(item.crits, true, '%') }}
+              {{ tableText(item.crits, '%') }}
             </td>
             <td align="right" data-label="Hit">
-              {{ tableText(item.hits, true, '%') }}
+              {{ tableText(item.hits, '%') }}
             </td>
           </tr>
         </tbody>
@@ -122,21 +122,36 @@
             <th class="span-3">{{ item.name }}</th>
             <td class="span-3" align="right" data-label="Uptime">
               <div style="margin-bottom: 2px">
-                {{ tableText(item.uptime, true, '%') }}
+                {{ tableText(item.uptime, '%') }}
               </div>
               <div class="progress-bar small">
                 <span class="progress" :style="{ width: `${item.uptime}%` }"/>
               </div>
             </td>
             <td align="right" data-label="Count">
-              {{ tableText(item.count, true) }}
+              {{ tableText(item.count) }}
             </td>
             <td align="right" data-label="Effective PPM">
-              {{ tableText(item.ppm, true) }}
+              {{ tableText(item.ppm) }}
             </td>
           </tr>
         </tbody>
       </table>
+    </section>
+
+    <section class="report-section">
+      <h2>Rage</h2>
+      <div class="report-grid">
+        <div v-for="(item, key) in data.report.rage" :key="key">
+          <span class="label">{{ item.name }}</span>
+          <span class="u-family-title">{{ item.value }}{{ item.suffix }}</span>
+        </div>
+      </div>
+      <small>
+        Time capped is rage at 100.
+        Time starved is rage &lt; 10.
+        Avg per hit do not count misses.
+      </small>
     </section>
 
     <section id="timeline" class="report-section">
@@ -206,10 +221,9 @@ export default {
     scrollUp() {
       window.scroll({ top: 0, behavior: 'smooth' })
     },
-    tableText(value, decimal, suffix = '') {
+    tableText(value, suffix = '') {
       if (!value) return '—'
-      if (decimal) return value.toFixed(1) + suffix
-      return value + suffix
+      return value.toFixed(1) + suffix
     }
   }
 }
@@ -259,9 +273,9 @@ export default {
 
   .report-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     grid-gap: 15px;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1rem;
   }
   @media (max-width: 768px) { .report-grid { grid-template-columns: repeat(3, 1fr); } }
   .report-grid .label {

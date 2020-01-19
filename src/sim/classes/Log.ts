@@ -1,16 +1,16 @@
 import { m } from '@/sim/helpers'
 
-export interface DmgLog {
-  [name: string]: {
-    name: string,
-    count: number,
-    dmg: number,
-    miss: number,
-    dodge: number,
-    glance: number,
-    crit: number,
-    hit: number
-  }
+export class DmgLog {
+  constructor (
+    public name: string,
+    public count: number = 0,
+    public dmg: number = 0,
+    public miss: number = 0,
+    public dodge: number = 0,
+    public glance: number = 0,
+    public crit: number = 0,
+    public hit: number = 0,
+  ) {}
 }
 
 export interface DmgReport {
@@ -26,12 +26,12 @@ export interface DmgReport {
   hits: number
 }
 
-export interface ProcLog {
-  [name: string]: {
-    name: string,
-    count: number,
-    uptime: number
-  }
+export class ProcLog {
+  constructor(
+    public name: string,
+    public count: number = 0,
+    public uptime: number = 0
+  ) {}
 }
 
 export interface ProcReport {
@@ -41,17 +41,35 @@ export interface ProcReport {
   ppm: number
 }
 
+export class RageLog {
+  constructor(
+    public hits: number = 0,
+    public gained: number = 0,
+    public gainedHit: number = 0,
+    public gainedUnbridled: number = 0,
+    public lostOverCap: number = 0,
+    public timeCapped: number = 0,
+    public timeStarved: number = 0
+  ) {}
+}
+
+export interface Report {
+  name: string,
+  value: number | string,
+  suffix?: string
+}
+
 export default class Log {
   timeline: Array<string>
-  dmg: DmgLog
-  procs: ProcLog
-  rage: any
+  dmg: Array<DmgLog>
+  procs: Array<ProcLog>
+  rage: RageLog
 
   constructor(private duration: number, private iterations: number) {
     this.timeline = []
-    this.dmg = {}
-    this.procs = {}
-    this.rage = {}
+    this.dmg = []
+    this.procs = []
+    this.rage = new RageLog()
   }
 
   // Getters
@@ -81,13 +99,13 @@ export default class Log {
     let dmg: Array<DmgReport> = []
     let procs: Array<ProcReport> = []
 
-    Object.values(this.dmg).forEach(obj => {
+    this.dmg.forEach(obj => {
       if (!obj.count) return
       dmg.push({
         name: obj.name,
         portion: toPercent(obj.dmg, this.totalDmg),
         dmg: Number((obj.dmg / this.iterations / 1000).toFixed(1)),
-        avgHit: m.round(obj.dmg / obj.count),
+        avgHit: Number((obj.dmg / obj.count).toFixed(1)),
         count: Number((obj.count / this.iterations).toFixed(1)),
         misses: toPercent(obj.miss, obj.count),
         dodges: toPercent(obj.dodge, obj.count),
@@ -97,7 +115,7 @@ export default class Log {
       })
     })
 
-    Object.values(this.procs).forEach(obj => {
+    this.procs.forEach(obj => {
       if (!obj.count) return
       procs.push({
         name: obj.name,
@@ -107,31 +125,44 @@ export default class Log {
       })
     })
 
+    const rage: Array<Report> = [{
+      name: 'Avg per hit',
+      value: Number((this.rage.gainedHit / this.rage.hits).toFixed(1))
+    },{
+      name: 'Per sec',
+      value: Number((this.rage.gained / this.totalDuration).toFixed(1))
+    },{
+      name: 'From UWrath',
+      value: Number((this.rage.gainedUnbridled / this.iterations).toFixed(1))
+    },{
+      name: 'Lost (capped)',
+      value: Number((this.rage.lostOverCap / this.iterations).toFixed(1))
+    },{
+      name: 'Time capped',
+      value: toPercent(this.rage.timeCapped, this.totalDuration),
+      suffix: '%'
+    },{
+      name: 'Time starved',
+      value: toPercent(this.rage.timeStarved, this.totalDuration),
+      suffix: '%'
+    }]
+
     dmg = Object.values(dmg).sort(byDmg)
     procs = Object.values(procs).sort(byUptime)
-    return { dmg, procs }
+    return { dmg, procs, rage }
   }
 
   // Methods
 
   newDmgLog(name: string) {
-    return this.dmg[name] = {
-      name,
-      count: 0,
-      dmg: 0,
-      miss: 0,
-      dodge: 0,
-      glance: 0,
-      crit: 0,
-      hit: 0
-    }
+    const value = new DmgLog(name)
+    this.dmg.push(value)
+    return value
   }
 
   newProcLog(name: string) {
-    return this.procs[name] = {
-      name,
-      count: 0,
-      uptime: 0
-    }
+    const value = new ProcLog(name)
+    this.procs.push(value)
+    return value
   }
 }

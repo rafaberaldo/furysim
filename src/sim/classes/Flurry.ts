@@ -1,10 +1,11 @@
+import { ProcLog } from '@/sim/classes/Log'
 import Player from '@/sim/classes/Player'
 import { m } from '@/sim/helpers'
 
 export default class Flurry {
   private charges: number
   private chargesLeft: number
-  private log: any
+  private log: ProcLog
   private haste: number
   name: string
 

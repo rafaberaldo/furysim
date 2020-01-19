@@ -1,4 +1,5 @@
 import { Cooldown, CooldownGCD } from '@/sim/classes/Cooldown'
+import { DmgLog } from '@/sim/classes/Log'
 import Player from '@/sim/classes/Player'
 import Target from '@/sim/classes/Target'
 import { clamp, m } from '@/sim/helpers'
@@ -11,7 +12,7 @@ export enum Result {
 }
 
 export default class Skill {
-  private log: any
+  private log: DmgLog
   private result: Result | undefined
   private target: Target
   private skillCritMul: number

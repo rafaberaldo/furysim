@@ -246,6 +246,7 @@ export default class Player {
 
   tick(secs: number) {
     this.gcd.tick(secs)
+    this.rage.tick(secs)
     this.flurry && this.flurry.tick(secs)
     this.windfury && this.windfury.tick(secs)
   }

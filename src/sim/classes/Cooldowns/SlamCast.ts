@@ -15,7 +15,7 @@ export default class SlamCast extends CooldownGCD {
   // Getters
 
   get timeLeftCast() {
-    return super.timeLeft
+    return this._timeLeft
   }
 
   get canUse() {

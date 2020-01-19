@@ -1,11 +1,12 @@
 import { EventEmitter } from 'events'
 
+import { ProcLog } from '@/sim/classes/Log'
 import Player from '@/sim/classes/Player'
 import { ProcType } from '@/sim/classes/Weapon'
 import { m, ppmToChance } from '@/sim/helpers'
 
 export default class Proc extends EventEmitter {
-  private log: any
+  private log: ProcLog
   private chance: number
   protected buffDurationLeft: number
   protected buffDuration: number

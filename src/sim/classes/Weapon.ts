@@ -1,5 +1,6 @@
 import AttackSpeed from '@/sim/classes/Cooldowns/AttackSpeed'
 import ExtraAttack from '@/sim/classes/Cooldowns/ExtraAttack'
+import { DmgLog } from '@/sim/classes/Log'
 import Player from '@/sim/classes/Player'
 import Proc from '@/sim/classes/Proc'
 import Windfury from '@/sim/classes/Procs/Windfury'
@@ -29,7 +30,7 @@ export default class Weapon {
   private max: number
   private speed: number
   private dmgMul: number
-  private log: any
+  private log: DmgLog
   private result: Result | undefined
   private target: Target
   private wf: Windfury | undefined
