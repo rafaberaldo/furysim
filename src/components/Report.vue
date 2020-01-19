@@ -13,7 +13,7 @@
       <span
         class="progress"
         :style="{ width: `${item.value / 50 * 100 }%` }"/>
-      <span class="label">{{ item.name }} = {{ item.value }} AP</span>
+      <span class="label">{{ item.name }} = {{ item.value }} EAP</span>
     </div>
 
     <hr v-if="ep" style="margin: 1rem 0">
@@ -24,11 +24,11 @@
         :style="{ width: `${flurry.uptime}%` }"/>
       <span class="label">Flurry Uptime ({{ flurry.uptime }}%)</span>
     </div>
-    <div v-for="item in data.report.dmg" :key="item.title" class="progress-bar">
+    <div v-for="item in data.report.dmg" :key="item.name" class="progress-bar">
       <span
         class="progress"
         :style="{ width: `${item.portion}%` }"/>
-      <span class="label">{{ item.title }} ({{ item.portion }}%)</span>
+      <span class="label">{{ item.name }} ({{ item.portion }}%)</span>
     </div>
 
     <ul class="u-align-center" style="margin-top: 1.5rem">
@@ -44,7 +44,7 @@
       <div class="report-grid">
         <div v-for="item in ep" :key="item.name">
           <span class="label">{{ item.name }}</span>
-          <span class="u-family-title">{{ item.value }} AP</span>
+          <span class="u-family-title">{{ item.value }} EAP</span>
           <div class="progress-bar small">
             <span class="progress" :style="{ width: `${item.value / 50 * 100 }%` }"/>
           </div>
@@ -52,47 +52,92 @@
       </div>
     </section>
 
-    <hr v-if="ep" class="transparent">
-
     <section class="report-section">
       <h2>Damage</h2>
-      <template v-for="item in data.report.dmg">
-        <h4 :key="`${item.title}-header`">{{ item.title }}</h4>
-        <div :key="item.title" class="report-grid">
-          <div
-            v-for="({ title, key, suffix }, i) in swingKeys"
-            :key="key"
-            :class="{ 'span-2': i === 3 }">
-            <span class="label">{{ title }}</span>
-            <span class="u-family-title">{{ item[key] + suffix }}</span>
-            <div v-if="suffix === '%'" class="progress-bar small">
-              <span class="progress" :style="{ width: `${item[key]}%` }"/>
-            </div>
-          </div>
-        </div>
-      </template>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th align="center">Dmg</th>
+            <th align="right">Count</th>
+            <th align="right">Avg Hit</th>
+            <th align="right">Miss</th>
+            <th align="right">Dodge</th>
+            <th align="right">Glance</th>
+            <th align="right">Crit</th>
+            <th align="right">Hit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in data.report.dmg" :key="item.name">
+            <th class="span-3">{{ item.name }}</th>
+            <td class="span-3" align="right" data-label="Dmg">
+              <div style="margin-bottom: 2px">
+                {{ tableText(item.dmg, true, 'k') }}
+                ({{ tableText(item.portion, true, '%') }})
+              </div>
+              <div class="progress-bar small">
+                <span class="progress" :style="{ width: `${item.portion}%` }"/>
+              </div>
+            </td>
+            <td align="right" data-label="Count">
+              {{ tableText(item.count, true) }}
+            </td>
+            <td align="right" data-label="Avg Hit">
+              {{ tableText(item.avgHit, false) }}
+            </td>
+            <td align="right" data-label="Miss">
+              {{ tableText(item.misses, true, '%') }}
+            </td>
+            <td align="right" data-label="Dodge">
+              {{ tableText(item.dodges, true, '%') }}
+            </td>
+            <td align="right" data-label="Glance">
+              {{ tableText(item.glances, true, '%') }}
+            </td>
+            <td align="right" data-label="Crit">
+              {{ tableText(item.crits, true, '%') }}
+            </td>
+            <td align="right" data-label="Hit">
+              {{ tableText(item.hits, true, '%') }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </section>
-
-    <hr class="transparent">
 
     <section class="report-section">
       <h2>Procs / Auras</h2>
-      <template v-for="item in data.report.procs">
-        <h4 :key="`${item.title}-header`">{{ item.title }}</h4>
-        <div :key="item.title" class="report-grid procs">
-          <div v-for="{ title, key, suffix } in procKeys" :key="key">
-            <span class="label">{{ title }}</span>
-            <span class="u-family-title">{{ item[key] + suffix }}</span>
-
-            <div v-if="suffix === '%'" class="progress-bar small">
-              <span class="progress" :style="{ width: `${item[key]}%` }"/>
-            </div>
-          </div>
-        </div>
-      </template>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th align="center">Uptime</th>
+            <th align="right">Count</th>
+            <th align="right">EPPM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in data.report.procs" :key="item.name">
+            <th class="span-3">{{ item.name }}</th>
+            <td class="span-3" align="right" data-label="Uptime">
+              <div style="margin-bottom: 2px">
+                {{ tableText(item.uptime, true, '%') }}
+              </div>
+              <div class="progress-bar small">
+                <span class="progress" :style="{ width: `${item.uptime}%` }"/>
+              </div>
+            </td>
+            <td align="right" data-label="Count">
+              {{ tableText(item.count, true) }}
+            </td>
+            <td align="right" data-label="Effective PPM">
+              {{ tableText(item.ppm, true) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </section>
-
-    <hr class="transparent">
 
     <section id="timeline" class="report-section">
       <h2>Fight Timeline</h2>
@@ -140,27 +185,7 @@ export default {
         .sort((a, b) => b.value > a.value ? 1 : -1)
     },
     flurry() {
-      return this.data.report.procs.find(p => p.title === 'Flurry')
-    },
-    swingKeys() {
-      return [
-        { key: 'portion', title: 'Dmg %', suffix: '%' },
-        { key: 'dmg', title: 'Dmg', suffix: 'k' },
-        { key: 'avgHit', title: 'Avg Hit', suffix: '' },
-        { key: 'count', title: 'Count', suffix: '' },
-        { key: 'misses', title: 'Misses', suffix: '%' },
-        { key: 'dodges', title: 'Dodges', suffix: '%' },
-        { key: 'glances', title: 'Glances', suffix: '%' },
-        { key: 'crits', title: 'Crits', suffix: '%' },
-        { key: 'hits', title: 'Hits', suffix: '%' },
-      ]
-    },
-    procKeys() {
-      return [
-        { key: 'uptime', title: 'Uptime', suffix: '%' },
-        { key: 'count', title: 'Count', suffix: '' },
-        { key: 'ppm', title: 'Effective PPM', suffix: '' },
-      ]
+      return this.data.report.procs.find(p => p.name === 'Flurry')
     },
     timeline() {
       const search = this.searchInput.toLowerCase()
@@ -180,6 +205,11 @@ export default {
     },
     scrollUp() {
       window.scroll({ top: 0, behavior: 'smooth' })
+    },
+    tableText(value, decimal, suffix = '') {
+      if (!value) return '—'
+      if (decimal) return value.toFixed(1) + suffix
+      return value + suffix
     }
   }
 }
@@ -244,7 +274,41 @@ export default {
     font-size: 1.35rem;
   }
   .report-section {
-    max-width: 580px;
-    margin: 0 auto;
+    max-width: 720px;
+    margin: 3rem auto;
+  }
+
+  @media (max-width: 768px) {
+    thead { display: none }
+    tbody tr {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-column-gap: 15px;
+      margin-bottom: 1.5rem;
+      white-space: nowrap;
+      font-size: 1.35rem;
+      font-weight: 300;
+      font-family: var(--font-family-title);
+    }
+    tbody td,
+    tbody th {
+      border-color: transparent;
+      text-align: left;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    tbody td:before,
+    tbody th:before {
+      content: attr(data-label);
+      font-weight: 600;
+      display: block;
+      font-family: var(--font-family);
+      font-size: 1rem;
+    }
+    tbody th {
+      font-weight: 300;
+      font-size: 1.5rem;
+    }
+    tbody td.span-3 { grid-column: span 3; }
   }
 </style>

@@ -14,7 +14,7 @@ export interface DmgLog {
 }
 
 export interface DmgReport {
-  title: string,
+  name: string,
   portion: number,
   dmg: number,
   avgHit: number,
@@ -35,7 +35,7 @@ export interface ProcLog {
 }
 
 export interface ProcReport {
-  title: string,
+  name: string,
   count: number,
   uptime: number,
   ppm: number
@@ -84,7 +84,7 @@ export default class Log {
     Object.values(this.dmg).forEach(obj => {
       if (!obj.count) return
       dmg.push({
-        title: obj.name,
+        name: obj.name,
         portion: toPercent(obj.dmg, this.totalDmg),
         dmg: Number((obj.dmg / this.iterations / 1000).toFixed(1)),
         avgHit: m.round(obj.dmg / obj.count),
@@ -100,7 +100,7 @@ export default class Log {
     Object.values(this.procs).forEach(obj => {
       if (!obj.count) return
       procs.push({
-        title: obj.name,
+        name: obj.name,
         count: Number((obj.count / this.iterations).toFixed(1)),
         uptime: toPercent(obj.uptime, this.totalDuration),
         ppm: Number((obj.count / (this.totalDuration / 60)).toFixed(1))
