@@ -57,7 +57,7 @@
       <table>
         <thead>
           <tr>
-            <th>Name</th>
+            <th></th>
             <th align="center">Dmg</th>
             <th align="right">Count</th>
             <th align="right">Avg Hit</th>
@@ -71,13 +71,17 @@
         <tbody>
           <tr v-for="item in data.report.dmg" :key="item.name">
             <th class="span-3">{{ item.name }}</th>
-            <td class="span-3" align="right" data-label="Dmg">
-              <div style="margin-bottom: 2px">
+            <td align="right" data-label="Dmg">
+              <span class="hidden-tablet">
                 {{ tableText(item.dmg, 'k') }}
                 ({{ tableText(item.portion, '%') }})
-              </div>
-              <div class="progress-bar small">
+              </span>
+              <div class="progress-bar small-mobile">
                 <span class="progress" :style="{ width: `${item.portion}%` }"/>
+                <span class="label hidden-mobile">
+                  {{ tableText(item.dmg, 'k') }}
+                  ({{ tableText(item.portion, '%') }})
+                </span>
               </div>
             </td>
             <td align="right" data-label="Count">
@@ -111,7 +115,7 @@
       <table>
         <thead>
           <tr>
-            <th>Name</th>
+            <th></th>
             <th align="center">Uptime</th>
             <th align="right">Count</th>
             <th align="right">EPPM</th>
@@ -120,12 +124,11 @@
         <tbody>
           <tr v-for="item in data.report.procs" :key="item.name">
             <th class="span-3">{{ item.name }}</th>
-            <td class="span-3" align="right" data-label="Uptime">
-              <div style="margin-bottom: 2px">
-                {{ tableText(item.uptime, '%') }}
-              </div>
-              <div class="progress-bar small">
+            <td align="right" data-label="Uptime">
+              <span class="hidden-tablet">{{ tableText(item.uptime, '%') }}</span>
+              <div class="progress-bar small-mobile">
                 <span class="progress" :style="{ width: `${item.uptime}%` }"/>
+                <span class="label hidden-mobile">{{ tableText(item.uptime, '%') }}</span>
               </div>
             </td>
             <td align="right" data-label="Count">
@@ -234,17 +237,15 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    height: 1.5rem;
+    height: 1.4rem;
     overflow: hidden;
     position: relative;
     border: var(--border-color);
     background: var(--background-color-softer);
-    margin-bottom: 0.25rem;
   }
-  .progress-bar.small {
-    height: 2px;
-    margin-bottom: 0;
-  }
+  .progress-bar:not(:last-child) { margin-bottom: 0.25rem; }
+  .progress-bar.small { height: 3px; }
+  @media (max-width: 768px) { .progress-bar.small-mobile { height: 3px; } }
   .progress-bar .progress {
     position: absolute;
     top: 0;
@@ -258,6 +259,8 @@ export default {
     position: relative;
     margin-right: 0.25rem;
     font-weight: 600;
+    color: var(--text-color-richer);
+    text-shadow: 1px 1px 1px var(--background-color-softer);
   }
 
   hr.transparent { border-color: transparent; }
@@ -323,6 +326,6 @@ export default {
       font-weight: 300;
       font-size: 1.5rem;
     }
-    tbody td.span-3 { grid-column: span 3; }
+    tbody .span-3 { grid-column: span 3; }
   }
 </style>

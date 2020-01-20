@@ -57,7 +57,7 @@ html {
   --border-color-hover: hsl(var(--theme-hue), 0%, 42%);	  /* textarea,select,code,td,hr border	 */
 
   --background-color: hsl(var(--theme-hue), 0%, 12%);			/* body background; textarea,select background */
-  --background-color-softer: hsl(var(--theme-hue), 0%, 25%);
+  --background-color-softer: hsl(var(--theme-hue), 0%, 23%);
   --code-background: hsl(var(--theme-hue), 0%, 5%);				/* code background*/
 
   --link-color: hsl(210, 85%, 55%);
@@ -425,7 +425,7 @@ table {
 }
 th,
 td {
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem;
   border-bottom: 1px solid var(--border-color-softer);
 }
 th:first-child,
@@ -532,8 +532,15 @@ there.
 */
 
 
+/* Mobile */
+@media (max-width: 768px) {
+  .hidden-mobile { display: none; }
+}
+
 /* Larger than mobile (default point when grid becomes active) */
-@media (min-width: 769px) {}
+@media (min-width: 769px) {
+  .hidden-tablet { display: none; }
+}
 
 /* Larger than tablet */
 @media (min-width: 1024px) {}

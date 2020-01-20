@@ -132,7 +132,7 @@ export default class Log {
       name: 'Per sec',
       value: Number((this.rage.gained / this.totalDuration).toFixed(1))
     },{
-      name: 'From UWrath',
+      name: 'Unbridled Wrath',
       value: Number((this.rage.gainedUnbridled / this.iterations).toFixed(1))
     },{
       name: 'Lost (capped)',
