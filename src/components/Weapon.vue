@@ -58,7 +58,7 @@
       <div class="horizontal">
         <label>Proc</label>
         <select v-model="value.proc.type" :disabled="!value.canUse">
-          <option :value="undefined">None</option>
+          <option :value="null">None</option>
           <option value="atkSpeed">Atk. Speed</option>
           <option value="extraAttack">Extra Attack</option>
           <option value="str">Strength</option>
@@ -172,11 +172,11 @@ export default {
       this.value.speed = value.speed
       this.value.type = value.type
       this.value.proc = {
-         type: value.proc && value.proc.type,
+         type: value.proc ? value.proc.type : null,
          percent: value.proc && value.proc.percent ||
           value.proc && this.getPercent(value.proc.ppm, value.speed),
-         amount: value.proc && value.proc.amount,
-         duration: value.proc && value.proc.duration
+         amount: value.proc ? value.proc.amount : 0,
+         duration: value.proc ? value.proc.duration : 0
       }
     }
   },

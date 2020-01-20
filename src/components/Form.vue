@@ -568,10 +568,10 @@ export default {
             skill: 305,
             enchant: true,
             proc: {
-              type: defaultMh.proc &&  defaultMh.proc.type,
-              percent: defaultMh.proc &&  defaultMh.proc.percent,
-              amount: defaultMh.proc &&  defaultMh.proc.amount,
-              duration: defaultMh.proc &&  defaultMh.proc.duration
+              type: defaultMh.proc ? defaultMh.proc.type : null,
+              percent: defaultMh.proc ? defaultMh.proc.percent : 0,
+              amount: defaultMh.proc ? defaultMh.proc.amount : 0,
+              duration: defaultMh.proc ? defaultMh.proc.duratiom : 0
             }
           },
           offhand: {
@@ -583,10 +583,10 @@ export default {
             skill: 305,
             enchant: true,
             proc: {
-              type: defaultOh.proc &&  defaultOh.proc.type,
-              percent: defaultOh.proc &&  defaultOh.proc.percent,
-              amount: defaultOh.proc &&  defaultOh.proc.amount,
-              duration: defaultOh.proc &&  defaultOh.proc.duration
+              type: defaultOh.proc ? defaultOh.proc.type : null,
+              percent: defaultOh.proc ? defaultOh.proc.percent : 0,
+              amount: defaultOh.proc ? defaultOh.proc.amount : 0,
+              duration: defaultOh.proc ? defaultOh.proc.duration : 0
             }
           },
           hoj: true,
