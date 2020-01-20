@@ -30,18 +30,24 @@
         rel="noopener">Here</a>. But post a valid source or insta-closed.
     </p>
 
-    <h5>What's the tech used?</h5>
-    <p>
-      The simulator itself runs in pure Javascript (Web Worker).
-      Interface is the default stack from
-      <a href="https://cli.vuejs.org/"
-        target="_blank"
-        rel="noopener">Vue CLI</a>.
-      CSS lib is
-      <a href="https://acahir.github.io/Barebones/"
-        target="_blank"
-        rel="noopener">Barebones</a> with a bit of changes.
-    </p>
+    <h5>What's the tech stack?</h5>
+    <ul>
+      <li>
+        <a href="https://www.typescriptlang.org/"
+          target="_blank"
+          rel="noopener">Typescript</a>
+      </li>
+      <li>
+        <a href="https://cli.vuejs.org/"
+          target="_blank"
+          rel="noopener">Vue.js / CLI</a>
+      </li>
+      <li>
+        <a href="https://acahir.github.io/Barebones/"
+          target="_blank"
+          rel="noopener">Barebones</a>
+      </li>
+    </ul>
 
     <h5>Why did you make this?</h5>
     <p>

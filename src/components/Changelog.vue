@@ -1,6 +1,26 @@
 <template>
   <Modal ref="modal">
     <h3>Changelog</h3>
+    <h5>v0.6.0</h5>
+    <ul>
+      <li>Fix Execute phase failing sim on Slam rotation</li>
+      <li>Fix Slam interaction with latency</li>
+      <li>Fix Blood Fury not snapshotting AP</li>
+      <li>Add more rotation options to MRP and BF</li>
+      <li>Add Diamond Flask</li>
+      <li>Add PvP Gloves</li>
+      <li>Add Essence of the Red</li>
+      <li>Add Imp. Expose Armor</li>
+      <li>Add rage info</li>
+      <li>Changes on code for better scaling</li>
+      <li>UI stuff:</li>
+      <ul>
+        <li>Detailed report on desktop is now a table</li>
+        <li>Add settings import/export functionality</li>
+        <li>Fix the need to clear cache for some users (hopefully)</li>
+      </ul>
+    </ul>
+
     <h5>v0.5.0</h5>
     <ul>
       <li>Add standard Slam rotation!</li>
