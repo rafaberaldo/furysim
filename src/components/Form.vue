@@ -1,71 +1,9 @@
 <template>
   <form @submit.prevent="submit">
     <div class="grid-container quarters">
-      <section class="grid-item">
-        <h4>Player Stats w/ Gear</h4>
-        <p>
-          With gear, unbuffed and untalented. I recommend
-          <a href="https://sixtyupgrades.com" rel="noopener" target="_blank">Sixty Upgrades</a>.
-        </p>
-        <div class="horizontal">
-          <label>Level</label>
-          <input type="number" required min="1" max="60" v-model.number="formData.player.lvl">
-        </div>
-
-        <div class="horizontal">
-          <label>Strength</label>
-          <input type="number" required min="10" max="1000" v-model.number="formData.player.str">
-        </div>
-
-        <div class="horizontal">
-          <label>Attack Power</label>
-          <input type="number" required min="50" max="5000" v-model.number="formData.player.ap">
-        </div>
-
-        <div class="horizontal">
-          <label>Hit (%)</label>
-          <input type="number" required min="0" max="100" v-model.number="formData.player.hit">
-        </div>
-
-        <div class="horizontal">
-          <label>Haste (%)</label>
-          <input type="number" required min="0" max="50" v-model.number="formData.player.haste">
-        </div>
-
-        <div class="horizontal">
-          <label>Crit (%)</label>
-          <input type="number" required min="0" max="100" step="0.01" v-model.number="formData.player.crit">
-        </div>
-
-        <div class="horizontal">
-          <label>Start Rage</label>
-          <input type="number" required min="0" max="100" v-model.number="formData.player.startRage">
-        </div>
-
-        <div class="horizontal select-edit">
-          <label><a :href="talentsUrl" rel="noopener" target="_blank">Talents</a></label>
-          <input
-            v-if="formData.isCustomTalent"
-            type="url"
-            required
-            pattern="https?://classic\.wowhead\.com/talent-calc/warrior/.+"
-            style="flex-grow: 1"
-            v-model="formData.player.talents"
-            @blur="resetTalent">
-          <select v-else v-model="formData.player.talents">
-            <option :value="dwTalent">
-              Default Dual Wield
-            </option>
-            <option value="https://classic.wowhead.com/talent-calc/warrior/20305011332-05052005025010051">
-              Default Two-Hand
-            </option>
-            <option value="https://classic.wowhead.com/talent-calc/warrior/20305011332-05050005005410051">
-              Default Slam
-            </option>
-            <option disabled>────────</option>
-            <option value="custom">Custom</option>
-          </select>
-        </div>
+      <section class="grid-item span-2">
+        <h4>Player</h4>
+        <PlayerForm :form-data="formData" :default-talent="dwTalent"/>
       </section>
 
       <section class="grid-item">
@@ -91,9 +29,11 @@
           </li>
         </ul>
       </section>
+    </div>
 
+    <div class="grid-container quarters">
       <section class="grid-item">
-        <h4>Target Stats</h4>
+        <h4>Target</h4>
         <div class="horizontal">
           <label>Level</label>
           <input type="number" required min="1" max="63" v-model.number="formData.target.lvl">
@@ -122,43 +62,6 @@
           <label>Mitigation</label>
           <span class="u-family-title">{{ targetMitigation }}%</span>
         </div>
-      </section>
-    </div>
-
-    <div class="grid-container quarters">
-      <section class="grid-item">
-        <div class="u-block">
-          <h4>Gear</h4>
-          <ul>
-            <li>
-              <label>
-                <input type="checkbox" v-model="formData.player.hoj">
-                <span class="label-body">Hand of Justice</span>
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox" v-model="formData.player.diamondFlask.canUse">
-                <span class="label-body">Diamond Flask</span>
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox" v-model="formData.player.cloudkeeper.canUse">
-                <span class="label-body">Cloudkeeper Legplates</span>
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox" v-model="formData.player.hamstring.pvpGloves">
-                <span class="label-body">PvP Gloves</span>
-              </label>
-            </li>
-          </ul>
-        </div>
-
-        <Weapon v-model="formData.player.mainhand" :mainhand="true"/>
-        <Weapon v-model="formData.player.offhand" :mainhand="false"/>
       </section>
 
       <section class="grid-item span-2">
@@ -499,12 +402,12 @@
 </template>
 
 <script>
+
 import Modal from '@/components/Modal'
+import PlayerForm from '@/components/PlayerForm'
 import Report from '@/components/Report'
-import Weapon from '@/components/Weapon'
 import weaponsData from '@/data/weapons'
 import Player from '@/sim/classes/Player'
-
 import mergeWith from 'lodash/mergeWith'
 
 // Deep merge but replacing arrays
@@ -517,8 +420,8 @@ export default {
   name: 'app',
   components: {
     Modal,
-    Report,
-    Weapon
+    PlayerForm,
+    Report
   },
   data() {
     const defaultMh = weaponsData['1H Axes'].find(w => w.title === 'Deathbringer')
@@ -795,12 +698,6 @@ export default {
     talents() {
       return Player.parseTalents(this.formData.player.talents)
     },
-    talentsUrl() {
-      const correctUrl = 'classic.wowhead.com/talent-calc/warrior/'
-      return this.formData.player.talents.includes(correctUrl)
-        ? this.formData.player.talents
-        : 'https://' + correctUrl
-    },
     submitText() {
       if (this.isLoading && this.message.progress < 100) return `${this.message.progress}%`
       if (this.isLoading) return `0%`
@@ -975,12 +872,6 @@ export default {
       })
       delete localStorage.formData
       this.$emit('report', this.result)
-    },
-    resetTalent() {
-      if (this.formData.player.talents) return
-
-      this.formData.isCustomTalent = false
-      this.formData.player.talents = this.dwTalent
     },
     loadData() {
       if (!localStorage.formData) return

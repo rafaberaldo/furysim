@@ -28,9 +28,11 @@
     "@vue/cli-plugin-typescript": "^4.1.2",
     "@vue/cli-service": "^4.1.0",
     "@vue/eslint-config-typescript": "^4.0.0",
+    "axios": "^0.19.1",
     "babel-eslint": "^10.0.3",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "import-sort-parser-typescript": "^6.0.0",
     "lodash": "^4.17.15",
     "typescript": "~3.7.5",
     "vue-template-compiler": "^2.6.10",
@@ -54,5 +56,11 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "importSort": {
+    ".ts, .vue": {
+      "parser": "typescript",
+      "style": "module"
+    }
+  }
 }
