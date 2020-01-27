@@ -450,48 +450,31 @@ export default {
           max: 200
         },
         player: {
+          race: 'Orc',
           lvl: 60,
-          str: 250,
-          ap: 910,
-          hit: 6,
-          haste: 0,
-          crit: 20.45,
           startRage: 0,
           talents: dwTalent,
           buffs: [
             'ony', 'dm', 'sf', 'wcb', 'mark', 'bloodFury', 'strTotem', 'wf', 'jujuPower',
             'roids', 'jujuMight', 'sunfruit', 'mrp', 'mongoose', 'eleStoneOh'
           ],
-          mainhand: {
-            canUse: true,
-            min: defaultMh.min,
-            max: defaultMh.max,
-            speed: defaultMh.speed,
-            type: defaultMh.type,
-            skill: 305,
-            enchant: true,
-            proc: {
-              type: defaultMh.proc ? defaultMh.proc.type : null,
-              percent: defaultMh.proc ? defaultMh.proc.percent : 0,
-              amount: defaultMh.proc ? defaultMh.proc.amount : 0,
-              duration: defaultMh.proc ? defaultMh.proc.duratiom : 0
-            }
-          },
-          offhand: {
-            canUse: true,
-            min: defaultOh.min,
-            max: defaultOh.max,
-            speed: defaultOh.speed,
-            type: defaultOh.type,
-            skill: 305,
-            enchant: true,
-            proc: {
-              type: defaultOh.proc ? defaultOh.proc.type : null,
-              percent: defaultOh.proc ? defaultOh.proc.percent : 0,
-              amount: defaultOh.proc ? defaultOh.proc.amount : 0,
-              duration: defaultOh.proc ? defaultOh.proc.duration : 0
-            }
-          },
+          head: 12640,
+          neck: 18404,
+          shoulder: 15051,
+          back: 13340,
+          chest: 11726,
+          wrist: 19146,
+          hand: 19143,
+          waist: 19137,
+          legs: 15052,
+          feet: 16984,
+          finger1: 19325,
+          finger2: 13098,
+          trinket1: 11815,
+          trinket2: 13965,
+          ranged: 17072,
+          mainhand: 17068,
+          offhand: 19103,
           hoj: true,
           cloudkeeper: {
             canUse: false,
