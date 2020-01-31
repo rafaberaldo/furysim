@@ -10,11 +10,6 @@
     </div>
 
     <div class="horizontal">
-      <label>Level</label>
-      <input type="number" required min="1" max="60" v-model.number="formData.player.lvl">
-    </div>
-
-    <div class="horizontal">
       <label>Start Rage</label>
       <input type="number" required min="0" max="100" v-model.number="formData.player.startRage">
     </div>
@@ -62,6 +57,10 @@
 
 import axios from 'axios'
 import Vue from 'vue'
+
+interface Set {
+  [setId: string]: number
+}
 
 export default Vue.extend({
   props: {
@@ -117,22 +116,23 @@ export default Vue.extend({
       const offhand = this.apiData.Weapons.find((e: any) => e.ID === this.formData.player.offhand)
       const race = this.apiData.Races.find((e: any) => e.Name === this.formData.player.race)
 
+      // Stats of a level 60
       const stats = {
-        ap: race.AP,
-        str: race.Str,
-        agi: race.Agi,
-        sta: race.Sta,
+        ap: 160,
+        str: 97 + race.Str,
+        agi: 60 + race.Agi,
+        sta: 88 + race.Sta,
         crit: 0,
         hit: 0,
         dodge: 0,
         parry: 5,
-        defense: this.formData.player.lvl * 5,
+        defense: 300,
         armor: 0,
         hp: 1509,
         mhSkill: race.Type.split(',').includes(mainhand.Type) ? race.Skill : 0,
         ohSkill: race.Type.split(',').includes(offhand.Type) ? race.Skill : 0
       }
-      const sets = {} as any
+      const sets = {} as Set
 
       this.gear.forEach(slot => {
         const itemId = this.formData.player[slot.key]
@@ -147,15 +147,39 @@ export default Vue.extend({
         stats.parry += item.Parry || 0
         stats.defense += item.Defense || 0
         stats.armor += item.AC || 0
+        stats.hp += item.HP || 0
 
-        if (item.Set) sets[item.Set] = sets[item.Set] + 1 || 1
+        if (item.Set) sets[item.SetID] = sets[item.SetID] + 1 || 1
 
         if (!item.Skill) return
         if (item.Type.split(',').includes(mainhand.Type)) stats.mhSkill += item.Skill
         if (item.Type.split(',').includes(offhand.Type)) stats.ohSkill += item.Skill
       })
+
+      Object.keys(sets).forEach(setId => {
+        const total = sets[setId]
+        const set = this.apiData.SetBonuses.find((e: any) => {
+          return e.ID === Number(setId) && e.Pieces === total
+        })
+        stats.ap += set.AP || 0
+        stats.str += set.Str || 0
+        stats.agi += set.Agi || 0
+        stats.sta += set.Sta || 0
+        stats.crit += set.Crit || 0
+        stats.hit += set.Hit || 0
+        stats.dodge += set.Dodge || 0
+        stats.parry += set.Parry || 0
+        stats.defense += set.Defense || 0
+        stats.armor += set.AC || 0
+
+        if (!set.Skill) return
+        if (set.Type.split(',').includes(mainhand.Type)) stats.mhSkill += set.Skill
+        if (set.Type.split(',').includes(offhand.Type)) stats.ohSkill += set.Skill
+      })
+
+
+
       stats.ap += stats.str * 2
-      // TODO stats.block += stats.str * 0.05
       stats.dodge += stats.agi * 0.05
       stats.crit += stats.agi * 0.05
       stats.armor += stats.agi * 2
