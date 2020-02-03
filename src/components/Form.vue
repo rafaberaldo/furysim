@@ -459,22 +459,32 @@ export default {
             'roids', 'jujuMight', 'sunfruit', 'mrp', 'mongoose', 'eleStoneOh'
           ],
           head: 12640,
+          headEnch: 11645,
           neck: 18404,
           shoulder: 15051,
+          shoulderEnch: undefined,
           back: 13340,
+          backEnch: 13882,
           chest: 11726,
+          chestEnch: 20025,
           wrist: 19146,
+          wristEnch: 20010,
           hand: 19143,
+          handEnch: 20013,
           waist: 19137,
           legs: 15052,
+          legsEnch: undefined,
           feet: 16984,
+          feetEnch: 13890,
           finger1: 19325,
           finger2: 13098,
           trinket1: 11815,
           trinket2: 13965,
           ranged: 17072,
           mainhand: 17068,
+          mainhandEnch: 20034,
           offhand: 19103,
+          offhandEnch: 20034,
           hoj: true,
           cloudkeeper: {
             canUse: false,
@@ -936,6 +946,8 @@ export default {
     margin-left: 1.5rem;
     margin-bottom: 0.5rem;
   }
+  .ident label,
+  .ident .label { font-weight: 400; }
   .ident code {
     display: inline-flex;
     align-items: center;

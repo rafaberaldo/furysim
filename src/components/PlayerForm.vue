@@ -39,15 +39,38 @@
       </select>
     </div>
 
-    <div v-for="slot in gear" :key="slot.title" class="horizontal select-edit">
+    <div
+      v-for="slot in gear"
+      :key="slot.key"
+      class="horizontal select-edit"
+      :class="{ 'ident': slot.ident }">
       <label>{{ slot.title }}</label>
       <select v-model="formData.player[slot.key]">
-        <option
-          v-for="item in apiData[slot.apiKey]"
-          :key="item.ID"
-          :value="item.ID">
-          {{ item.Name }}
-        </option>
+        <option :value="undefined">None</option>
+        <template v-for="(item, key) in apiData[slot.slotData]">
+          <optgroup
+            v-if="!Array.isArray(apiData[slot.slotData])"
+            :key="key"
+            :label="key">
+            <option v-for="subitem in item" :key="subitem.ID" :value="subitem.ID">
+              {{ subitem.Name }}
+            </option>
+          </optgroup>
+          <option v-else :key="item.ID" :value="item.ID">
+            {{ item.Name }}
+          </option>
+        </template>
+      </select>
+
+      <select
+        v-if="slot.enchant"
+        v-model="formData.player[slot.enchant.key]">
+        <option :value="undefined">None</option>
+        <template v-for="item in apiData[slot.enchant.slotData]">
+          <option :key="item.ID" :value="item.ID">
+            {{ item.Name }}
+          </option>
+        </template>
       </select>
     </div>
   </div>
@@ -71,23 +94,43 @@ export default Vue.extend({
     return {
       apiData: {} as any,
       gear: [
-        { title: 'Head', key: 'head', apiKey: 'Heads' },
-        { title: 'Neck', key: 'neck', apiKey: 'Necks' },
-        { title: 'Shoulder', key: 'shoulder', apiKey: 'Shoulders' },
-        { title: 'Back', key: 'back', apiKey: 'Backs' },
-        { title: 'Chest', key: 'chest', apiKey: 'Chests' },
-        { title: 'Wrist', key: 'wrist', apiKey: 'Wrists' },
-        { title: 'Hand', key: 'hand', apiKey: 'Hands' },
-        { title: 'Waist', key: 'waist', apiKey: 'Waists' },
-        { title: 'Legs', key: 'legs', apiKey: 'Legs' },
-        { title: 'Feet', key: 'feet', apiKey: 'Feet' },
-        { title: 'Finger 1', key: 'finger1', apiKey: 'Rings' },
-        { title: 'Finger 2', key: 'finger2', apiKey: 'Rings' },
-        { title: 'Trinket 1', key: 'trinket1', apiKey: 'Trinkets' },
-        { title: 'Trinket 2', key: 'trinket2', apiKey: 'Trinkets' },
-        { title: 'Ranged Weapon', key: 'ranged', apiKey: 'RangedWeapons' },
-        { title: 'Mainhand', key: 'mainhand', apiKey: 'Weapons' },
-        { title: 'Offhand', key: 'offhand', apiKey: 'Weapons' },
+        { title: 'Head', key: 'head', slotData: 'Heads',
+          enchant: { key: 'headEnch', slotData: 'HeadsEnch' }
+        },
+        { title: 'Neck', key: 'neck', slotData: 'Necks' },
+        { title: 'Shoulder', key: 'shoulder', slotData: 'Shoulders',
+          enchant: { key: 'shoulderEnch', slotData: 'ShouldersEnch'},
+        },
+        { title: 'Back', key: 'back', slotData: 'Backs',
+          enchant: { key: 'backEnch', slotData: 'BacksEnch'},
+        },
+        { title: 'Chest', key: 'chest', slotData: 'Chests',
+          enchant: { key: 'chestEnch', slotData: 'ChestsEnch'},
+        },
+        { title: 'Wrist', key: 'wrist', slotData: 'Wrists',
+          enchant: { key: 'wristEnch', slotData: 'WristsEnch'},
+        },
+        { title: 'Hand', key: 'hand', slotData: 'Hands',
+          enchant: { key: 'handEnch', slotData: 'HandsEnch'},
+        },
+        { title: 'Waist', key: 'waist', slotData: 'Waists' },
+        { title: 'Legs', key: 'legs', slotData: 'Legs',
+          enchant: { key: 'legsEnch', slotData: 'LegsEnch'},
+        },
+        { title: 'Feet', key: 'feet', slotData: 'Feet',
+          enchant: { key: 'feetEnch', slotData: 'FeetEnch'},
+        },
+        { title: 'Finger', key: 'finger1', slotData: 'Rings' },
+        { title: 'Finger', key: 'finger2', slotData: 'Rings' },
+        { title: 'Trinket', key: 'trinket1', slotData: 'Trinkets' },
+        { title: 'Trinket', key: 'trinket2', slotData: 'Trinkets' },
+        { title: 'Ranged Weapon', key: 'ranged', slotData: 'RangedWeapons' },
+        { title: 'Mainhand', key: 'mainhand', slotData: 'Mainhand',
+          enchant: { key: 'mainhandEnch', slotData: 'WeaponsEnch'},
+        },
+        { title: 'Offhand', key: 'offhand', slotData: 'Offhand',
+          enchant: { key: 'offhandEnch', slotData: 'WeaponsEnch'},
+        },
       ]
     }
   },
@@ -110,6 +153,31 @@ export default Vue.extend({
 
       this.formData.isCustomTalent = false
       this.formData.player.talents = this.defaultTalent
+    },
+    updateApiData() {
+      this.apiData.Offhand = {
+        '1HAxe': this.apiData.Weapons.filter((e: any) => e.Type === '1HAxe'),
+        '1HSword': this.apiData.Weapons.filter((e: any) => e.Type === '1HSword'),
+        '1HMace': this.apiData.Weapons.filter((e: any) => e.Type === '1HMace'),
+        'Dagger': this.apiData.Weapons.filter((e: any) => e.Type === 'Dagger'),
+        'Fist': this.apiData.Weapons.filter((e: any) => e.Type === 'Fist'),
+      }
+      this.apiData.Mainhand = Object.assign({}, this.apiData.Offhand)
+      this.apiData.Mainhand = Object.assign(this.apiData.Mainhand, {
+        '2HAxe': this.apiData.Weapons.filter((e: any) => e.Type === '2HAxe'),
+        '2HSword': this.apiData.Weapons.filter((e: any) => e.Type === '2HSword'),
+        '2HMace': this.apiData.Weapons.filter((e: any) => e.Type === '2HMace'),
+        'Polearm': this.apiData.Weapons.filter((e: any) => e.Type === 'Polearm'),
+      })
+      this.apiData.HeadsEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Head')
+      this.apiData.LegsEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Legs')
+      this.apiData.HandsEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Hands')
+      this.apiData.ShouldersEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Shoulders')
+      this.apiData.BacksEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Back')
+      this.apiData.WristsEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Wrist')
+      this.apiData.FeetEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Feet')
+      this.apiData.ChestsEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Chest')
+      this.apiData.WeaponsEnch = this.apiData.Enchants.filter((e: any) => e.Slot === 'Weapon')
     },
     calculateStats() {
       const mainhand = this.apiData.Weapons.find((e: any) => e.ID === this.formData.player.mainhand)
@@ -136,7 +204,10 @@ export default Vue.extend({
 
       this.gear.forEach(slot => {
         const itemId = this.formData.player[slot.key]
-        const item = this.apiData[slot.apiKey].find((e: any) => e.ID === itemId)
+        if (!itemId) return
+
+        const slotData = ['Mainhand', 'Offhand'].includes(slot.slotData) ? 'Weapons' : slot.slotData
+        const item = this.apiData[slotData].find((e: any) => e.ID === itemId)
         stats.ap += item.AP || 0
         stats.str += item.Str || 0
         stats.agi += item.Agi || 0
@@ -176,8 +247,6 @@ export default Vue.extend({
         if (set.Type.split(',').includes(mainhand.Type)) stats.mhSkill += set.Skill
         if (set.Type.split(',').includes(offhand.Type)) stats.ohSkill += set.Skill
       })
-
-
 
       stats.ap += stats.str * 2
       stats.dodge += stats.agi * 0.05
@@ -224,6 +293,7 @@ export default Vue.extend({
         const {data} = await axios.get(this.getApiUrl(title))
         this.apiData[title] = this.arrayToObj(data.values)
       }))
+      this.updateApiData()
       this.$forceUpdate()
       this.calculateStats()
       // eslint-disable-next-line no-console
