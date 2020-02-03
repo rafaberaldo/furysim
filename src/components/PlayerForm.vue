@@ -73,6 +73,8 @@
         </template>
       </select>
     </div>
+
+    <a href='https://classic.wowhead.com/item=15052' :rel="allGearIdsRel">BDS</a>
   </div>
 </template>
 
@@ -140,6 +142,11 @@ export default Vue.extend({
       return this.formData.player.talents.includes(correctUrl)
         ? this.formData.player.talents
         : `https://${correctUrl}`
+    },
+    allGearIdsRel() {
+      const ids: Array<number> = []
+      this.gear.forEach(e => ids.push(this.formData.player[e.key]))
+      return `pcs=${ids.join(':')}`
     }
   },
   watch: {
