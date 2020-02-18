@@ -417,7 +417,6 @@ const customizer = (objValue, srcValue, key, obj, src) => {
 }
 
 export default {
-  name: 'app',
   components: {
     Modal,
     PlayerForm,
@@ -477,7 +476,7 @@ export default {
           feet: 16984,
           feetEnch: 13890,
           finger1: 19325,
-          finger2: 13098,
+          finger2: 18821,
           trinket1: 11815,
           trinket2: 13965,
           ranged: 17072,

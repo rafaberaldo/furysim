@@ -39,7 +39,29 @@
       </select>
     </div>
 
-    <div
+    <div class="gear">
+      <div class="gear-left">
+        <GearSlot
+          v-for="slot in gear.slice(0, 9)"
+          :key="slot.key"
+          :rel="allGearIdsRel"
+          :data="apiData[slot.slotData]"
+          :gear-slot="slot"
+          v-model="formData.player[slot.key]"/>
+      </div>
+      <div class="gear-right">
+        <GearSlot
+          v-for="slot in gear.slice(9)"
+          :key="slot.key"
+          :rel="allGearIdsRel"
+          :data="apiData[slot.slotData]"
+          :gear-slot="slot"
+          right
+          v-model="formData.player[slot.key]"/>
+      </div>
+    </div>
+
+    <!-- <div
       v-for="slot in gear"
       :key="slot.key"
       class="horizontal select-edit"
@@ -72,9 +94,7 @@
           </option>
         </template>
       </select>
-    </div>
-
-    <a href='https://classic.wowhead.com/item=15052' :rel="allGearIdsRel">BDS</a>
+    </div> -->
   </div>
 </template>
 
@@ -82,12 +102,16 @@
 
 import axios from 'axios'
 import Vue from 'vue'
+import GearSlot from '@/components/GearSlot.vue'
 
 interface Set {
   [setId: string]: number
 }
 
 export default Vue.extend({
+  components: {
+    GearSlot
+  },
   props: {
     formData: Object,
     defaultTalent: String
@@ -112,6 +136,13 @@ export default Vue.extend({
         { title: 'Wrist', key: 'wrist', slotData: 'Wrists',
           enchant: { key: 'wristEnch', slotData: 'WristsEnch'},
         },
+        { title: 'Mainhand', key: 'mainhand', slotData: 'Mainhand',
+          enchant: { key: 'mainhandEnch', slotData: 'WeaponsEnch'},
+        },
+        { title: 'Offhand', key: 'offhand', slotData: 'Offhand',
+          enchant: { key: 'offhandEnch', slotData: 'WeaponsEnch'},
+        },
+        { title: 'Ranged Weapon', key: 'ranged', slotData: 'RangedWeapons' },
         { title: 'Hand', key: 'hand', slotData: 'Hands',
           enchant: { key: 'handEnch', slotData: 'HandsEnch'},
         },
@@ -126,18 +157,11 @@ export default Vue.extend({
         { title: 'Finger', key: 'finger2', slotData: 'Rings' },
         { title: 'Trinket', key: 'trinket1', slotData: 'Trinkets' },
         { title: 'Trinket', key: 'trinket2', slotData: 'Trinkets' },
-        { title: 'Ranged Weapon', key: 'ranged', slotData: 'RangedWeapons' },
-        { title: 'Mainhand', key: 'mainhand', slotData: 'Mainhand',
-          enchant: { key: 'mainhandEnch', slotData: 'WeaponsEnch'},
-        },
-        { title: 'Offhand', key: 'offhand', slotData: 'Offhand',
-          enchant: { key: 'offhandEnch', slotData: 'WeaponsEnch'},
-        },
       ]
     }
   },
   computed: {
-    talentsUrl() {
+    talentsUrl(): string {
       const correctUrl = 'classic.wowhead.com/talent-calc/warrior/'
       return this.formData.player.talents.includes(correctUrl)
         ? this.formData.player.talents
@@ -309,6 +333,16 @@ export default Vue.extend({
   },
   mounted() {
     this.getApiData()
+
+    // eslint-disable-next-line no-console
+    console.log($WowheadPower)
   }
 })
 </script>
+
+<style>
+  .gear {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+</style>
