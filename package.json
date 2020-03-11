@@ -34,7 +34,7 @@
     "lodash": "^4.17.15",
     "typescript": "~3.7.5",
     "vue-template-compiler": "^2.6.10",
-    "worker-plugin": "^3.2.0"
+    "worker-plugin": "^4.0.2"
   },
   "eslintConfig": {
     "root": true,
