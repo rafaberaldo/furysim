@@ -1,6 +1,12 @@
 <template>
   <Modal ref="modal">
     <h3>Changelog</h3>
+    <h5>v0.6.1</h5>
+    <ul>
+      <li>Add Spirit of Zandalar buff</li>
+      <li>Add Smoked Desert Dumplings</li>
+    </ul>
+
     <h5>v0.6.0</h5>
     <ul>
       <li>Fix Execute phase failing sim on Slam rotation</li>
