@@ -18,6 +18,11 @@
         </div>
 
         <div class="horizontal">
+          <label>Agility</label>
+          <input type="number" required min="10" max="1000" v-model.number="formData.player.agi">
+        </div>
+
+        <div class="horizontal">
           <label>Attack Power</label>
           <input type="number" required min="50" max="5000" v-model.number="formData.player.ap">
         </div>
@@ -432,7 +437,7 @@
             <label>Crit</label>
             <span class="u-family-title">{{ playerStats.crit }}%</span>
           </div>
-          <small>* BoK is added during sim to account procs.</small>
+          <small>* BoK and Zandalar Str is added during sim to account procs.</small>
         </div>
 
         <h4>Simulation</h4>
@@ -549,6 +554,7 @@ export default {
         player: {
           lvl: 60,
           str: 250,
+          agi: 125,
           ap: 910,
           hit: 6,
           haste: 0,
@@ -557,7 +563,7 @@ export default {
           talents: dwTalent,
           buffs: [
             'ony', 'dm', 'sf', 'wcb', 'mark', 'bloodFury', 'strTotem', 'wf', 'jujuPower',
-            'roids', 'jujuMight', 'sunfruit', 'mrp', 'mongoose', 'eleStoneOh'
+            'roids', 'jujuMight', 'dumplings', 'mrp', 'mongoose', 'eleStoneOh'
           ],
           mainhand: {
             canUse: true,
@@ -662,6 +668,7 @@ export default {
           { title: 'Fengus\' Ferocity (DM AP)', value: 'dm' },
           { title: 'Songflower Serenade', value: 'sf' },
           { title: 'Warchief\'s Blessing (WCB/Rend)', value: 'wcb' },
+          { title: 'Spirit of Zandalar *', value: 'zand' },
           { title: 'Mark of the Wild', value: 'mark' },
           { title: 'Leader of the Pack', value: 'lotp' },
           { title: 'Trueshot Aura', value: 'trueshot' },
@@ -688,7 +695,8 @@ export default {
             disabled: this.formData.player.buffs.includes('jujuMight')
           },
           { title: 'R.O.I.D.S.', value: 'roids' },
-          { title: 'Blessed Sunfruit', value: 'sunfruit' },
+          { title: 'Smoked Desert Dumplings', value: 'dumplings', disabled: this.formData.player.buffs.includes('sunfruit') },
+          { title: 'Blessed Sunfruit', value: 'sunfruit', disabled: this.formData.player.buffs.includes('dumplings') },
           { title: 'Mighty Rage Potion (MRP)', value: 'mrp' },
           { title: 'Elixir of the Mongoose', value: 'mongoose' },
           { title: 'Elem. Sharp. Stone MH', value: 'eleStoneMh',
@@ -714,8 +722,9 @@ export default {
       const lvl = this.formData.player.lvl
       const initBaseAp = Player.getBaseAp(lvl, str)
       const gearAp = this.formData.player.ap - initBaseAp
+      const agi = this.formData.player.agi
 
-      // BoK is calculated on sim to account procs
+      // BoK and Zandalar Str is calculated on sim to account procs
       this.formData.player.buffs.forEach((value) => {
         if (value === 'sf') str += 15
         if (value === 'mark') str += 12
@@ -723,6 +732,7 @@ export default {
         if (value === 'jujuPower') str += 30
         if (value === 'giants') str += 25
         if (value === 'roids') str += 25
+        if (value === 'dumplings') str += 20
         if (value === 'sunfruit') str += 10
       })
 
@@ -748,6 +758,7 @@ export default {
         if (value === 'mongoose') crit += 3.25
         if (value === 'eleStoneMh') crit += 2
         if (value === 'eleStoneOh') crit += 2
+        if (value === 'zand') crit += (agi * 1.15 - agi) * 0.05
       })
       crit += this.talents.cruelty
       crit += 3 // Berserker Stance
@@ -859,6 +870,7 @@ export default {
             wf: form.player.buffs.includes('wf'),
             improvedWf: form.player.buffs.includes('improvedWf'),
             bok: form.player.buffs.includes('bok'),
+            zand: form.player.buffs.includes('zand'),
             bloodFury: form.player.buffs.includes('bloodFury'),
             mrp: form.player.buffs.includes('mrp')
           },

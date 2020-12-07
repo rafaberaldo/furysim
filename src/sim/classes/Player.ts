@@ -38,6 +38,7 @@ export default class Player {
   target: Target
   windfury: Windfury | undefined
   bok: boolean
+  zand: boolean
   mrp: MightyRagePotion | undefined
   bloodFury: BloodFury | undefined
   red: EssenceOfTheRed | undefined
@@ -81,6 +82,7 @@ export default class Player {
 
     this.windfury = cfg.player.buffs.wf && new Windfury(this, cfg.player.buffs.improvedWf)
     this.bok = cfg.player.buffs.bok
+    this.zand = cfg.player.buffs.zand
     this.mrp = cfg.player.buffs.mrp && new MightyRagePotion(this, cfg.player.mrp)
     this.bloodFury = cfg.player.buffs.bloodFury && new BloodFury(this, cfg.player.bloodFury)
     this.red = cfg.player.buffs.red && new EssenceOfTheRed(this)
@@ -140,6 +142,7 @@ export default class Player {
     if (this.diamondFlask && this.diamondFlask.isActive) str += 75
     if (this.mrp && this.mrp.isActive) str += 60
     if (this.bok) str *= 1.1
+    if (this.zand) str *= 1.15
 
     return str
   }
